@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,12 +13,9 @@ export function PassportCheckForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [passport, setPassport] = useState("");
-  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [existsMessage, setExistsMessage] = useState<string | null>(null);
-
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,17 +27,13 @@ export function PassportCheckForm() {
       setError("Pasport raqami noto'g'ri formatda. Misol: AA1234567");
       return;
     }
-    if (!token) {
-      setError("Bot tekshiruvidan o'ting.");
-      return;
-    }
 
     setLoading(true);
     try {
       const res = await fetch("/api/check-passport", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passport_number: normalized, turnstileToken: token }),
+        body: JSON.stringify({ passport_number: normalized }),
       });
 
       if (res.status === 429) {
@@ -100,15 +92,6 @@ export function PassportCheckForm() {
         <p className="text-xs text-muted-foreground">
           2 ta harf va 7 ta raqamdan iborat. Misol: AA1234567
         </p>
-      </div>
-
-      <div className="flex justify-center">
-        <Turnstile
-          siteKey={siteKey}
-          onSuccess={(t) => setToken(t)}
-          onError={() => setToken("")}
-          onExpire={() => setToken("")}
-        />
       </div>
 
       {error ? (

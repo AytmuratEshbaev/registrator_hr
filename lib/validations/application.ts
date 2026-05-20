@@ -37,7 +37,6 @@ export const applicationSchema = z.object({
   passport_scan_url: z.string().min(1, "Pasport skanini yuklang"),
   diploma_url: z.string().min(1, "Diplom faylini yuklang"),
   photo_url: z.string().min(1, "Suratni yuklang"),
-  turnstileToken: z.string().min(1, "Bot tekshiruvidan o'ting"),
 });
 
 export type ApplicationInput = z.infer<typeof applicationSchema>;

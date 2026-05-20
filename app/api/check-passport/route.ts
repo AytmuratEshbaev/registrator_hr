@@ -3,7 +3,6 @@ import { z } from "zod";
 import { passportCheckSchema } from "@/lib/validations/passport";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,22 +37,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const { passport_number, turnstileToken } = parsed.data;
-
-  // Turnstile (token mavjud bo'lsa tekshirish; bo'lmasa - 400)
-  if (!turnstileToken) {
-    return NextResponse.json(
-      { error: "Bot tekshiruvidan o'tish talab qilinadi." },
-      { status: 400 }
-    );
-  }
-  const ok = await verifyTurnstile(turnstileToken, ip);
-  if (!ok) {
-    return NextResponse.json(
-      { error: "Bot tekshiruvi muvaffaqiyatsiz tugadi. Qaytadan urinib ko'ring." },
-      { status: 400 }
-    );
-  }
+  const { passport_number } = parsed.data;
 
   // DB tekshiruv
   try {

@@ -10,7 +10,6 @@ Yaqinda ochilgan firma uchun nomzodlardan ariza qabul qilish va HR adminlari uch
 | UI | Tailwind CSS + shadcn/ui + Radix UI |
 | Database + Auth | Supabase (PostgreSQL) |
 | Fayl saqlash | Cloudflare R2 (S3-compatible) |
-| Spam himoyasi | Cloudflare Turnstile |
 | Forma | React Hook Form + Zod |
 | Eksport | xlsx (SheetJS) |
 | Hosting | Vercel |
@@ -61,21 +60,12 @@ Qisqa:
    ```
 4. `.env.local` ga `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_ENDPOINT` yozing
 
-### 3. Cloudflare Turnstile
-1. https://dash.cloudflare.com → Turnstile → "Add site"
-2. Hostname: `localhost`, `your-vercel-domain.vercel.app`
-3. Widget Mode: `Managed`
-4. Site Key va Secret Key olib `.env.local` ga yozing
-5. **Development uchun test kalitlari** (har doim o'tadi):
-   - Site key: `1x00000000000000000000AA`
-   - Secret key: `1x0000000000000000000000000000000AA`
-
-### 4. Vercel'ga deploy
+### 3. Vercel'ga deploy
 1. https://vercel.com → "Add new project" → GitHub'dan loyihani import qiling
 2. Framework: Next.js (avtomatik aniqlanadi)
 3. Environment Variables qismida `.env.example` dagi barcha o'zgaruvchilarni qo'shing (haqiqiy production qiymatlari bilan)
 4. Deploy bosing
-5. Vercel domeni Turnstile va R2 CORS sozlamalariga qo'shilganini tekshiring
+5. Vercel domeni R2 CORS sozlamalariga qo'shilganini tekshiring
 
 ## Loyiha tuzilishi
 
@@ -106,8 +96,7 @@ registrator/
 │   ├── validations/       # Zod sxemalari
 │   ├── constants.ts       # FILE_LIMITS, STATUSES, REGEXES
 │   ├── utils.ts           # cn, formatDate, formatPhone, ...
-│   ├── rate-limit.ts      # In-memory rate limiting
-│   └── turnstile.ts       # Turnstile server verification
+│   └── rate-limit.ts      # In-memory rate limiting
 ├── supabase/
 │   ├── schema.sql         # Database sxemasi
 │   └── README.md          # Supabase setup qo'llanmasi
@@ -135,8 +124,7 @@ registrator/
 - **HTTPS**: Vercel avtomatik ta'minlaydi
 - **RLS**: Supabase tomonida — anon foydalanuvchi `applications` jadvalini o'qiy olmaydi
 - **Service Role**: faqat server-side API'da ishlatiladi, hech qachon clientga chiqarilmaydi
-- **Rate limit**: `/api/check-passport` — IP'ga daqiqasiga 5 ta urinish (`lib/rate-limit.ts`)
-- **Turnstile**: bot tekshiruvi forma yuborilganida
+- **Rate limit**: `/api/check-passport` va `/api/applications` — IP'ga daqiqasiga 5 ta urinish (`lib/rate-limit.ts`)
 - **Fayl validatsiya**: MIME va hajm backend'da Zod orqali tekshiriladi
 - **Signed URL'lar**: R2 fayllari faqat 10 daqiqalik signed URL orqali yuklab olinadi (admin)
 - **UNIQUE pasport constraint**: database darajasida — bir pasport bilan ikki marta yozish mumkin emas
@@ -156,6 +144,7 @@ npm run lint     # ESLint
 - **Rate limiting in-memory**: Vercel serverless'da har funksiya invokatsiyasi alohida xotira. Production'da Upstash Redis kerak bo'lishi mumkin. Hozircha yetarli.
 - **Email yuborilmaydi**: spec'da yo'q. Keyinroq Resend qo'shish mumkin.
 - **Audit log yo'q**: HR amallari tarixi yozilmaydi.
+- **Bot himoyasi yo'q**: Turnstile olib tashlangan. Spam paydo bo'lsa qayta qo'shish mumkin.
 
 ## Litsenziya
 Internal — qisqa muddatli loyiha. Litsenziya yo'q.

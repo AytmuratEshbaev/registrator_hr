@@ -11,6 +11,4 @@ export const passportSchema = z.object({
 
 export type PassportInput = z.infer<typeof passportSchema>;
 
-export const passportCheckSchema = passportSchema.extend({
-  turnstileToken: z.string().min(1, "Bot tekshiruvidan o'tilmadi").optional(),
-});
+export const passportCheckSchema = passportSchema;

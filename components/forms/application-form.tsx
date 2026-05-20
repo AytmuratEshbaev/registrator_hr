@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,9 +30,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
   const router = useRouter();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
-
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA";
 
   const {
     register,
@@ -58,14 +54,8 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
       passport_scan_url: "",
       diploma_url: "",
       photo_url: "",
-      turnstileToken: "",
     },
   });
-
-  // Turnstile tokenni RHF state ichida ham saqlash
-  useEffect(() => {
-    setValue("turnstileToken", turnstileToken, { shouldValidate: false });
-  }, [turnstileToken, setValue]);
 
   // Pasport raqami URL/sessionStorage'dan kelgan bo'lsa, RHF default'iga yozish
   useEffect(() => {
@@ -80,7 +70,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
         const draft = JSON.parse(raw) as Partial<ApplicationInput>;
         for (const [k, v] of Object.entries(draft)) {
           if (k === "passport_number") continue;
-          if (k === "turnstileToken") continue;
           if (typeof v === "string" || v === null) {
             setValue(k as keyof ApplicationInput, v as never, { shouldValidate: false });
           }
@@ -91,7 +80,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
     }
   }, [setValue]);
 
-  // Har bir o'zgarishdan keyin draft'ni saqlash (fayl/token maydonlarisiz)
+  // Har bir o'zgarishdan keyin draft'ni saqlash (fayl maydonlarisiz)
   const watched = watch();
   useEffect(() => {
     const id = setTimeout(() => {
@@ -123,21 +112,12 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
   }
 
   async function onSubmit(values: ApplicationInput) {
-    if (!turnstileToken) {
-      toast({
-        title: "Bot tekshiruvi",
-        description: "Iltimos, bot tekshiruvidan o'ting.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setSubmitting(true);
     try {
       const res = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, turnstileToken }),
+        body: JSON.stringify(values),
       });
 
       if (res.status === 429) {
@@ -388,19 +368,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           </ul>
         )}
       </fieldset>
-
-      {/* Turnstile */}
-      <div className="flex flex-col items-center gap-2">
-        <Turnstile
-          siteKey={siteKey}
-          onSuccess={(t) => setTurnstileToken(t)}
-          onError={() => setTurnstileToken("")}
-          onExpire={() => setTurnstileToken("")}
-        />
-        {errors.turnstileToken ? (
-          <p className="text-xs text-destructive">{errors.turnstileToken.message}</p>
-        ) : null}
-      </div>
 
       <div className="flex flex-col gap-3">
         <Button type="submit" size="lg" disabled={submitting} className="w-full md:w-auto">

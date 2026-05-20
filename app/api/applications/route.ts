@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { applicationSchema } from "@/lib/validations/application";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,15 +39,6 @@ export async function POST(req: Request) {
   }
 
   const data = parsed.data;
-
-  // Turnstile
-  const ok = await verifyTurnstile(data.turnstileToken, ip);
-  if (!ok) {
-    return NextResponse.json(
-      { error: "Bot tekshiruvi muvaffaqiyatsiz tugadi." },
-      { status: 400 }
-    );
-  }
 
   try {
     const supabase = createAdminClient();
