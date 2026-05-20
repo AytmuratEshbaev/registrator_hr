@@ -6,8 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/use-toast";
 import { PASSPORT_REGEX } from "@/lib/constants";
+import { statusFriendlyMessage } from "@/lib/utils";
+import type { ApplicationStatus } from "@/lib/supabase/types";
+
+interface ExistingApplication {
+  status: ApplicationStatus;
+  hr_note: string | null;
+}
 
 export function PassportCheckForm() {
   const router = useRouter();
@@ -15,12 +23,12 @@ export function PassportCheckForm() {
   const [passport, setPassport] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [existsMessage, setExistsMessage] = useState<string | null>(null);
+  const [existing, setExisting] = useState<ExistingApplication | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setExistsMessage(null);
+    setExisting(null);
 
     const normalized = passport.trim().toUpperCase();
     if (!PASSPORT_REGEX.test(normalized)) {
@@ -46,15 +54,18 @@ export function PassportCheckForm() {
         return;
       }
 
-      const data: { exists: boolean } = await res.json();
-      if (data.exists) {
-        setExistsMessage(
-          "Ushbu pasport raqami bilan ariza allaqachon topshirilgan. Iltimos, HR bo'limi javobini kuting."
-        );
+      const data: {
+        exists: boolean;
+        status?: ApplicationStatus;
+        hr_note?: string | null;
+      } = await res.json();
+
+      if (data.exists && data.status) {
+        setExisting({ status: data.status, hr_note: data.hr_note ?? null });
         return;
       }
 
-      // Saqlash va keyingi qadamga o'tish
+      // Yangi nomzod: saqlash va keyingi qadamga o'tish
       try {
         sessionStorage.setItem("apply.passport", normalized);
       } catch {
@@ -100,9 +111,22 @@ export function PassportCheckForm() {
         </div>
       ) : null}
 
-      {existsMessage ? (
-        <div className="rounded-md border border-amber-300 bg-amber-50 text-amber-900 text-sm px-3 py-2">
-          {existsMessage}
+      {existing ? (
+        <div className="rounded-md border bg-card p-4 space-y-3">
+          <p className="font-medium">Siz avval ro&apos;yxatdan o&apos;tgansiz</p>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Arizangiz holati:</span>
+            <StatusBadge status={existing.status} />
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {statusFriendlyMessage(existing.status)}
+          </p>
+          {existing.hr_note ? (
+            <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
+              <p className="text-xs text-muted-foreground mb-1">HR izohi:</p>
+              <p className="whitespace-pre-wrap break-words">{existing.hr_note}</p>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

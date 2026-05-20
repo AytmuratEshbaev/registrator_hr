@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("applications")
-      .select("id")
+      .select("id, status, hr_note")
       .eq("passport_number", passport_number)
       .maybeSingle();
 
@@ -56,7 +56,14 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ exists: !!data });
+    if (data) {
+      return NextResponse.json({
+        exists: true,
+        status: data.status,
+        hr_note: data.hr_note,
+      });
+    }
+    return NextResponse.json({ exists: false });
   } catch (err) {
     console.error("[check-passport] exception:", err);
     if (err instanceof z.ZodError) {

@@ -55,6 +55,20 @@ export function statusLabel(status: string): string {
   return labels[status] ?? status;
 }
 
+export function statusFriendlyMessage(status: string): string {
+  const messages: Record<string, string> = {
+    pending:
+      "Arizangiz qabul qilingan va HR bo'limi ko'rib chiqishini kutmoqda.",
+    reviewing:
+      "Arizangiz hozir HR bo'limi tomonidan ko'rib chiqilmoqda. Iltimos, biroz kuting.",
+    accepted:
+      "Tabriklaymiz! Sizning arizangiz qabul qilindi. HR bo'limi tez orada siz bilan bog'lanadi.",
+    rejected:
+      "Afsuski, sizning arizangiz qabul qilinmadi.",
+  };
+  return messages[status] ?? "";
+}
+
 export function statusColor(status: string): string {
   const colors: Record<string, string> = {
     pending: "bg-blue-100 text-blue-800 border-blue-200",
