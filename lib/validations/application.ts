@@ -29,7 +29,6 @@ export const applicationSchema = z.object({
       },
       { message: "Yosh 16 dan 80 gacha bo'lishi kerak" }
     ),
-  address: z.string().trim().min(3, "Manzilni kiriting").max(300),
   position_id: z.string().uuid().nullable().optional(),
   position_title: z.string().trim().min(2, "Lavozimni tanlang").max(150),
   about: z.string().trim().min(20, "Kamida 20 ta belgi yozing").max(2000),

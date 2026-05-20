@@ -43,7 +43,6 @@ export async function GET(req: NextRequest) {
     "Email": a.email,
     "Telefon": a.phone,
     "Tug'ilgan sana": formatDate(a.birth_date),
-    "Manzil": a.address,
     "Lavozim": a.position_title,
     "O'zi haqida": a.about,
     "Status": statusLabel(a.status),

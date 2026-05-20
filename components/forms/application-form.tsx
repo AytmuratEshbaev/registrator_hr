@@ -46,7 +46,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
       email: "",
       phone: "+998",
       birth_date: "",
-      address: "",
       position_id: null,
       position_title: "",
       about: "",
@@ -90,7 +89,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           email: watched.email,
           phone: watched.phone,
           birth_date: watched.birth_date,
-          address: watched.address,
           position_id: watched.position_id,
           position_title: watched.position_title,
           about: watched.about,
@@ -248,19 +246,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
               <p className="text-xs text-destructive">{errors.birth_date.message}</p>
             ) : null}
           </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="address">Manzil *</Label>
-          <Input
-            id="address"
-            placeholder="Toshkent shahri, Chilonzor tumani, 1-uy"
-            {...register("address")}
-            disabled={submitting}
-          />
-          {errors.address ? (
-            <p className="text-xs text-destructive">{errors.address.message}</p>
-          ) : null}
         </div>
       </fieldset>
 

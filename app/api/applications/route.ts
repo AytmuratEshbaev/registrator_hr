@@ -50,7 +50,6 @@ export async function POST(req: Request) {
         email: data.email,
         phone: data.phone,
         birth_date: data.birth_date,
-        address: data.address,
         position_id: data.position_id ?? null,
         position_title: data.position_title,
         about: data.about,

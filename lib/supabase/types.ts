@@ -7,7 +7,6 @@ export type ApplicationRow = {
   email: string;
   phone: string;
   birth_date: string;
-  address: string;
   position_id: string | null;
   position_title: string;
   about: string;
@@ -28,7 +27,6 @@ export type ApplicationInsert = {
   email: string;
   phone: string;
   birth_date: string;
-  address: string;
   position_id?: string | null;
   position_title: string;
   about: string;
@@ -49,7 +47,6 @@ export type ApplicationUpdate = {
   email?: string;
   phone?: string;
   birth_date?: string;
-  address?: string;
   position_id?: string | null;
   position_title?: string;
   about?: string;

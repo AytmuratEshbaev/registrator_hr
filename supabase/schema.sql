@@ -36,7 +36,6 @@ CREATE TABLE public.applications (
   email              text NOT NULL,
   phone              text NOT NULL,
   birth_date         date NOT NULL,
-  address            text NOT NULL,
   position_id        uuid REFERENCES public.positions(id) ON DELETE SET NULL,
   position_title     text NOT NULL,
   about              text NOT NULL,

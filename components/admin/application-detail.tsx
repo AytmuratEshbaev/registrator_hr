@@ -6,7 +6,6 @@ import {
   Mail,
   Phone,
   Calendar,
-  MapPin,
   Briefcase,
   FileText,
 } from "lucide-react";
@@ -160,12 +159,6 @@ export function ApplicationDetail({ application }: Props) {
                   value={application.position_title}
                 />
               </div>
-              <Separator />
-              <FieldRow
-                icon={MapPin}
-                label="Manzil"
-                value={application.address}
-              />
               {application.about && (
                 <>
                   <Separator />
