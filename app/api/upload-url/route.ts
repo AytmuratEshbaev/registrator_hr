@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const rl = rateLimit(`upload-url:${ip}`, { max: 20, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: "Juda ko'p urinish. Keyinroq urinib ko'ring." },
+      { error: "Слишком много попыток. Попробуйте позже." },
       { status: 429 }
     );
   }
@@ -23,14 +23,14 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Yaroqsiz so'rov tanasi" }, { status: 400 });
+    return NextResponse.json({ error: "Некорректное тело запроса" }, { status: 400 });
   }
 
   const parsed = uploadUrlSchema.safeParse(body);
   if (!parsed.success) {
     const first = parsed.error.issues[0];
     return NextResponse.json(
-      { error: first?.message ?? "Noto'g'ri ma'lumot" },
+      { error: first?.message ?? "Некорректные данные" },
       { status: 400 }
     );
   }
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[upload-url] error:", err);
     return NextResponse.json(
-      { error: "Yuklash URL'ini yaratib bo'lmadi." },
+      { error: "Не удалось создать URL для загрузки." },
       { status: 500 }
     );
   }

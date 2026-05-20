@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const rl = rateLimit(`applications:${ip}`, { max: 5, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: "Juda ko'p urinish. Bir daqiqadan so'ng qayta urinib ko'ring." },
+      { error: "Слишком много попыток. Попробуйте снова через минуту." },
       { status: 429 }
     );
   }
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Yaroqsiz so'rov tanasi" }, { status: 400 });
+    return NextResponse.json({ error: "Некорректное тело запроса" }, { status: 400 });
   }
 
   const parsed = applicationSchema.safeParse(body);
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const path = first?.path?.join(".") ?? "";
     return NextResponse.json(
       {
-        error: first?.message ?? "Noto'g'ri ma'lumot",
+        error: first?.message ?? "Некорректные данные",
         field: path,
       },
       { status: 400 }
@@ -66,20 +66,20 @@ export async function POST(req: Request) {
       const code = (error as { code?: string }).code;
       if (code === "23505") {
         return NextResponse.json(
-          { error: "Bu pasport bilan ariza topshirilgan" },
+          { error: "По этому паспорту заявка уже подана" },
           { status: 409 }
         );
       }
       console.error("[applications] insert error:", error);
       return NextResponse.json(
-        { error: "Arizani saqlashda xatolik yuz berdi." },
+        { error: "Произошла ошибка при сохранении заявки." },
         { status: 500 }
       );
     }
 
     if (!inserted) {
       return NextResponse.json(
-        { error: "Arizani saqlashda xatolik yuz berdi." },
+        { error: "Произошла ошибка при сохранении заявки." },
         { status: 500 }
       );
     }
@@ -87,6 +87,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: inserted.id });
   } catch (err) {
     console.error("[applications] exception:", err);
-    return NextResponse.json({ error: "Server xatosi" }, { status: 500 });
+    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
   }
 }

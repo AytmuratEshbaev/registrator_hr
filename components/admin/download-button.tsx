@@ -27,15 +27,15 @@ export function DownloadButton({ label, objectKey, filename }: Props) {
       const res = await fetch(`/api/admin/download?${params.toString()}`);
       if (!res.ok) {
         const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error ?? "Yuklab olishda xato");
+        throw new Error(errBody.error ?? "Ошибка при скачивании");
       }
       const data = (await res.json()) as { url?: string };
-      if (!data.url) throw new Error("Yuklab olish havolasi olinmadi");
+      if (!data.url) throw new Error("Не удалось получить ссылку для скачивания");
       window.open(data.url, "_blank", "noopener,noreferrer");
     } catch (err) {
       toast({
-        title: "Xato",
-        description: err instanceof Error ? err.message : "Noma'lum xato",
+        title: "Ошибка",
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
         variant: "destructive",
       });
     } finally {
@@ -57,7 +57,7 @@ export function DownloadButton({ label, objectKey, filename }: Props) {
       )}
       {label}
       {disabled && (
-        <span className="ml-auto text-xs text-muted-foreground">yo'q</span>
+        <span className="ml-auto text-xs text-muted-foreground">нет</span>
       )}
     </Button>
   );

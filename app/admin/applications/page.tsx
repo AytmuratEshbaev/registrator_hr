@@ -70,9 +70,9 @@ export default async function AdminApplicationsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Arizalar</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Заявки</h1>
         <p className="text-muted-foreground">
-          Topshirilgan barcha arizalarni ko'rish va boshqarish
+          Просмотр и управление всеми поданными заявками
         </p>
       </div>
 

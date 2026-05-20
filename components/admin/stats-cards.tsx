@@ -12,31 +12,31 @@ interface StatsCardsProps {
 const ITEMS = [
   {
     key: "total" as const,
-    label: "Jami arizalar",
+    label: "Всего заявок",
     icon: FileText,
     className: "text-foreground",
   },
   {
     key: "pending" as const,
-    label: "Yangi",
+    label: "Новые",
     icon: Clock,
     className: "text-blue-600",
   },
   {
     key: "reviewing" as const,
-    label: "Ko'rib chiqilmoqda",
+    label: "На рассмотрении",
     icon: Eye,
     className: "text-amber-600",
   },
   {
     key: "accepted" as const,
-    label: "Qabul qilindi",
+    label: "Принятые",
     icon: CheckCircle2,
     className: "text-green-600",
   },
   {
     key: "rejected" as const,
-    label: "Rad etildi",
+    label: "Отклонённые",
     icon: XCircle,
     className: "text-red-600",
   },

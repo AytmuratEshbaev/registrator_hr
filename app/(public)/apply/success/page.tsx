@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CheckCircle2 } from "lucide-react";
 
 export const metadata = {
-  title: "Ariza muvaffaqiyatli topshirildi",
+  title: "Заявка успешно подана",
 };
 
 export default function ApplySuccessPage() {
@@ -16,16 +16,16 @@ export default function ApplySuccessPage() {
             <div className="mx-auto w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-3">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <CardTitle>Arizangiz qabul qilindi!</CardTitle>
+            <CardTitle>Ваша заявка принята!</CardTitle>
             <CardDescription>
-              Tashrifingiz uchun rahmat. HR bo&apos;limimiz arizangizni ko&apos;rib chiqadi va siz bilan
-              tez orada bog&apos;lanadi.
+              Спасибо за обращение. HR-отдел рассмотрит вашу заявку и свяжется с вами
+              в ближайшее время.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex justify-center">
               <Button asChild>
-                <Link href="/">Bosh sahifaga qaytish</Link>
+                <Link href="/">Вернуться на главную</Link>
               </Button>
             </div>
           </CardContent>

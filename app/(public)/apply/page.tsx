@@ -4,7 +4,7 @@ import { PassportCheckForm } from "@/components/forms/passport-check-form";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Ariza topshirish — Pasport tekshiruvi",
+  title: "Подать заявку — Проверка паспорта",
 };
 
 export default function ApplyPage() {
@@ -16,15 +16,15 @@ export default function ApplyPage() {
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
-          Bosh sahifaga qaytish
+          Вернуться на главную
         </Link>
 
         <Card>
           <CardHeader>
-            <CardTitle>Ariza topshirish</CardTitle>
+            <CardTitle>Подать заявку</CardTitle>
             <CardDescription>
-              Boshlash uchun pasport raqamingizni kiriting. Tizim avval ariza
-              topshirilganligini tekshiradi.
+              Для начала введите номер паспорта. Система проверит, не подавали ли
+              вы заявку ранее.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -33,7 +33,7 @@ export default function ApplyPage() {
         </Card>
 
         <p className="text-xs text-muted-foreground text-center mt-4">
-          Pasport raqami noyob bo&apos;lishi kerak. Har bir nomzod faqat bir marta ariza topshira oladi.
+          Номер паспорта должен быть уникальным. Каждый кандидат может подать заявку только один раз.
         </p>
       </div>
     </div>

@@ -82,10 +82,10 @@ export function ApplicationDetail({ application }: Props) {
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
             <Link href="/admin/applications" className="hover:underline">
-              Arizalar
+              Заявки
             </Link>
             <span>/</span>
-            <span>Tafsilotlar</span>
+            <span>Подробности</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight">
             {fullName}
@@ -93,12 +93,12 @@ export function ApplicationDetail({ application }: Props) {
           <div className="mt-2 flex items-center gap-3">
             <StatusBadge status={application.status} />
             <span className="text-xs text-muted-foreground">
-              Yuborilgan: {formatDateTime(application.created_at)}
+              Подано: {formatDateTime(application.created_at)}
             </span>
           </div>
         </div>
         <Button asChild variant="outline">
-          <Link href="/admin/applications">← Ro'yxatga qaytish</Link>
+          <Link href="/admin/applications">← Вернуться к списку</Link>
         </Button>
       </div>
 
@@ -107,30 +107,30 @@ export function ApplicationDetail({ application }: Props) {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Shaxsiy ma'lumotlar</CardTitle>
+              <CardTitle>Личные данные</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <FieldRow
                   icon={User}
-                  label="Ism"
+                  label="Имя"
                   value={application.first_name}
                 />
                 <FieldRow
                   icon={User}
-                  label="Familya"
+                  label="Фамилия"
                   value={application.last_name}
                 />
                 <FieldRow
                   icon={FileText}
-                  label="Pasport raqami"
+                  label="Номер паспорта"
                   value={
                     <span className="font-mono">{application.passport_number}</span>
                   }
                 />
                 <FieldRow
                   icon={Phone}
-                  label="Telefon"
+                  label="Телефон"
                   value={
                     <a
                       href={`tel:${application.phone}`}
@@ -142,12 +142,12 @@ export function ApplicationDetail({ application }: Props) {
                 />
                 <FieldRow
                   icon={Calendar}
-                  label="Tug'ilgan sana"
+                  label="Дата рождения"
                   value={formatDate(application.birth_date)}
                 />
                 <FieldRow
                   icon={Briefcase}
-                  label="Lavozim"
+                  label="Должность"
                   value={application.position_title}
                 />
               </div>
@@ -156,30 +156,30 @@ export function ApplicationDetail({ application }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Hujjatlar</CardTitle>
+              <CardTitle>Документы</CardTitle>
               <CardDescription>
-                Yuklab olish uchun tugmani bosing — havola xavfsiz va vaqtinchalik
+                Нажмите кнопку, чтобы скачать — ссылка безопасная и временная
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-2 sm:grid-cols-2">
                 <DownloadButton
-                  label="CV yuklab olish"
+                  label="Скачать резюме"
                   objectKey={cvKey}
                   filename={`${baseName}-CV.pdf`}
                 />
                 <DownloadButton
-                  label="Pasport skani"
+                  label="Скан паспорта"
                   objectKey={passportKey}
                   filename={`${baseName}-pasport`}
                 />
                 <DownloadButton
-                  label="Diplom"
+                  label="Диплом"
                   objectKey={diplomaKey}
                   filename={`${baseName}-diplom.pdf`}
                 />
                 <DownloadButton
-                  label="3x4 surat"
+                  label="Фото 3x4"
                   objectKey={photoKey}
                   filename={`${baseName}-surat`}
                 />
@@ -192,8 +192,8 @@ export function ApplicationDetail({ application }: Props) {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Status</CardTitle>
-              <CardDescription>Ariza holatini o'zgartirish</CardDescription>
+              <CardTitle>Статус</CardTitle>
+              <CardDescription>Изменить статус заявки</CardDescription>
             </CardHeader>
             <CardContent>
               <StatusChanger
@@ -205,8 +205,8 @@ export function ApplicationDetail({ application }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>HR izohi</CardTitle>
-              <CardDescription>Faqat admin ko'radi</CardDescription>
+              <CardTitle>Комментарий HR</CardTitle>
+              <CardDescription>Видит только администратор</CardDescription>
             </CardHeader>
             <CardContent>
               <HrNoteEditor
@@ -218,17 +218,17 @@ export function ApplicationDetail({ application }: Props) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Tizim ma'lumoti</CardTitle>
+              <CardTitle>Системная информация</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Yaratilgan:</span>
+                <span className="text-muted-foreground">Создано:</span>
                 <span className="font-mono">
                   {formatDateTime(application.created_at)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Yangilangan:</span>
+                <span className="text-muted-foreground">Обновлено:</span>
                 <span className="font-mono">
                   {formatDateTime(application.updated_at)}
                 </span>

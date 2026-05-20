@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "HR Registratsiya — Firma nomi",
-  description: "Ishga ariza topshirish platformasi",
+  title: "HR Регистрация — Название компании",
+  description: "Платформа подачи заявок на работу",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uz">
+    <html lang="ru">
       <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background`}>
         {children}
         <Toaster />

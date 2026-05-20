@@ -17,9 +17,9 @@ export default async function AdminPositionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Lavozimlar</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Должности</h1>
         <p className="text-muted-foreground">
-          Ariza topshirishda foydalanuvchilar tanlay oladigan lavozimlarni boshqarish
+          Управление должностями, доступными кандидатам при подаче заявки
         </p>
       </div>
 

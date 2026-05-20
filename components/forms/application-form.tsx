@@ -117,8 +117,8 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
 
       if (res.status === 429) {
         toast({
-          title: "Juda ko'p urinish",
-          description: "Bir daqiqadan so'ng qayta urinib ko'ring.",
+          title: "Слишком много попыток",
+          description: "Попробуйте снова через минуту.",
           variant: "destructive",
         });
         return;
@@ -126,8 +126,8 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
 
       if (res.status === 409) {
         toast({
-          title: "Ariza mavjud",
-          description: "Bu pasport bilan ariza topshirilgan.",
+          title: "Заявка уже существует",
+          description: "По этому паспорту заявка уже подана.",
           variant: "destructive",
         });
         return;
@@ -136,8 +136,8 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         toast({
-          title: "Xatolik",
-          description: data?.error ?? "Arizani jo'natishda xatolik yuz berdi.",
+          title: "Ошибка",
+          description: data?.error ?? "Произошла ошибка при отправке заявки.",
           variant: "destructive",
         });
         return;
@@ -154,8 +154,8 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
     } catch (err) {
       console.error(err);
       toast({
-        title: "Tarmoq xatosi",
-        description: "Server bilan bog'lanib bo'lmadi.",
+        title: "Ошибка сети",
+        description: "Не удалось связаться с сервером.",
         variant: "destructive",
       });
     } finally {
@@ -166,20 +166,20 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <div className="rounded-md bg-muted/50 border px-4 py-3 text-sm">
-        <span className="text-muted-foreground">Pasport raqami: </span>
+        <span className="text-muted-foreground">Номер паспорта: </span>
         <span className="font-semibold">{passport_number}</span>
       </div>
 
       {/* Shaxsiy ma'lumotlar */}
       <fieldset className="space-y-5">
-        <legend className="text-lg font-semibold">Shaxsiy ma&apos;lumotlar</legend>
+        <legend className="text-lg font-semibold">Личные данные</legend>
 
         <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="first_name">Ism *</Label>
+            <Label htmlFor="first_name">Имя *</Label>
             <Input
               id="first_name"
-              placeholder="Ali"
+              placeholder="Иван"
               {...register("first_name")}
               disabled={submitting}
             />
@@ -189,10 +189,10 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="last_name">Familya *</Label>
+            <Label htmlFor="last_name">Фамилия *</Label>
             <Input
               id="last_name"
-              placeholder="Valiyev"
+              placeholder="Иванов"
               {...register("last_name")}
               disabled={submitting}
             />
@@ -202,7 +202,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="phone">Telefon raqami *</Label>
+            <Label htmlFor="phone">Телефон *</Label>
             <Input
               id="phone"
               type="tel"
@@ -224,12 +224,12 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
             {errors.phone ? (
               <p className="text-xs text-destructive">{errors.phone.message}</p>
             ) : (
-              <p className="text-xs text-muted-foreground">Format: +998XXXXXXXXX</p>
+              <p className="text-xs text-muted-foreground">Формат: +998XXXXXXXXX</p>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="birth_date">Tug&apos;ilgan sana *</Label>
+            <Label htmlFor="birth_date">Дата рождения *</Label>
             <Input
               id="birth_date"
               type="date"
@@ -245,10 +245,10 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
 
       {/* Lavozim */}
       <fieldset className="space-y-5">
-        <legend className="text-lg font-semibold">Tanlangan lavozim</legend>
+        <legend className="text-lg font-semibold">Выбранная должность</legend>
 
         <div className="space-y-1.5">
-          <Label htmlFor="position">Lavozim *</Label>
+          <Label htmlFor="position">Должность *</Label>
           <Controller
             control={control}
             name="position_id"
@@ -259,7 +259,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
                 disabled={submitting}
               >
                 <SelectTrigger id="position">
-                  <SelectValue placeholder="Lavozimni tanlang" />
+                  <SelectValue placeholder="Выберите должность" />
                 </SelectTrigger>
                 <SelectContent>
                   {positions.map((p) => (
@@ -280,16 +280,16 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
 
       {/* Hujjatlar */}
       <fieldset className="space-y-5">
-        <legend className="text-lg font-semibold">Hujjatlar</legend>
+        <legend className="text-lg font-semibold">Документы</legend>
         <p className="text-sm text-muted-foreground -mt-3">
-          Quyidagi hujjatlarning har birini yuklang. Fayllar avtomatik tekshiriladi.
+          Загрузите каждый из перечисленных документов. Файлы проверяются автоматически.
         </p>
 
         <div className="grid gap-5 md:grid-cols-2">
           <FileUploadField
             kind="cv"
             passport_number={passport_number}
-            label="CV (PDF)"
+            label="Резюме (PDF)"
             onUploaded={(key) =>
               setValue("cv_url", key ?? "", { shouldValidate: true })
             }
@@ -297,7 +297,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           <FileUploadField
             kind="passport_scan"
             passport_number={passport_number}
-            label="Pasport skani"
+            label="Скан паспорта"
             onUploaded={(key) =>
               setValue("passport_scan_url", key ?? "", { shouldValidate: true })
             }
@@ -305,7 +305,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           <FileUploadField
             kind="diploma"
             passport_number={passport_number}
-            label="Diplom (PDF)"
+            label="Диплом (PDF)"
             onUploaded={(key) =>
               setValue("diploma_url", key ?? "", { shouldValidate: true })
             }
@@ -313,7 +313,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           <FileUploadField
             kind="photo"
             passport_number={passport_number}
-            label="3x4 surat"
+            label="Фото 3x4"
             onUploaded={(key) =>
               setValue("photo_url", key ?? "", { shouldValidate: true })
             }
@@ -337,15 +337,14 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
         <Button type="submit" size="lg" disabled={submitting} className="w-full md:w-auto">
           {submitting ? (
             <>
-              <Spinner className="mr-2" /> Yuborilmoqda...
+              <Spinner className="mr-2" /> Отправка...
             </>
           ) : (
-            "Yuborish"
+            "Отправить"
           )}
         </Button>
         <p className="text-xs text-muted-foreground">
-          Arizani jo&apos;natish orqali siz shaxsiy ma&apos;lumotlaringizni qayta ishlashga rozilik
-          bildirasiz.
+          Отправляя заявку, вы соглашаетесь на обработку персональных данных.
         </p>
       </div>
     </form>

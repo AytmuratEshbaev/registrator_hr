@@ -70,7 +70,7 @@ export function FileUploadField({
 
     // Tekshirish
     if (!(limits.mimes as readonly string[]).includes(fileToUpload.type)) {
-      setError(`Faqat ${limits.mimes.join(", ")} formatlari ruxsat etilgan.`);
+      setError(`Разрешены только форматы: ${limits.mimes.join(", ")}.`);
       setStatus("error");
       return;
     }
@@ -78,7 +78,7 @@ export function FileUploadField({
       const mb = Math.round(limits.maxBytes / 1024 / 1024);
       const kb = Math.round(limits.maxBytes / 1024);
       setError(
-        `Fayl hajmi ${limits.maxBytes >= 1024 * 1024 ? mb + "MB" : kb + "KB"} dan oshmasligi kerak.`
+        `Размер файла не должен превышать ${limits.maxBytes >= 1024 * 1024 ? mb + "MB" : kb + "KB"}.`
       );
       setStatus("error");
       return;
@@ -104,7 +104,7 @@ export function FileUploadField({
 
       if (!presignRes.ok) {
         const data = await presignRes.json().catch(() => ({}));
-        throw new Error(data?.error ?? "Yuklash uchun ruxsat olinmadi.");
+        throw new Error(data?.error ?? "Не удалось получить разрешение на загрузку.");
       }
       const { uploadUrl, key } = (await presignRes.json()) as {
         uploadUrl: string;
@@ -126,10 +126,10 @@ export function FileUploadField({
           if (xhr.status >= 200 && xhr.status < 300) {
             resolve();
           } else {
-            reject(new Error(`Yuklash xatosi: HTTP ${xhr.status}`));
+            reject(new Error(`Ошибка загрузки: HTTP ${xhr.status}`));
           }
         };
-        xhr.onerror = () => reject(new Error("Tarmoq xatosi yuz berdi."));
+        xhr.onerror = () => reject(new Error("Произошла ошибка сети."));
         xhr.send(fileToUpload);
       });
 
@@ -137,7 +137,7 @@ export function FileUploadField({
       setProgress(100);
       onUploaded(key);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Xatolik yuz berdi.";
+      const message = err instanceof Error ? err.message : "Произошла ошибка.";
       setError(message);
       setStatus("error");
       onUploaded(null);
@@ -171,10 +171,10 @@ export function FileUploadField({
         >
           <Upload className="w-5 h-5 text-muted-foreground" />
           <div className="text-sm text-center">
-            <span className="font-medium">Faylni tanlang</span>
+            <span className="font-medium">Выберите файл</span>
           </div>
           <div className="text-xs text-muted-foreground text-center">
-            {limits.label} &middot; maks.{" "}
+            {limits.label} &middot; макс.{" "}
             {limits.maxBytes >= 1024 * 1024
               ? `${Math.round(limits.maxBytes / 1024 / 1024)}MB`
               : `${Math.round(limits.maxBytes / 1024)}KB`}
@@ -221,14 +221,14 @@ export function FileUploadField({
                   />
                 </div>
                 <div className="text-xs text-muted-foreground mt-0.5">
-                  {status === "compressing" && "Siqilmoqda..."}
-                  {status === "requesting" && "Ruxsat olinmoqda..."}
-                  {status === "uploading" && `Yuklanmoqda ${progress}%`}
+                  {status === "compressing" && "Сжатие..."}
+                  {status === "requesting" && "Получение разрешения..."}
+                  {status === "uploading" && `Загрузка ${progress}%`}
                 </div>
               </div>
             ) : null}
             {status === "done" ? (
-              <div className="text-xs text-green-700 mt-0.5">Yuklandi</div>
+              <div className="text-xs text-green-700 mt-0.5">Загружено</div>
             ) : null}
           </div>
           {!isBusy ? (
@@ -237,7 +237,7 @@ export function FileUploadField({
               variant="ghost"
               size="sm"
               onClick={reset}
-              aria-label="Faylni o'chirish"
+              aria-label="Удалить файл"
             >
               <X className="w-4 h-4" />
             </Button>

@@ -64,7 +64,7 @@ export default async function AdminDashboardPage() {
   const positionBreakdown = new Map<string, number>();
   if (positionsRes.data) {
     for (const row of positionsRes.data as { position_title: string }[]) {
-      const title = row.position_title || "Noma'lum";
+      const title = row.position_title || "Неизвестно";
       positionBreakdown.set(title, (positionBreakdown.get(title) ?? 0) + 1);
     }
   }
@@ -75,8 +75,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Boshqaruv paneli</h1>
-        <p className="text-muted-foreground">Umumiy statistika va so'nggi arizalar</p>
+        <h1 className="text-3xl font-bold tracking-tight">Панель управления</h1>
+        <p className="text-muted-foreground">Общая статистика и последние заявки</p>
       </div>
 
       <StatsCards
@@ -91,26 +91,26 @@ export default async function AdminDashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>So'nggi arizalar</CardTitle>
-              <CardDescription>Oxirgi 5 ta yuborilgan ariza</CardDescription>
+              <CardTitle>Последние заявки</CardTitle>
+              <CardDescription>Последние 5 поданных заявок</CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href="/admin/applications">Barchasi</Link>
+              <Link href="/admin/applications">Все</Link>
             </Button>
           </CardHeader>
           <CardContent>
             {latest.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                Hozircha arizalar yo'q
+                Пока заявок нет
               </p>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Ism</TableHead>
-                    <TableHead>Lavozim</TableHead>
-                    <TableHead>Sana</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Имя</TableHead>
+                    <TableHead>Должность</TableHead>
+                    <TableHead>Дата</TableHead>
+                    <TableHead>Статус</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -141,13 +141,13 @@ export default async function AdminDashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Lavozim bo'yicha</CardTitle>
-            <CardDescription>Arizalar taqsimoti</CardDescription>
+            <CardTitle>По должностям</CardTitle>
+            <CardDescription>Распределение заявок</CardDescription>
           </CardHeader>
           <CardContent>
             {positionEntries.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                Ma'lumot yo'q
+                Нет данных
               </p>
             ) : (
               <ul className="space-y-3">

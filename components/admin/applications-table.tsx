@@ -107,14 +107,14 @@ export function ApplicationsTable({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Ism, familya yoki pasport bo'yicha qidirish"
+              placeholder="Поиск по имени, фамилии или паспорту"
               className="pl-9"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
           <Button type="submit" variant="secondary" disabled={isPending}>
-            Qidirish
+            Поиск
           </Button>
         </form>
 
@@ -124,7 +124,7 @@ export function ApplicationsTable({
             className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             <Download className="h-4 w-4" />
-            Eksport (XLSX)
+            Экспорт (XLSX)
           </a>
         </div>
       </div>
@@ -132,7 +132,7 @@ export function ApplicationsTable({
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Filtr:</span>
+          <span className="text-sm font-medium">Фильтр:</span>
         </div>
 
         <Select
@@ -140,10 +140,10 @@ export function ApplicationsTable({
           onValueChange={handleStatusChange}
         >
           <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder="Статус" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_VALUE}>Barcha statuslar</SelectItem>
+            <SelectItem value={ALL_VALUE}>Все статусы</SelectItem>
             {APPLICATION_STATUSES.map((s) => (
               <SelectItem key={s} value={s}>
                 {statusLabel(s)}
@@ -157,10 +157,10 @@ export function ApplicationsTable({
           onValueChange={handlePositionChange}
         >
           <SelectTrigger className="w-full md:w-[260px]">
-            <SelectValue placeholder="Lavozim" />
+            <SelectValue placeholder="Должность" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_VALUE}>Barcha lavozimlar</SelectItem>
+            <SelectItem value={ALL_VALUE}>Все должности</SelectItem>
             {positions.map((p) => (
               <SelectItem key={p.id} value={p.id}>
                 {p.title}
@@ -176,20 +176,20 @@ export function ApplicationsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Ism Familya</TableHead>
-              <TableHead>Lavozim</TableHead>
-              <TableHead>Pasport</TableHead>
-              <TableHead>Telefon</TableHead>
-              <TableHead>Sana</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Amallar</TableHead>
+              <TableHead>Имя Фамилия</TableHead>
+              <TableHead>Должность</TableHead>
+              <TableHead>Паспорт</TableHead>
+              <TableHead>Телефон</TableHead>
+              <TableHead>Дата</TableHead>
+              <TableHead>Статус</TableHead>
+              <TableHead className="text-right">Действия</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                  Arizalar topilmadi
+                  Заявки не найдены
                 </TableCell>
               </TableRow>
             ) : (
@@ -211,7 +211,7 @@ export function ApplicationsTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/applications/${app.id}`}>Ko'rish</Link>
+                      <Link href={`/admin/applications/${app.id}`}>Просмотр</Link>
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -225,8 +225,8 @@ export function ApplicationsTable({
       {total > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Jami: <span className="font-medium text-foreground">{total}</span> ariza
-            {" "}— sahifa {page} / {totalPages}
+            Всего: <span className="font-medium text-foreground">{total}</span> заявок
+            {" "}— страница {page} / {totalPages}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -235,7 +235,7 @@ export function ApplicationsTable({
               onClick={() => handlePageChange(page - 1)}
               disabled={page <= 1 || isPending}
             >
-              Oldingi
+              Назад
             </Button>
             <Button
               variant="outline"
@@ -243,7 +243,7 @@ export function ApplicationsTable({
               onClick={() => handlePageChange(page + 1)}
               disabled={page >= totalPages || isPending}
             >
-              Keyingi
+              Вперед
             </Button>
           </div>
         </div>

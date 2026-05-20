@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   const format = (req.nextUrl.searchParams.get("format") ?? "xlsx").toLowerCase();
   if (format !== "xlsx" && format !== "csv") {
     return NextResponse.json(
-      { error: "format faqat xlsx yoki csv bo'lishi mumkin" },
+      { error: "Допустимы только форматы xlsx или csv" },
       { status: 400 }
     );
   }
@@ -38,16 +38,16 @@ export async function GET(req: NextRequest) {
   }
 
   const rows = ((data as ApplicationRow[] | null) ?? []).map((a) => ({
-    "Ism": a.first_name,
-    "Familya": a.last_name,
-    "Pasport": a.passport_number,
-    "Telefon": a.phone,
-    "Tug'ilgan sana": formatDate(a.birth_date),
-    "Lavozim": a.position_title,
-    "Status": statusLabel(a.status),
-    "HR izohi": a.hr_note ?? "",
-    "Yuborilgan": formatDateTime(a.created_at),
-    "Yangilangan": formatDateTime(a.updated_at),
+    "Имя": a.first_name,
+    "Фамилия": a.last_name,
+    "Паспорт": a.passport_number,
+    "Телефон": a.phone,
+    "Дата рождения": formatDate(a.birth_date),
+    "Должность": a.position_title,
+    "Статус": statusLabel(a.status),
+    "Комментарий HR": a.hr_note ?? "",
+    "Подано": formatDateTime(a.created_at),
+    "Обновлено": formatDateTime(a.updated_at),
   }));
 
   const stamp = todayStamp();
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="arizalar-${stamp}.csv"`,
+        "Content-Disposition": `attachment; filename="zayavki-${stamp}.csv"`,
         "Cache-Control": "no-store",
       },
     });
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
   });
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Arizalar");
+  XLSX.utils.book_append_sheet(wb, ws, "Заявки");
   const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" }) as Buffer;
   const body = new Uint8Array(buf);
 
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="arizalar-${stamp}.xlsx"`,
+      "Content-Disposition": `attachment; filename="zayavki-${stamp}.xlsx"`,
       "Cache-Control": "no-store",
     },
   });

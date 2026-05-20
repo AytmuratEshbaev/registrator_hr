@@ -5,7 +5,7 @@ export default function Loading() {
     <div className="flex min-h-[50vh] items-center justify-center">
       <div className="flex flex-col items-center gap-3 text-muted-foreground">
         <Spinner className="h-8 w-8" />
-        <p className="text-sm">Yuklanmoqda...</p>
+        <p className="text-sm">Загрузка...</p>
       </div>
     </div>
   );

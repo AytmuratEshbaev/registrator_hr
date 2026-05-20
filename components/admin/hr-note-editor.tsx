@@ -31,14 +31,14 @@ export function HrNoteEditor({ applicationId, initialNote }: Props) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Saqlashda xato");
+        throw new Error(body.error ?? "Ошибка при сохранении");
       }
-      toast({ title: "Saqlandi", description: "HR izohi yangilandi" });
+      toast({ title: "Сохранено", description: "Комментарий HR обновлён" });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Xato",
-        description: err instanceof Error ? err.message : "Noma'lum xato",
+        title: "Ошибка",
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
         variant: "destructive",
       });
     } finally {
@@ -51,13 +51,13 @@ export function HrNoteEditor({ applicationId, initialNote }: Props) {
       <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="HR izohini bu yerga yozing..."
+        placeholder="Напишите комментарий HR здесь..."
         rows={5}
       />
       <div className="flex justify-end">
         <Button onClick={save} disabled={saving || !dirty}>
           {saving && <Spinner className="mr-2" />}
-          Saqlash
+          Сохранить
         </Button>
       </div>
     </div>

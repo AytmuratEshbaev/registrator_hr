@@ -10,7 +10,7 @@ import type { PositionRow } from "@/lib/supabase/types";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Ariza topshirish — Forma",
+  title: "Подать заявку — Форма",
 };
 
 async function getActivePositions(): Promise<PositionRow[]> {
@@ -52,15 +52,15 @@ export default async function ApplyFormPage({
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
-          Orqaga qaytish
+          Назад
         </Link>
 
         <Card>
           <CardHeader>
-            <CardTitle>Ariza ma&apos;lumotlari</CardTitle>
+            <CardTitle>Данные заявки</CardTitle>
             <CardDescription>
-              Quyidagi forma maydonlarini to&apos;ldiring va kerakli hujjatlarni yuklang. Yulduzcha
-              (*) bilan belgilangan maydonlar majburiy.
+              Заполните поля формы и загрузите необходимые документы. Поля, отмеченные
+              звездочкой (*), обязательны для заполнения.
             </CardDescription>
           </CardHeader>
           <CardContent>

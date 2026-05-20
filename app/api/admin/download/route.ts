@@ -15,13 +15,13 @@ export async function GET(req: NextRequest) {
   const filename = req.nextUrl.searchParams.get("filename") ?? undefined;
 
   if (!key) {
-    return NextResponse.json({ error: "key parametri kerak" }, { status: 400 });
+    return NextResponse.json({ error: "Требуется параметр key" }, { status: 400 });
   }
 
   // Basic safety: only allow R2 keys under our applications/ prefix
   if (!key.startsWith("applications/")) {
     return NextResponse.json(
-      { error: "Ruxsat berilmagan kalit" },
+      { error: "Недопустимый ключ" },
       { status: 403 }
     );
   }
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     const url = await createDownloadUrl(key, filename);
     return NextResponse.json({ url });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Yuklab olishda xato";
+    const message = err instanceof Error ? err.message : "Ошибка при скачивании";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

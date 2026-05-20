@@ -57,20 +57,20 @@ export function PositionsManager({ initialPositions }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Lavozimni o'chirishni tasdiqlaysizmi?")) return;
+    if (!confirm("Подтвердить удаление должности?")) return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/admin/positions/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "O'chirishda xato");
+        throw new Error(body.error ?? "Ошибка при удалении");
       }
-      toast({ title: "O'chirildi", description: "Lavozim o'chirildi" });
+      toast({ title: "Удалено", description: "Должность удалена" });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Xato",
-        description: err instanceof Error ? err.message : "Noma'lum xato",
+        title: "Ошибка",
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
         variant: "destructive",
       });
     } finally {
@@ -83,7 +83,7 @@ export function PositionsManager({ initialPositions }: Props) {
       <div className="flex items-center justify-end">
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          Yangi lavozim qo'shish
+          Добавить должность
         </Button>
       </div>
 
@@ -91,10 +91,10 @@ export function PositionsManager({ initialPositions }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nomi</TableHead>
-              <TableHead>Tavsifi</TableHead>
-              <TableHead className="w-32">Holati</TableHead>
-              <TableHead className="text-right w-44">Amallar</TableHead>
+              <TableHead>Название</TableHead>
+              <TableHead>Описание</TableHead>
+              <TableHead className="w-32">Состояние</TableHead>
+              <TableHead className="text-right w-44">Действия</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -104,7 +104,7 @@ export function PositionsManager({ initialPositions }: Props) {
                   colSpan={4}
                   className="text-center py-12 text-muted-foreground"
                 >
-                  Lavozimlar yo'q. "Yangi lavozim qo'shish" tugmasi orqali qo'shing.
+                  Должностей нет. Добавьте через кнопку «Добавить должность».
                 </TableCell>
               </TableRow>
             ) : (
@@ -116,9 +116,9 @@ export function PositionsManager({ initialPositions }: Props) {
                   </TableCell>
                   <TableCell>
                     {p.active ? (
-                      <Badge>Faol</Badge>
+                      <Badge>Активна</Badge>
                     ) : (
-                      <Badge variant="secondary">Nofaol</Badge>
+                      <Badge variant="secondary">Неактивна</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -129,7 +129,7 @@ export function PositionsManager({ initialPositions }: Props) {
                         onClick={() => openEdit(p)}
                       >
                         <Pencil className="h-3.5 w-3.5 mr-1" />
-                        Tahrirlash
+                        Редактировать
                       </Button>
                       <Button
                         variant="outline"
@@ -227,18 +227,18 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Saqlashda xato");
+        throw new Error(body.error ?? "Ошибка при сохранении");
       }
       toast({
-        title: "Saqlandi",
-        description: editing ? "Lavozim yangilandi" : "Yangi lavozim qo'shildi",
+        title: "Сохранено",
+        description: editing ? "Должность обновлена" : "Новая должность добавлена",
       });
       reset();
       onSaved();
     } catch (err) {
       toast({
-        title: "Xato",
-        description: err instanceof Error ? err.message : "Noma'lum xato",
+        title: "Ошибка",
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
         variant: "destructive",
       });
     } finally {
@@ -251,10 +251,10 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {editing ? "Lavozimni tahrirlash" : "Yangi lavozim qo'shish"}
+            {editing ? "Редактировать должность" : "Добавить должность"}
           </DialogTitle>
           <DialogDescription>
-            Lavozim haqidagi ma'lumotlarni kiriting
+            Введите данные о должности
           </DialogDescription>
         </DialogHeader>
 
@@ -264,10 +264,10 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
           id="position-form"
         >
           <div className="space-y-2">
-            <Label htmlFor="title">Nomi *</Label>
+            <Label htmlFor="title">Название *</Label>
             <Input
               id="title"
-              placeholder="Masalan: Frontend Developer"
+              placeholder="Например: Frontend Developer"
               {...register("title")}
             />
             {errors.title && (
@@ -276,11 +276,11 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Tavsif</Label>
+            <Label htmlFor="description">Описание</Label>
             <Textarea
               id="description"
               rows={4}
-              placeholder="Lavozim haqida qisqacha"
+              placeholder="Краткое описание должности"
               {...register("description")}
             />
             {errors.description && (
@@ -299,7 +299,7 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
               className="h-4 w-4 rounded border-input"
             />
             <Label htmlFor="active" className="cursor-pointer">
-              Faol (ariza topshirishda ko'rinadi)
+              Активна (отображается при подаче заявки)
             </Label>
           </div>
         </form>
@@ -311,11 +311,11 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
             onClick={() => onOpenChange(false)}
             disabled={submitting}
           >
-            Bekor qilish
+            Отмена
           </Button>
           <Button type="submit" form="position-form" disabled={submitting}>
             {submitting && <Spinner className="mr-2" />}
-            {editing ? "Yangilash" : "Qo'shish"}
+            {editing ? "Обновить" : "Добавить"}
           </Button>
         </DialogFooter>
       </DialogContent>

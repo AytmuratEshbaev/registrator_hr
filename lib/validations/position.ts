@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const positionSchema = z.object({
-  title: z.string().trim().min(2, "Lavozim nomini kiriting").max(150),
+  title: z.string().trim().min(2, "Введите название должности").max(150),
   description: z.string().trim().max(1000).nullable().optional(),
   active: z.boolean(),
 });

@@ -11,7 +11,7 @@ export function PositionsList({ positions }: PositionsListProps) {
   if (!positions.length) {
     return (
       <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-        Hozircha ochiq lavozimlar yo&apos;q. Tez orada yangilanadi.
+        Пока открытых вакансий нет. Скоро будут обновления.
       </div>
     );
   }
@@ -26,14 +26,14 @@ export function PositionsList({ positions }: PositionsListProps) {
                 <Briefcase className="w-4 h-4 text-primary" />
                 {pos.title}
               </CardTitle>
-              <Badge variant="secondary">Ochiq</Badge>
+              <Badge variant="secondary">Открыта</Badge>
             </div>
             {pos.description ? (
               <CardDescription className="line-clamp-3">{pos.description}</CardDescription>
             ) : null}
           </CardHeader>
           <CardContent className="mt-auto text-xs text-muted-foreground">
-            Ariza topshirish uchun pastdagi tugmani bosing.
+            Нажмите кнопку ниже, чтобы подать заявку.
           </CardContent>
         </Card>
       ))}

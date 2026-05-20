@@ -18,17 +18,17 @@ export default function GlobalError({
   return (
     <div className="container mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center gap-4 px-4 text-center">
       <AlertTriangle className="h-12 w-12 text-destructive" />
-      <h1 className="text-2xl font-bold">Nimadir noto'g'ri ketdi</h1>
+      <h1 className="text-2xl font-bold">Что-то пошло не так</h1>
       <p className="text-muted-foreground">
-        Sahifani yuklashda kutilmagan xatolik yuz berdi. Qaytadan urinib ko'ring yoki birozdan keyin qayting.
+        При загрузке страницы произошла непредвиденная ошибка. Попробуйте снова или вернитесь чуть позже.
       </p>
       {error.digest && (
-        <p className="text-xs text-muted-foreground">Xatolik kodi: {error.digest}</p>
+        <p className="text-xs text-muted-foreground">Код ошибки: {error.digest}</p>
       )}
       <div className="flex gap-2">
-        <Button onClick={() => reset()}>Qaytadan urinish</Button>
+        <Button onClick={() => reset()}>Попробовать снова</Button>
         <Button variant="outline" asChild>
-          <a href="/">Bosh sahifa</a>
+          <a href="/">Главная</a>
         </Button>
       </div>
     </div>

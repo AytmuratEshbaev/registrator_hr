@@ -32,7 +32,7 @@ export function PassportCheckForm() {
 
     const normalized = passport.trim().toUpperCase();
     if (!PASSPORT_REGEX.test(normalized)) {
-      setError("Pasport raqami noto'g'ri formatda. Misol: AA1234567");
+      setError("Неверный формат номера паспорта. Пример: AA1234567");
       return;
     }
 
@@ -45,12 +45,12 @@ export function PassportCheckForm() {
       });
 
       if (res.status === 429) {
-        setError("Juda ko'p urinish. Bir daqiqadan so'ng qayta urinib ko'ring.");
+        setError("Слишком много попыток. Попробуйте снова через минуту.");
         return;
       }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data?.error ?? "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+        setError(data?.error ?? "Произошла ошибка. Попробуйте снова.");
         return;
       }
 
@@ -75,8 +75,8 @@ export function PassportCheckForm() {
     } catch (err) {
       console.error(err);
       toast({
-        title: "Tarmoq xatosi",
-        description: "Server bilan bog'lanib bo'lmadi. Qaytadan urinib ko'ring.",
+        title: "Ошибка сети",
+        description: "Не удалось связаться с сервером. Попробуйте снова.",
         variant: "destructive",
       });
     } finally {
@@ -87,7 +87,7 @@ export function PassportCheckForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="passport">Pasport raqami</Label>
+        <Label htmlFor="passport">Номер паспорта</Label>
         <Input
           id="passport"
           name="passport"
@@ -101,7 +101,7 @@ export function PassportCheckForm() {
           required
         />
         <p className="text-xs text-muted-foreground">
-          2 ta harf va 7 ta raqamdan iborat. Misol: AA1234567
+          2 буквы и 7 цифр. Пример: AA1234567
         </p>
       </div>
 
@@ -113,9 +113,9 @@ export function PassportCheckForm() {
 
       {existing ? (
         <div className="rounded-md border bg-card p-4 space-y-3">
-          <p className="font-medium">Siz avval ro&apos;yxatdan o&apos;tgansiz</p>
+          <p className="font-medium">Вы уже подавали заявку</p>
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Arizangiz holati:</span>
+            <span className="text-muted-foreground">Статус вашей заявки:</span>
             <StatusBadge status={existing.status} />
           </div>
           <p className="text-sm text-muted-foreground">
@@ -123,7 +123,7 @@ export function PassportCheckForm() {
           </p>
           {existing.hr_note ? (
             <div className="rounded-md bg-muted/50 px-3 py-2 text-sm">
-              <p className="text-xs text-muted-foreground mb-1">HR izohi:</p>
+              <p className="text-xs text-muted-foreground mb-1">Комментарий HR:</p>
               <p className="whitespace-pre-wrap break-words">{existing.hr_note}</p>
             </div>
           ) : null}
@@ -133,10 +133,10 @@ export function PassportCheckForm() {
       <Button type="submit" className="w-full" disabled={loading} size="lg">
         {loading ? (
           <>
-            <Spinner className="mr-2" /> Tekshirilmoqda...
+            <Spinner className="mr-2" /> Проверяется...
           </>
         ) : (
-          "Tekshirish"
+          "Проверить"
         )}
       </Button>
     </form>

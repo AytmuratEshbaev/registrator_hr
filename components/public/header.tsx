@@ -10,22 +10,16 @@ export function Header() {
             <Building2 className="w-5 h-5" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-semibold text-sm">Firma nomi</span>
-            <span className="text-xs text-muted-foreground">HR Registratsiya</span>
+            <span className="font-semibold text-sm">Название компании</span>
+            <span className="text-xs text-muted-foreground">HR регистрация</span>
           </div>
         </Link>
         <nav className="flex items-center gap-4 text-sm">
           <Link
-            href="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Bosh sahifa
-          </Link>
-          <Link
             href="/admin/login"
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            Adminlar uchun
+            Вход
           </Link>
         </nav>
       </div>

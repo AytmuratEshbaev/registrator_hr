@@ -42,17 +42,17 @@ export function StatusChanger({ applicationId, currentStatus }: Props) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Statusni yangilashda xato");
+        throw new Error(body.error ?? "Ошибка при обновлении статуса");
       }
       toast({
-        title: "Status yangilandi",
-        description: `Holat: ${statusLabel(status)}`,
+        title: "Статус обновлён",
+        description: `Статус: ${statusLabel(status)}`,
       });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Xato",
-        description: err instanceof Error ? err.message : "Noma'lum xato",
+        title: "Ошибка",
+        description: err instanceof Error ? err.message : "Неизвестная ошибка",
         variant: "destructive",
       });
     } finally {

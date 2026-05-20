@@ -19,13 +19,13 @@ export async function PATCH(
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Noto'g'ri JSON" }, { status: 400 });
+    return NextResponse.json({ error: "Некорректный JSON" }, { status: 400 });
   }
 
   const parsed = positionUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Noto'g'ri ma'lumot", details: parsed.error.flatten() },
+      { error: "Некорректные данные", details: parsed.error.flatten() },
       { status: 400 }
     );
   }
@@ -38,7 +38,7 @@ export async function PATCH(
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json(
-      { error: "Yangilanadigan maydon yo'q" },
+      { error: "Нет полей для обновления" },
       { status: 400 }
     );
   }
@@ -54,7 +54,7 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   if (!data) {
-    return NextResponse.json({ error: "Topilmadi" }, { status: 404 });
+    return NextResponse.json({ error: "Не найдено" }, { status: 404 });
   }
 
   return NextResponse.json({ position: data });

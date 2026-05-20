@@ -7,21 +7,21 @@ export const APPLICATION_STATUSES = [
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
 export const FILE_LIMITS = {
-  cv: { maxBytes: 2 * 1024 * 1024, mimes: ["application/pdf"], label: "CV (PDF)" },
+  cv: { maxBytes: 2 * 1024 * 1024, mimes: ["application/pdf"], label: "Резюме (PDF)" },
   passport_scan: {
     maxBytes: 2 * 1024 * 1024,
     mimes: ["application/pdf", "image/jpeg", "image/jpg", "image/png"],
-    label: "Pasport skani (PDF/JPG/PNG)",
+    label: "Скан паспорта (PDF/JPG/PNG)",
   },
   diploma: {
     maxBytes: 2 * 1024 * 1024,
     mimes: ["application/pdf"],
-    label: "Diplom (PDF)",
+    label: "Диплом (PDF)",
   },
   photo: {
     maxBytes: 500 * 1024,
     mimes: ["image/jpeg", "image/jpg", "image/png"],
-    label: "3x4 surat (JPG/PNG)",
+    label: "Фото 3x4 (JPG/PNG)",
   },
 } as const;
 

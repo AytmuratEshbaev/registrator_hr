@@ -7,7 +7,7 @@ export const uploadUrlSchema = z
       .string()
       .trim()
       .toUpperCase()
-      .regex(PASSPORT_REGEX, "Pasport raqami noto'g'ri"),
+      .regex(PASSPORT_REGEX, "Неверный номер паспорта"),
     kind: z.enum(FILE_KINDS as [string, ...string[]]),
     contentType: z.string().min(1),
     contentLength: z.number().int().positive(),
@@ -18,7 +18,7 @@ export const uploadUrlSchema = z
     if (!limits) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Noma'lum fayl turi",
+        message: "Неизвестный тип файла",
         path: ["kind"],
       });
       return;
@@ -26,14 +26,14 @@ export const uploadUrlSchema = z
     if (!(limits.mimes as readonly string[]).includes(data.contentType)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Faqat ${limits.mimes.join(", ")} formatlari ruxsat etilgan`,
+        message: `Разрешены только форматы: ${limits.mimes.join(", ")}`,
         path: ["contentType"],
       });
     }
     if (data.contentLength > limits.maxBytes) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Fayl hajmi ${Math.round(limits.maxBytes / 1024 / 1024)}MB dan oshmasligi kerak`,
+        message: `Размер файла не должен превышать ${Math.round(limits.maxBytes / 1024 / 1024)}MB`,
         path: ["contentLength"],
       });
     }
