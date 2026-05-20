@@ -14,15 +14,15 @@ interface LogoProps {
 const sizeMap = {
   sm: {
     brand: "text-base",
-    separator: "text-base mx-1",
+    sub: "text-[10px]",
   },
   md: {
     brand: "text-xl md:text-2xl",
-    separator: "text-xl md:text-2xl mx-1.5",
+    sub: "text-xs md:text-sm",
   },
   lg: {
     brand: "text-3xl md:text-4xl",
-    separator: "text-3xl md:text-4xl mx-2",
+    sub: "text-sm md:text-base",
   },
 } as const;
 
@@ -39,30 +39,22 @@ export function Logo({
   const cls = sizeMap[size];
 
   const content = (
-    <div className={cn("inline-flex items-center select-none", className)}>
+    <div
+      className={cn(
+        "inline-flex flex-col items-start leading-none select-none",
+        className
+      )}
+    >
       <span
-        className={cn(
-          "font-extrabold tracking-tight leading-none",
-          cls.brand
-        )}
+        className={cn("font-extrabold tracking-tight", cls.brand)}
         style={{ color: brandColor }}
       >
         ZEYIN
       </span>
       <span
         className={cn(
-          "font-light leading-none opacity-30",
-          cls.separator
-        )}
-        style={{ color: brandColor }}
-        aria-hidden="true"
-      >
-        |
-      </span>
-      <span
-        className={cn(
-          "font-bold tracking-tight leading-none",
-          cls.brand
+          "font-bold tracking-widest uppercase mt-0.5",
+          cls.sub
         )}
         style={{ color: accentColor }}
       >
