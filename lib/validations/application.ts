@@ -7,12 +7,16 @@ export const applicationSchema = z.object({
     .trim()
     .toUpperCase()
     .regex(PASSPORT_REGEX, "Pasport raqami noto'g'ri formatda. Misol: AA1234567"),
-  full_name: z
+  first_name: z
     .string()
     .trim()
-    .min(3, "To'liq ismni kiriting")
-    .max(120, "Ism juda uzun"),
-  email: z.string().trim().toLowerCase().email("Email manzili noto'g'ri"),
+    .min(2, "Ismni kiriting")
+    .max(60, "Ism juda uzun"),
+  last_name: z
+    .string()
+    .trim()
+    .min(2, "Familyani kiriting")
+    .max(60, "Familya juda uzun"),
   phone: z
     .string()
     .trim()
@@ -31,7 +35,6 @@ export const applicationSchema = z.object({
     ),
   position_id: z.string().uuid().nullable().optional(),
   position_title: z.string().trim().min(2, "Lavozimni tanlang").max(150),
-  about: z.string().trim().min(20, "Kamida 20 ta belgi yozing").max(2000),
   cv_url: z.string().min(1, "CV faylini yuklang"),
   passport_scan_url: z.string().min(1, "Pasport skanini yuklang"),
   diploma_url: z.string().min(1, "Diplom faylini yuklang"),

@@ -38,13 +38,12 @@ export async function GET(req: NextRequest) {
   }
 
   const rows = ((data as ApplicationRow[] | null) ?? []).map((a) => ({
-    "To'liq ism": a.full_name,
+    "Ism": a.first_name,
+    "Familya": a.last_name,
     "Pasport": a.passport_number,
-    "Email": a.email,
     "Telefon": a.phone,
     "Tug'ilgan sana": formatDate(a.birth_date),
     "Lavozim": a.position_title,
-    "O'zi haqida": a.about,
     "Status": statusLabel(a.status),
     "HR izohi": a.hr_note ?? "",
     "Yuborilgan": formatDateTime(a.created_at),

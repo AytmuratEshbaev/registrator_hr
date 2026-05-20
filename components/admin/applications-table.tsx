@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Spinner } from "@/components/ui/spinner";
-import { formatDateTime, formatPhone, statusLabel } from "@/lib/utils";
+import { formatDateTime, formatName, formatPhone, statusLabel } from "@/lib/utils";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import type {
   ApplicationRow,
@@ -107,7 +107,7 @@ export function ApplicationsTable({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Ism, email yoki pasport bo'yicha qidirish"
+              placeholder="Ism, familya yoki pasport bo'yicha qidirish"
               className="pl-9"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -176,10 +176,9 @@ export function ApplicationsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Ism</TableHead>
+              <TableHead>Ism Familya</TableHead>
               <TableHead>Lavozim</TableHead>
               <TableHead>Pasport</TableHead>
-              <TableHead>Email</TableHead>
               <TableHead>Telefon</TableHead>
               <TableHead>Sana</TableHead>
               <TableHead>Status</TableHead>
@@ -189,19 +188,18 @@ export function ApplicationsTable({
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                   Arizalar topilmadi
                 </TableCell>
               </TableRow>
             ) : (
               applications.map((app) => (
                 <TableRow key={app.id}>
-                  <TableCell className="font-medium">{app.full_name}</TableCell>
+                  <TableCell className="font-medium">{formatName(app)}</TableCell>
                   <TableCell>{app.position_title}</TableCell>
                   <TableCell className="font-mono text-xs">
                     {app.passport_number}
                   </TableCell>
-                  <TableCell className="text-xs">{app.email}</TableCell>
                   <TableCell className="text-xs whitespace-nowrap">
                     {formatPhone(app.phone)}
                   </TableCell>

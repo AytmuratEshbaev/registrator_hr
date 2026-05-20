@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, formatName } from "@/lib/utils";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import type { ApplicationRow, ApplicationStatus } from "@/lib/supabase/types";
 
@@ -121,7 +121,7 @@ export default async function AdminDashboardPage() {
                           href={`/admin/applications/${app.id}`}
                           className="hover:underline"
                         >
-                          {app.full_name}
+                          {formatName(app)}
                         </Link>
                       </TableCell>
                       <TableCell>{app.position_title}</TableCell>

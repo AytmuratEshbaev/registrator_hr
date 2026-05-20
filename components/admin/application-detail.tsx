@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   User,
-  Mail,
   Phone,
   Calendar,
   Briefcase,
@@ -18,11 +17,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Separator } from "@/components/ui/separator";
 import { StatusChanger } from "./status-changer";
 import { HrNoteEditor } from "./hr-note-editor";
 import { DownloadButton } from "./download-button";
-import { formatDate, formatDateTime, formatPhone } from "@/lib/utils";
+import { formatDate, formatDateTime, formatName, formatPhone } from "@/lib/utils";
 import type { ApplicationRow } from "@/lib/supabase/types";
 
 // Inlined to avoid pulling the AWS SDK into the client bundle.
@@ -73,7 +71,8 @@ export function ApplicationDetail({ application }: Props) {
     ? extractKeyFromUrl(application.photo_url)
     : null;
 
-  const safeName = application.full_name.replace(/[^A-Za-z0-9_\- ]/g, "").trim();
+  const fullName = formatName(application);
+  const safeName = fullName.replace(/[^A-Za-z0-9_\- ]/g, "").trim();
   const baseName = safeName || application.passport_number;
 
   return (
@@ -89,7 +88,7 @@ export function ApplicationDetail({ application }: Props) {
             <span>Tafsilotlar</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight">
-            {application.full_name}
+            {fullName}
           </h1>
           <div className="mt-2 flex items-center gap-3">
             <StatusBadge status={application.status} />
@@ -114,26 +113,19 @@ export function ApplicationDetail({ application }: Props) {
               <div className="grid gap-4 md:grid-cols-2">
                 <FieldRow
                   icon={User}
-                  label="To'liq ism"
-                  value={application.full_name}
+                  label="Ism"
+                  value={application.first_name}
+                />
+                <FieldRow
+                  icon={User}
+                  label="Familya"
+                  value={application.last_name}
                 />
                 <FieldRow
                   icon={FileText}
                   label="Pasport raqami"
                   value={
                     <span className="font-mono">{application.passport_number}</span>
-                  }
-                />
-                <FieldRow
-                  icon={Mail}
-                  label="Email"
-                  value={
-                    <a
-                      href={`mailto:${application.email}`}
-                      className="hover:underline"
-                    >
-                      {application.email}
-                    </a>
                   }
                 />
                 <FieldRow
@@ -159,17 +151,6 @@ export function ApplicationDetail({ application }: Props) {
                   value={application.position_title}
                 />
               </div>
-              {application.about && (
-                <>
-                  <Separator />
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">O'zi haqida</p>
-                    <p className="text-sm whitespace-pre-wrap break-words">
-                      {application.about}
-                    </p>
-                  </div>
-                </>
-              )}
             </CardContent>
           </Card>
 

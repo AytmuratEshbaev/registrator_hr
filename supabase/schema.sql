@@ -32,13 +32,12 @@ CREATE INDEX positions_active_idx ON public.positions (active);
 CREATE TABLE public.applications (
   id                 uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   passport_number    text NOT NULL UNIQUE,
-  full_name          text NOT NULL,
-  email              text NOT NULL,
+  first_name         text NOT NULL,
+  last_name          text NOT NULL,
   phone              text NOT NULL,
   birth_date         date NOT NULL,
   position_id        uuid REFERENCES public.positions(id) ON DELETE SET NULL,
   position_title     text NOT NULL,
-  about              text NOT NULL,
   cv_url             text,
   passport_scan_url  text,
   diploma_url        text,
@@ -53,7 +52,7 @@ CREATE TABLE public.applications (
 CREATE INDEX applications_status_idx       ON public.applications (status);
 CREATE INDEX applications_position_id_idx  ON public.applications (position_id);
 CREATE INDEX applications_created_at_idx   ON public.applications (created_at DESC);
-CREATE INDEX applications_full_name_idx    ON public.applications USING gin (to_tsvector('simple', full_name));
+CREATE INDEX applications_last_name_idx    ON public.applications USING gin (to_tsvector('simple', last_name));
 
 -- ----- updated_at avtomatik yangilanishi -----
 CREATE OR REPLACE FUNCTION public.set_updated_at()

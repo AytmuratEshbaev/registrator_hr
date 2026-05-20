@@ -46,13 +46,12 @@ export async function POST(req: Request) {
       .from("applications")
       .insert({
         passport_number: data.passport_number,
-        full_name: data.full_name,
-        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
         phone: data.phone,
         birth_date: data.birth_date,
         position_id: data.position_id ?? null,
         position_title: data.position_title,
-        about: data.about,
         // R2 object key'lar (URL emas) — adminga signed download URL yaratiladi
         cv_url: data.cv_url,
         passport_scan_url: data.passport_scan_url,

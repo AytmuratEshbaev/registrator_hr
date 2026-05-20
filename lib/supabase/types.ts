@@ -3,13 +3,12 @@ export type ApplicationStatus = "pending" | "reviewing" | "accepted" | "rejected
 export type ApplicationRow = {
   id: string;
   passport_number: string;
-  full_name: string;
-  email: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   birth_date: string;
   position_id: string | null;
   position_title: string;
-  about: string;
   cv_url: string | null;
   passport_scan_url: string | null;
   diploma_url: string | null;
@@ -23,13 +22,12 @@ export type ApplicationRow = {
 export type ApplicationInsert = {
   id?: string;
   passport_number: string;
-  full_name: string;
-  email: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   birth_date: string;
   position_id?: string | null;
   position_title: string;
-  about: string;
   cv_url?: string | null;
   passport_scan_url?: string | null;
   diploma_url?: string | null;
@@ -43,13 +41,12 @@ export type ApplicationInsert = {
 export type ApplicationUpdate = {
   id?: string;
   passport_number?: string;
-  full_name?: string;
-  email?: string;
+  first_name?: string;
+  last_name?: string;
   phone?: string;
   birth_date?: string;
   position_id?: string | null;
   position_title?: string;
-  about?: string;
   cv_url?: string | null;
   passport_scan_url?: string | null;
   diploma_url?: string | null;
@@ -100,11 +97,11 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: Record<never, never>;
+    Functions: Record<never, never>;
     Enums: {
       application_status: ApplicationStatus;
     };
-    CompositeTypes: Record<string, never>;
+    CompositeTypes: Record<never, never>;
   };
 };

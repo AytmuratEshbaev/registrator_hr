@@ -27,6 +27,10 @@ export function formatDateTime(date: string | Date | null | undefined): string {
   return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
+export function formatName(person: { first_name: string; last_name: string }): string {
+  return `${person.first_name} ${person.last_name}`.trim();
+}
+
 export function formatPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.length === 12 && digits.startsWith("998")) {

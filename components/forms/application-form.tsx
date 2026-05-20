@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
@@ -42,13 +41,12 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
     resolver: zodResolver(applicationSchema),
     defaultValues: {
       passport_number,
-      full_name: "",
-      email: "",
+      first_name: "",
+      last_name: "",
       phone: "+998",
       birth_date: "",
       position_id: null,
       position_title: "",
-      about: "",
       cv_url: "",
       passport_scan_url: "",
       diploma_url: "",
@@ -85,13 +83,12 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
     const id = setTimeout(() => {
       try {
         const draftToSave = {
-          full_name: watched.full_name,
-          email: watched.email,
+          first_name: watched.first_name,
+          last_name: watched.last_name,
           phone: watched.phone,
           birth_date: watched.birth_date,
           position_id: watched.position_id,
           position_title: watched.position_title,
-          about: watched.about,
         };
         sessionStorage.setItem("apply.form.draft", JSON.stringify(draftToSave));
       } catch {
@@ -181,29 +178,28 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
 
         <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="full_name">To&apos;liq ism *</Label>
+            <Label htmlFor="first_name">Ism *</Label>
             <Input
-              id="full_name"
-              placeholder="Ali Valiyev Sodiqovich"
-              {...register("full_name")}
+              id="first_name"
+              placeholder="Ali"
+              {...register("first_name")}
               disabled={submitting}
             />
-            {errors.full_name ? (
-              <p className="text-xs text-destructive">{errors.full_name.message}</p>
+            {errors.first_name ? (
+              <p className="text-xs text-destructive">{errors.first_name.message}</p>
             ) : null}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="last_name">Familya *</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="ali@example.com"
-              {...register("email")}
+              id="last_name"
+              placeholder="Valiyev"
+              {...register("last_name")}
               disabled={submitting}
             />
-            {errors.email ? (
-              <p className="text-xs text-destructive">{errors.email.message}</p>
+            {errors.last_name ? (
+              <p className="text-xs text-destructive">{errors.last_name.message}</p>
             ) : null}
           </div>
 
@@ -282,21 +278,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
           ) : null}
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="about">O&apos;zingiz haqida *</Label>
-          <Textarea
-            id="about"
-            rows={5}
-            placeholder="Tajribangiz, ko'nikmalaringiz va nima uchun bu lavozimga mos kelishingizni yozing."
-            {...register("about")}
-            disabled={submitting}
-          />
-          {errors.about ? (
-            <p className="text-xs text-destructive">{errors.about.message}</p>
-          ) : (
-            <p className="text-xs text-muted-foreground">Kamida 20 ta belgi.</p>
-          )}
-        </div>
       </fieldset>
 
       {/* Hujjatlar */}

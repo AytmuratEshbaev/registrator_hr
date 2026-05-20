@@ -48,7 +48,7 @@ export default async function AdminApplicationsPage({
     // escape % and , special chars by removing them — Supabase OR filter is comma-separated
     const safe = q.replace(/[%,]/g, "");
     query = query.or(
-      `full_name.ilike.%${safe}%,email.ilike.%${safe}%,passport_number.ilike.%${safe}%`
+      `first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,passport_number.ilike.%${safe}%`
     );
   }
 
