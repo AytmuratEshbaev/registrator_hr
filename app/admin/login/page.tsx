@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { LoginForm } from "@/components/admin/login-form";
 
 export const metadata = {
-  title: "Вход — HR Admin",
+  title: "Вход — ZEYIN mektebi",
 };
 
 export const dynamic = "force-dynamic";

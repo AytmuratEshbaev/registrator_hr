@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "HR Регистрация — Название компании",
-  description: "Платформа подачи заявок на работу",
+  title: "ZEYIN mektebi school — Подача заявки",
+  description: "Платформа подачи заявок на работу в ZEYIN mektebi school",
 };
 
 export default function RootLayout({

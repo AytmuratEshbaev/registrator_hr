@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { Logo } from "@/components/public/logo";
 
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Панель управления", icon: LayoutDashboard },
@@ -41,8 +42,8 @@ export function AdminSidebar() {
   return (
     <aside className="flex h-screen w-64 flex-col border-r bg-card sticky top-0">
       <div className="border-b px-6 py-5">
-        <h1 className="text-lg font-bold tracking-tight">HR Admin</h1>
-        <p className="text-xs text-muted-foreground mt-0.5">Панель управления</p>
+        <Logo size="sm" href={null} />
+        <p className="text-xs text-muted-foreground mt-2">Панель управления</p>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
