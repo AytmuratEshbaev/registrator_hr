@@ -143,8 +143,6 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
         return;
       }
 
-      const data: { id: string } = await res.json();
-
       // tozalash
       try {
         sessionStorage.removeItem("apply.form.draft");
@@ -152,7 +150,7 @@ export function ApplicationForm({ passport_number, positions }: ApplicationFormP
         // ignore
       }
 
-      router.push(`/apply/success?id=${encodeURIComponent(data.id)}`);
+      router.push("/apply/success");
     } catch (err) {
       console.error(err);
       toast({
