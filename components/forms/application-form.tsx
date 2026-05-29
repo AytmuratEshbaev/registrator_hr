@@ -20,6 +20,7 @@ import { FileUploadField } from "@/components/forms/file-upload-field";
 import {
   studentApplicationSchema,
   vacancyApplicationSchema,
+  type ApplicationInput,
 } from "@/lib/validations/application";
 import type { PositionRow } from "@/lib/supabase/types";
 
