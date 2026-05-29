@@ -2,13 +2,16 @@ export type ApplicationStatus = "pending" | "reviewing" | "accepted" | "rejected
 
 export type ApplicationRow = {
   id: string;
+  type: "student" | "vacancy";
   passport_number: string;
   first_name: string;
   last_name: string;
   phone: string;
   birth_date: string;
+  parent_name: string | null;
+  grade: string | null;
   position_id: string | null;
-  position_title: string;
+  position_title: string | null;
   cv_url: string | null;
   passport_scan_url: string | null;
   diploma_url: string | null;
@@ -21,13 +24,16 @@ export type ApplicationRow = {
 
 export type ApplicationInsert = {
   id?: string;
+  type: "student" | "vacancy";
   passport_number: string;
   first_name: string;
   last_name: string;
   phone: string;
   birth_date: string;
+  parent_name?: string | null;
+  grade?: string | null;
   position_id?: string | null;
-  position_title: string;
+  position_title?: string | null;
   cv_url?: string | null;
   passport_scan_url?: string | null;
   diploma_url?: string | null;
@@ -40,13 +46,16 @@ export type ApplicationInsert = {
 
 export type ApplicationUpdate = {
   id?: string;
+  type?: "student" | "vacancy";
   passport_number?: string;
   first_name?: string;
   last_name?: string;
   phone?: string;
   birth_date?: string;
+  parent_name?: string | null;
+  grade?: string | null;
   position_id?: string | null;
-  position_title?: string;
+  position_title?: string | null;
   cv_url?: string | null;
   passport_scan_url?: string | null;
   diploma_url?: string | null;

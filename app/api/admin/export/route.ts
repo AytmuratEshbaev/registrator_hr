@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   const format = (req.nextUrl.searchParams.get("format") ?? "xlsx").toLowerCase();
   if (format !== "xlsx" && format !== "csv") {
     return NextResponse.json(
-      { error: "Допустимы только форматы xlsx или csv" },
+      { error: "Faqat xlsx yoki csv formatlari qabul qilinadi" },
       { status: 400 }
     );
   }
@@ -38,16 +38,18 @@ export async function GET(req: NextRequest) {
   }
 
   const rows = ((data as ApplicationRow[] | null) ?? []).map((a) => ({
-    "Имя": a.first_name,
-    "Фамилия": a.last_name,
-    "Паспорт": a.passport_number,
-    "Телефон": a.phone,
-    "Дата рождения": formatDate(a.birth_date),
-    "Должность": a.position_title,
-    "Статус": statusLabel(a.status),
-    "Комментарий HR": a.hr_note ?? "",
-    "Подано": formatDateTime(a.created_at),
-    "Обновлено": formatDateTime(a.updated_at),
+    "Ismi": a.first_name,
+    "Familiyasi": a.last_name,
+    "Ariza turi": a.type === "student" ? "O'quvchi" : "Vakansiya",
+    "Hujjat raqami": a.passport_number,
+    "Telefon raqami": a.phone,
+    "Tug'ilgan sanasi": formatDate(a.birth_date),
+    "Sinf / Lavozim": a.type === "student" ? a.grade : a.position_title,
+    "Ota-onasining ismi": a.parent_name ?? "",
+    "Status": statusLabel(a.status),
+    "Ma'muriyat izohi (HR)": a.hr_note ?? "",
+    "Topshirilgan sana": formatDateTime(a.created_at),
+    "Yangilangan sana": formatDateTime(a.updated_at),
   }));
 
   const stamp = todayStamp();
@@ -61,7 +63,7 @@ export async function GET(req: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="zayavki-${stamp}.csv"`,
+        "Content-Disposition": `attachment; filename="arizalar-${stamp}.csv"`,
         "Cache-Control": "no-store",
       },
     });
@@ -80,7 +82,7 @@ export async function GET(req: NextRequest) {
   });
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Заявки");
+  XLSX.utils.book_append_sheet(wb, ws, "Arizalar");
   const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" }) as Buffer;
   const body = new Uint8Array(buf);
 
@@ -89,7 +91,7 @@ export async function GET(req: NextRequest) {
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="zayavki-${stamp}.xlsx"`,
+      "Content-Disposition": `attachment; filename="arizalar-${stamp}.xlsx"`,
       "Cache-Control": "no-store",
     },
   });

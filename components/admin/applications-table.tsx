@@ -42,6 +42,7 @@ interface Props {
   filters: {
     status: ApplicationStatus | "";
     position: string;
+    type: string;
     q: string;
   };
 }
@@ -60,7 +61,6 @@ export function ApplicationsTable({
   const [isPending, startTransition] = useTransition();
   const [searchInput, setSearchInput] = useState(filters.q);
 
-  // Keep input in sync if URL changes externally
   useEffect(() => {
     setSearchInput(filters.q);
   }, [filters.q]);
@@ -76,7 +76,6 @@ export function ApplicationsTable({
         params.set(key, value);
       }
     }
-    // Reset page when filters change (except when explicitly setting page)
     if (!("page" in updates)) params.delete("page");
     startTransition(() => {
       router.replace(`${pathname}?${params.toString()}`);
@@ -91,6 +90,10 @@ export function ApplicationsTable({
     updateParams({ position: value === ALL_VALUE ? null : value });
   }
 
+  function handleTypeChange(value: string) {
+    updateParams({ type: value === ALL_VALUE ? null : value });
+  }
+
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
     updateParams({ q: searchInput.trim() || null });
@@ -102,48 +105,66 @@ export function ApplicationsTable({
 
   return (
     <div className="space-y-4">
+      {/* Qidiruv va Eksport */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <form onSubmit={handleSearchSubmit} className="flex gap-2 md:max-w-md flex-1">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Поиск по имени, фамилии или паспорту"
-              className="pl-9"
+              placeholder="Ism, familiya yoki hujjat raqami..."
+              className="pl-9 rounded-xl border-slate-200"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
-          <Button type="submit" variant="secondary" disabled={isPending}>
-            Поиск
+          <Button type="submit" variant="secondary" disabled={isPending} className="rounded-xl">
+            Qidirish
           </Button>
         </form>
 
         <div className="flex items-center gap-2">
           <a
             href="/api/admin/export?format=xlsx"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-indigo-950/15"
           >
             <Download className="h-4 w-4" />
-            Экспорт (XLSX)
+            Eksport (XLSX)
           </a>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 md:flex-row md:items-center">
+      {/* Filtrlar */}
+      <div className="flex flex-col gap-3 md:flex-row md:items-center flex-wrap">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Фильтр:</span>
+          <span className="text-sm font-bold text-slate-800">Filtrlar:</span>
         </div>
 
+        {/* Ariza Turi filtri */}
+        <Select
+          value={filters.type || ALL_VALUE}
+          onValueChange={handleTypeChange}
+        >
+          <SelectTrigger className="w-full md:w-[180px] rounded-xl border-slate-200">
+            <SelectValue placeholder="Ariza turi" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL_VALUE}>Barcha turlar</SelectItem>
+            <SelectItem value="student">O'quvchilar qabuli</SelectItem>
+            <SelectItem value="vacancy">Vakansiya qabuli</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Status filtri */}
         <Select
           value={filters.status || ALL_VALUE}
           onValueChange={handleStatusChange}
         >
-          <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Статус" />
+          <SelectTrigger className="w-full md:w-[180px] rounded-xl border-slate-200">
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_VALUE}>Все статусы</SelectItem>
+            <SelectItem value={ALL_VALUE}>Barcha statuslar</SelectItem>
             {APPLICATION_STATUSES.map((s) => (
               <SelectItem key={s} value={s}>
                 {statusLabel(s)}
@@ -152,70 +173,108 @@ export function ApplicationsTable({
           </SelectContent>
         </Select>
 
-        <Select
-          value={filters.position || ALL_VALUE}
-          onValueChange={handlePositionChange}
-        >
-          <SelectTrigger className="w-full md:w-[260px]">
-            <SelectValue placeholder="Должность" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_VALUE}>Все должности</SelectItem>
-            {positions.map((p) => (
-              <SelectItem key={p.id} value={p.id}>
-                {p.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Vakansiya filtri - Faqat vakansiyalar uchun */}
+        {filters.type !== "student" && (
+          <Select
+            value={filters.position || ALL_VALUE}
+            onValueChange={handlePositionChange}
+          >
+            <SelectTrigger className="w-full md:w-[220px] rounded-xl border-slate-200">
+              <SelectValue placeholder="Vakansiya lavozimi" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_VALUE}>Barcha vakansiyalar</SelectItem>
+              {positions.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         {isPending && <Spinner />}
       </div>
 
-      <div className="rounded-lg border bg-card">
+      {/* Arizalar jadvali */}
+      <div className="rounded-2xl border border-slate-200/80 bg-card overflow-hidden shadow-sm">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-slate-50/70 border-b">
             <TableRow>
-              <TableHead>Имя Фамилия</TableHead>
-              <TableHead>Должность</TableHead>
-              <TableHead>Паспорт</TableHead>
-              <TableHead>Телефон</TableHead>
-              <TableHead>Дата</TableHead>
-              <TableHead>Статус</TableHead>
-              <TableHead className="text-right">Действия</TableHead>
+              <TableHead className="font-bold text-slate-800">F.I.SH.</TableHead>
+              <TableHead className="font-bold text-slate-800">Ariza turi</TableHead>
+              <TableHead className="font-bold text-slate-800">Sinf / Lavozim</TableHead>
+              <TableHead className="font-bold text-slate-800">Hujjat raqami</TableHead>
+              <TableHead className="font-bold text-slate-800">Telefon raqami</TableHead>
+              <TableHead className="font-bold text-slate-800">Sana</TableHead>
+              <TableHead className="font-bold text-slate-800">Status</TableHead>
+              <TableHead className="text-right font-bold text-slate-800">Amallar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                  Заявки не найдены
+                <TableCell colSpan={8} className="text-center py-12 text-slate-400 font-medium">
+                  Arizalar topilmadi
                 </TableCell>
               </TableRow>
             ) : (
-              applications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell className="font-medium">{formatName(app)}</TableCell>
-                  <TableCell>{app.position_title}</TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {app.passport_number}
-                  </TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">
-                    {formatPhone(app.phone)}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                    {formatDateTime(app.created_at)}
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={app.status} />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/applications/${app.id}`}>Просмотр</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+              applications.map((app) => {
+                const isAppStudent = app.type === "student";
+                return (
+                  <TableRow key={app.id} className="hover:bg-slate-50/50">
+                    {/* F.I.SH */}
+                    <TableCell className="font-bold text-slate-900">{formatName(app)}</TableCell>
+                    
+                    {/* Ariza turi */}
+                    <TableCell>
+                      <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold ${
+                        isAppStudent 
+                          ? "bg-orange-50 text-orange-700 border border-orange-100" 
+                          : "bg-indigo-50 text-indigo-700 border border-indigo-100"
+                      }`}>
+                        {isAppStudent ? "O'quvchi" : "Vakansiya"}
+                      </span>
+                    </TableCell>
+
+                    {/* Sinf / Lavozim */}
+                    <TableCell className="font-medium text-slate-700">
+                      {isAppStudent ? (
+                        <span className="text-orange-600 font-semibold">{app.grade}</span>
+                      ) : (
+                        <span className="text-indigo-900 font-semibold">{app.position_title}</span>
+                      )}
+                    </TableCell>
+
+                    {/* Hujjat raqami */}
+                    <TableCell className="font-mono text-xs text-slate-600 font-semibold">
+                      {app.passport_number}
+                    </TableCell>
+
+                    {/* Telefon raqami */}
+                    <TableCell className="text-xs whitespace-nowrap text-slate-600 font-medium">
+                      {formatPhone(app.phone)}
+                    </TableCell>
+
+                    {/* Sana */}
+                    <TableCell className="text-xs text-slate-400 whitespace-nowrap">
+                      {formatDateTime(app.created_at)}
+                    </TableCell>
+
+                    {/* Status */}
+                    <TableCell>
+                      <StatusBadge status={app.status} />
+                    </TableCell>
+
+                    {/* Ko'rish */}
+                    <TableCell className="text-right">
+                      <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
+                        <Link href={`/admin/applications/${app.id}`}>Ko'rish</Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -224,9 +283,9 @@ export function ApplicationsTable({
       {/* Pagination */}
       {total > 0 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Всего: <span className="font-medium text-foreground">{total}</span> заявок
-            {" "}— страница {page} / {totalPages}
+          <p className="text-sm text-slate-500 font-medium">
+            Jami: <span className="font-bold text-slate-800">{total}</span> ta ariza
+            {" "}— sahifa {page} / {totalPages}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -234,16 +293,18 @@ export function ApplicationsTable({
               size="sm"
               onClick={() => handlePageChange(page - 1)}
               disabled={page <= 1 || isPending}
+              className="rounded-lg font-medium border-slate-200"
             >
-              Назад
+              Orqaga
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(page + 1)}
               disabled={page >= totalPages || isPending}
+              className="rounded-lg font-medium border-slate-200"
             >
-              Вперед
+              Oldinga
             </Button>
           </div>
         </div>

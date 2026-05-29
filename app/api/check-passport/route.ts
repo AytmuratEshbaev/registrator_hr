@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const rl = rateLimit(`check-passport:${ip}`);
   if (!rl.allowed) {
     return NextResponse.json(
-      { error: "Слишком много попыток. Попробуйте снова через минуту." },
+      { error: "Urinishlar soni ko'payib ketdi. Iltimos, bir daqiqadan so'ng qayta urinib ko'ring." },
       { status: 429 }
     );
   }
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Некорректное тело запроса" }, { status: 400 });
+    return NextResponse.json({ error: "So'rov ma'lumoti noto'g'ri formatda" }, { status: 400 });
   }
 
   // Zod tekshiruv
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     const first = parsed.error.issues[0];
     return NextResponse.json(
-      { error: first?.message ?? "Некорректные данные" },
+      { error: first?.message ?? "Noto'g'ri ma'lumotlar kiritildi" },
       { status: 400 }
     );
   }
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     if (error) {
       console.error("[check-passport] supabase error:", error);
       return NextResponse.json(
-        { error: "Ошибка сервера. Попробуйте позже." },
+        { error: "Tizim xatoligi. Iltimos, keyinroq qayta urinib ko'ring." },
         { status: 500 }
       );
     }
@@ -67,8 +67,8 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[check-passport] exception:", err);
     if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: "Некорректные данные" }, { status: 400 });
+      return NextResponse.json({ error: "Noto'g'ri ma'lumotlar" }, { status: 400 });
     }
-    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
+    return NextResponse.json({ error: "Tizim xatoligi" }, { status: 500 });
   }
 }

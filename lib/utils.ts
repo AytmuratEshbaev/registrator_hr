@@ -47,10 +47,10 @@ export function formatFileSize(bytes: number): string {
 
 export function statusLabel(status: string): string {
   const labels: Record<string, string> = {
-    pending: "Новая",
-    reviewing: "На рассмотрении",
-    accepted: "Принята",
-    rejected: "Отклонена",
+    pending: "Yangi",
+    reviewing: "Ko'rib chiqilmoqda",
+    accepted: "Qabul qilindi",
+    rejected: "Rad etildi",
   };
   return labels[status] ?? status;
 }
@@ -58,13 +58,13 @@ export function statusLabel(status: string): string {
 export function statusFriendlyMessage(status: string): string {
   const messages: Record<string, string> = {
     pending:
-      "Ваша заявка принята и ожидает рассмотрения HR-отделом.",
+      "Sizning arizangiz muvaffaqiyatli qabul qilindi va ko'rib chiqilishini kutmoqda.",
     reviewing:
-      "Ваша заявка сейчас рассматривается HR-отделом. Пожалуйста, подождите.",
+      "Sizning arizangiz hozirda mutaxassislarimiz tomonidan ko'rib chiqilmoqda. Iltimos, biroz kuting.",
     accepted:
-      "Поздравляем! Ваша заявка принята. HR-отдел свяжется с вами в ближайшее время.",
+      "Tabriklaymiz! Arizangiz qabul qilindi. Tez orada ma'muriyatimiz siz bilan bog'lanadi.",
     rejected:
-      "К сожалению, ваша заявка отклонена.",
+      "Afsuski, arizangiz rad etildi.",
   };
   return messages[status] ?? "";
 }

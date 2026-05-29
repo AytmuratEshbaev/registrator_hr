@@ -1,5 +1,5 @@
 -- ============================================
--- HR Registratsiya — Database sxemasi
+-- HR va O'quvchi Registratsiyasi — Database sxemasi
 -- ============================================
 -- Supabase SQL Editor'da bu butun faylni nusxalab yopishtiring va Run bosing.
 -- Mavjud jadvallar bo'lsa avval o'chiriladi.
@@ -31,13 +31,16 @@ CREATE INDEX positions_active_idx ON public.positions (active);
 -- ----- applications jadvali -----
 CREATE TABLE public.applications (
   id                 uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  type               text NOT NULL CHECK (type IN ('student', 'vacancy')),
   passport_number    text NOT NULL UNIQUE,
   first_name         text NOT NULL,
   last_name          text NOT NULL,
   phone              text NOT NULL,
   birth_date         date NOT NULL,
-  position_id        uuid REFERENCES public.positions(id) ON DELETE SET NULL,
-  position_title     text NOT NULL,
+  parent_name        text, -- Faqat o'quvchilar uchun
+  grade              text, -- Faqat o'quvchilar uchun (masalan: 1-sinf)
+  position_id        uuid REFERENCES public.positions(id) ON DELETE SET NULL, -- Faqat vakansiyalar uchun
+  position_title     text, -- Faqat vakansiyalar uchun
   cv_url             text,
   passport_scan_url  text,
   diploma_url        text,
@@ -46,9 +49,10 @@ CREATE TABLE public.applications (
   hr_note            text,
   created_at         timestamptz NOT NULL DEFAULT now(),
   updated_at         timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT passport_format CHECK (passport_number ~ '^[A-Z]{2}[0-9]{7}$')
+  CONSTRAINT passport_format CHECK (passport_number ~* '^[A-Z0-9 -]{5,20}$')
 );
 
+CREATE INDEX applications_type_idx         ON public.applications (type);
 CREATE INDEX applications_status_idx       ON public.applications (status);
 CREATE INDEX applications_position_id_idx  ON public.applications (position_id);
 CREATE INDEX applications_created_at_idx   ON public.applications (created_at DESC);
@@ -91,32 +95,29 @@ CREATE POLICY applications_select_authenticated ON public.applications
   FOR SELECT TO authenticated
   USING (true);
 
+-- applications: adminlar tahrirlashi mumkin
 CREATE POLICY applications_update_authenticated ON public.applications
   FOR UPDATE TO authenticated
   USING (true) WITH CHECK (true);
 
+-- applications: adminlar o'chirishi mumkin
 CREATE POLICY applications_delete_authenticated ON public.applications
   FOR DELETE TO authenticated
   USING (true);
 
--- Anon va authenticated INSERT — frontendan to'g'ridan-to'g'ri ishlatilmaydi,
--- biz API orqali service role bilan yozamiz. Lekin himoya uchun yopiq qoldiramiz.
--- (Hech qanday INSERT policy yo'q = anon insert qila olmaydi)
-
 -- ============================================
--- Boshlang'ich lavozimlar (siz o'zgartira olasiz)
+-- Boshlang'ich maktab vakansiyalari
 -- ============================================
 INSERT INTO public.positions (title, description, active) VALUES
-  ('Dasturchi', 'Frontend yoki backend dasturchi vakansiyasi', true),
-  ('Buxgalter', 'Buxgalteriya va moliyaviy hisobot', true),
-  ('Marketing menejer', 'Marketing va sotuv', true),
-  ('Operator', 'Mijozlar bilan ishlash', true);
+  ('Matematika o''qituvchisi', 'Boshlang''ich yoki yuqori sinflar uchun matematika o''qituvchisi', true),
+  ('Ingliz tili o''qituvchisi', 'Ingliz tili darslarini yuqori saviyada olib borish', true),
+  ('Boshlang''ich sinf o''qituvchisi', 'Boshlang''ich sinf o''quvchilari uchun ta''lim-tarbiya', true),
+  ('IT Mutaxassis', 'Maktab infratuzilmasi va kompyuter tizimlarini boshqarish', true),
+  ('Maktab psixologi', 'O''quvchilar va jamoa bilan psixologik suhbatlar o''tkazish', true);
 
 -- ============================================
 -- Admin foydalanuvchisini yaratish
 -- ============================================
--- Supabase Dashboard → Authentication → Users → Add user
--- (yoki) ushbu SQL'ni ishlating (parolni o'zgartiring):
 --
 -- SELECT * FROM auth.users WHERE email = 'admin@yourcompany.com';
 -- (Agar yo'q bo'lsa, Supabase Dashboard'dan qo'shing — bu xavfsizroq.)

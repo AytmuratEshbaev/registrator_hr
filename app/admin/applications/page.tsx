@@ -14,6 +14,7 @@ const PAGE_SIZE = 20;
 interface SearchParams {
   status?: string;
   position?: string;
+  type?: string;
   q?: string;
   page?: string;
 }
@@ -33,10 +34,11 @@ export default async function AdminApplicationsPage({
   ) as ApplicationStatus | "";
 
   const position = searchParams.position ?? "";
+  const type = searchParams.type === "student" ? "student" : searchParams.type === "vacancy" ? "vacancy" : "";
   const q = searchParams.q ?? "";
   const page = Math.max(1, parseInt(searchParams.page ?? "1", 10) || 1);
 
-  // Build query
+  // So'rovni qurish
   let query = supabase
     .from("applications")
     .select("*", { count: "exact" })
@@ -44,8 +46,9 @@ export default async function AdminApplicationsPage({
 
   if (status) query = query.eq("status", status);
   if (position) query = query.eq("position_id", position);
+  if (type) query = query.eq("type", type);
+  
   if (q) {
-    // escape % and , special chars by removing them — Supabase OR filter is comma-separated
     const safe = q.replace(/[%,]/g, "");
     query = query.or(
       `first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,passport_number.ilike.%${safe}%`
@@ -70,9 +73,9 @@ export default async function AdminApplicationsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Заявки</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Arizalar</h1>
         <p className="text-muted-foreground">
-          Просмотр и управление всеми поданными заявками
+          Barcha topshirilgan arizalarni ko'rib chiqish va boshqarish paneli
         </p>
       </div>
 
@@ -82,7 +85,7 @@ export default async function AdminApplicationsPage({
         total={total}
         page={page}
         pageSize={PAGE_SIZE}
-        filters={{ status, position, q }}
+        filters={{ status, position, type, q }}
       />
     </div>
   );

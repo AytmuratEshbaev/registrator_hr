@@ -28,7 +28,7 @@ export const FILE_LIMITS = {
 export type FileKind = keyof typeof FILE_LIMITS;
 export const FILE_KINDS = Object.keys(FILE_LIMITS) as FileKind[];
 
-export const PASSPORT_REGEX = /^[A-Z]{2}\d{7}$/;
+export const PASSPORT_REGEX = /^[A-Z0-9 -]{5,20}$/i;
 export const PHONE_REGEX = /^\+998\d{9}$/;
 
 export const RATE_LIMIT_WINDOW_MS = 60_000;

@@ -6,7 +6,7 @@ export const passportSchema = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .regex(PASSPORT_REGEX, "Неверный формат номера паспорта. Пример: AA1234567"),
+    .regex(PASSPORT_REGEX, "Hujjat raqami formati noto'g'ri. (Masalan: AA1234567 yoki I-TAS 1234567)"),
 });
 
 export type PassportInput = z.infer<typeof passportSchema>;

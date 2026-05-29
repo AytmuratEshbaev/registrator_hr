@@ -4,30 +4,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CheckCircle2 } from "lucide-react";
 
 export const metadata = {
-  title: "Заявка успешно подана",
+  title: "Ariza muvaffaqiyatli yuborildi — Zeyin School",
 };
 
 export default function ApplySuccessPage() {
   return (
-    <div className="container mx-auto px-4 py-12 md:py-20">
-      <div className="max-w-lg mx-auto">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-3">
-              <CheckCircle2 className="w-8 h-8" />
-            </div>
-            <CardTitle>Ваша заявка принята!</CardTitle>
-            <CardDescription>
-              Спасибо за обращение. HR-отдел рассмотрит вашу заявку и свяжется с вами
-              в ближайшее время.
+    <div className="bg-slate-50 min-h-[calc(100vh-8rem)] flex items-center py-12 px-4">
+      <div className="max-w-md w-full mx-auto">
+        <Card className="border-slate-200/80 shadow-2xl rounded-2xl overflow-hidden text-center p-6 md:p-8">
+          <div className="mx-auto w-16 h-16 rounded-full bg-green-50 text-green-500 flex items-center justify-center mb-4 shadow-inner">
+            <CheckCircle2 className="w-10 h-10" />
+          </div>
+          <CardHeader className="space-y-2 p-0">
+            <CardTitle className="text-2xl font-bold text-slate-900">Arizangiz qabul qilindi!</CardTitle>
+            <CardDescription className="text-slate-500 text-sm leading-relaxed">
+              Murojaatingiz uchun tashakkur. Maktab ma'muriyati arizangizni tez orada ko'rib chiqadi va siz bilan bog'lanadi.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex justify-center">
-              <Button asChild>
-                <Link href="/">Вернуться на главную</Link>
-              </Button>
-            </div>
+          <CardContent className="pt-6 pb-0">
+            <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl">
+              <Link href="/">Bosh sahifaga qaytish</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

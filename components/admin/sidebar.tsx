@@ -11,9 +11,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { Logo } from "@/components/public/logo";
 
 const NAV_ITEMS = [
-  { href: "/admin/dashboard", label: "Панель управления", icon: LayoutDashboard },
-  { href: "/admin/applications", label: "Заявки", icon: FileText },
-  { href: "/admin/positions", label: "Должности", icon: Briefcase },
+  { href: "/admin/dashboard", label: "Boshqaruv paneli", icon: LayoutDashboard },
+  { href: "/admin/applications", label: "Arizalar", icon: FileText },
+  { href: "/admin/positions", label: "Vakansiyalar", icon: Briefcase },
 ];
 
 export function AdminSidebar() {
@@ -26,13 +26,13 @@ export function AdminSidebar() {
     setLoggingOut(true);
     try {
       const res = await fetch("/api/admin/logout", { method: "POST" });
-      if (!res.ok) throw new Error("Ошибка при выходе");
+      if (!res.ok) throw new Error("Chiqishda xatolik yuz berdi");
       router.push("/admin/login");
       router.refresh();
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Произошла ошибка при выходе",
+        title: "Xatolik",
+        description: err instanceof Error ? err.message : "Tizimdan chiqishda xatolik yuz berdi",
         variant: "destructive",
       });
       setLoggingOut(false);
@@ -43,7 +43,7 @@ export function AdminSidebar() {
     <aside className="flex h-screen w-64 flex-col border-r bg-card sticky top-0">
       <div className="border-b px-6 py-5">
         <Logo size="sm" href={null} />
-        <p className="text-xs text-muted-foreground mt-2">Панель управления</p>
+        <p className="text-xs text-muted-foreground mt-2">Boshqaruv paneli</p>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -81,7 +81,7 @@ export function AdminSidebar() {
           ) : (
             <LogOut className="mr-3 h-4 w-4" />
           )}
-          Выйти
+          Chiqish
         </Button>
       </div>
     </aside>
