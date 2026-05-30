@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   User,
   Phone,
-  Calendar,
   Briefcase,
   FileText,
   Bookmark,
@@ -22,7 +21,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StatusChanger } from "./status-changer";
 import { HrNoteEditor } from "./hr-note-editor";
 import { DownloadButton } from "./download-button";
-import { formatDate, formatDateTime, formatName, formatPhone } from "@/lib/utils";
+import { formatDateTime, formatName, formatPhone } from "@/lib/utils";
 import type { ApplicationRow, StudentApplicationRow } from "@/lib/supabase/types";
 
 export type AdminApplicationDetailRow = 
@@ -165,15 +164,7 @@ export function ApplicationDetail({ application }: Props) {
                     }
                   />
                 )}
-                {!isStudent && (
-                  <FieldRow
-                    icon={Calendar}
-                    label="Tug'ilgan sanasi"
-                    value={formatDate(application.birth_date)}
-                  />
-                )}
-                
-                {/* O'quvchi uchun maxsus: Sinf */}
+                 {/* O'quvchi uchun maxsus: Sinf */}
                 {isStudent ? (
                   <>
                     <FieldRow

@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { PositionRow } from "@/lib/supabase/types";
 import { ApplicationForm } from "@/components/forms/application-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Briefcase, Phone, Clock, HelpCircle } from "lucide-react";
+import { GraduationCap, Briefcase, Phone, HelpCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -108,10 +108,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
                 {/* Qo'shimcha foydali ma'lumotlar */}
                 <div className="pt-4 border-t border-slate-100 space-y-3 text-[11px] text-slate-500 font-bold">
-                  <div className="flex items-center gap-2.5">
-                    <Clock className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Ish vaqti: Dush - Shan (9:00 - 18:00)</span>
-                  </div>
                   <div className="flex items-start gap-2.5">
                     <div className="w-4 h-4 rounded bg-slate-100 flex items-center justify-center text-slate-400 font-black shrink-0 text-[10px]">
                       i

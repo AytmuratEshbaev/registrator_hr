@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, formatDateTime, statusLabel } from "@/lib/utils";
+import { formatDateTime, statusLabel } from "@/lib/utils";
 import type { AdminApplication } from "@/components/admin/applications-table";
 import type { ApplicationStatus } from "@/lib/supabase/types";
 
@@ -96,7 +96,6 @@ export async function GET(req: NextRequest) {
     "Hujjat raqami": a.passport_number,
     "Asosiy telefon": a.phone,
     "Qo'shimcha telefon": a.phone_secondary ?? "",
-    "Tug'ilgan sanasi": a.type === "vacancy" ? formatDate(a.birth_date) : "",
     "Sinf / Lavozim": a.type === "student" ? a.grade : a.position_title,
     "Ota-onasining ismi": a.type === "student" ? a.middle_name : "",
     "Status": statusLabel(a.status),

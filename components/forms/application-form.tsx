@@ -51,15 +51,7 @@ const STUDENT_SERIES = [
   "I-NS",
 ];
 
-const VACANCY_SERIES = [
-  "AA",
-  "AB",
-  "AD",
-  "AE",
-  "KA",
-  "FA",
-  "MY",
-];
+
 
 const GRADES = [
   "1-sinf",
@@ -117,7 +109,6 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           middle_name: "",
           phone: "+998",
           phone_secondary: "+998",
-          birth_date: "",
           parent_name: "",
           grade: "",
         }
@@ -131,7 +122,6 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           middle_name: "",
           phone: "+998",
           phone_secondary: "+998",
-          birth_date: "",
           position_id: null,
           position_title: "",
           cv_url: "",
@@ -158,16 +148,24 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
   // Seriya va raqamlarni passport_number'ga birlashtirish
   useEffect(() => {
-    const combined = ((seriesVal ?? "") + (digitsVal ?? "")).trim().toUpperCase();
-    setValue("passport_number", combined, { shouldValidate: true });
-  }, [seriesVal, digitsVal, setValue]);
+    if (isStudent) {
+      const combined = ((seriesVal ?? "") + (digitsVal ?? "")).trim().toUpperCase();
+      setValue("passport_number", combined, { shouldValidate: true });
+    }
+  }, [seriesVal, digitsVal, setValue, isStudent]);
 
   // Hujjat raqamini avtomatik ravishda tekshirish (kechikish va AbortController bilan)
   useEffect(() => {
-    if (!passportVal || !digitsVal || digitsVal.length !== 7) {
+    const isComplete = isStudent 
+      ? (passportVal && digitsVal && digitsVal.length === 7)
+      : (passportVal && passportVal.length === 9);
+
+    if (!isComplete) {
       setExistingApp(null);
-      // Fikrtionless tozalash
-      if (!digitsVal || digitsVal.length < 7) {
+      // Frictionless clearing
+      if (isStudent && (!digitsVal || digitsVal.length < 7)) {
+        clearErrors("passport_number");
+      } else if (!isStudent && (!passportVal || passportVal.length < 9)) {
         clearErrors("passport_number");
       }
       return;
@@ -176,7 +174,11 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
     const normalized = passportVal.trim().toUpperCase();
     
     // Agar formatga umuman to'g'ri kelmasa yoki 5 ta belgidan kam bo'lsa bazaga so'rov yubormaymiz
-    if (normalized.length < 5 || !PASSPORT_REGEX.test(normalized)) {
+    const formatValid = isStudent 
+      ? PASSPORT_REGEX.test(normalized)
+      : /^[A-Z]{2}\d{7}$/.test(normalized);
+
+    if (!formatValid) {
       setExistingApp(null);
       return;
     }
@@ -262,7 +264,6 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           first_name: watched.first_name,
           last_name: watched.last_name,
           phone: watched.phone,
-          birth_date: watched.birth_date,
         };
 
         if (isStudent) {
@@ -573,9 +574,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 />
                 {errors.phone ? (
                   <p className="text-xs text-destructive font-semibold">{errors.phone.message}</p>
-                ) : (
-                  <p className="text-[11px] text-slate-400 font-semibold tracking-wide mt-1 pl-1">Format: +998XXXXXXXXX</p>
-                )}
+                ) : null}
               </div>
 
               {/* Telefon (Qo'shimcha) */}
@@ -599,9 +598,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 />
                 {errors.phone_secondary ? (
                   <p className="text-xs text-destructive font-semibold">{(errors.phone_secondary as { message?: string }).message}</p>
-                ) : (
-                  <p className="text-xs text-slate-400">Format: +998XXXXXXXXX (ixtiyoriy)</p>
-                )}
+                ) : null}
               </div>
             </div>
           </fieldset>
@@ -622,62 +619,36 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               {/* Pasport seriyasi va raqami */}
               <div className="space-y-1.5">
                 <Label className={labelBaseClass}>Pasport seriyasi va raqami <span className="text-indigo-900">*</span></Label>
-                <div className="flex gap-3 max-w-[340px]">
-                  {/* Seriya Select */}
-                  <div className="w-[130px] shrink-0">
-                    <Controller
-                      control={control}
-                      name="passport_series"
-                      render={({ field }) => (
-                        <Select
-                          value={field.value ?? undefined}
-                          onValueChange={field.onChange}
-                          disabled={submitting}
-                        >
-                          <SelectTrigger id="passport_series" className={selectTriggerClass}>
-                            <SelectValue placeholder="Seriya" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {VACANCY_SERIES.map((opt) => (
-                              <SelectItem key={opt} value={opt}>
-                                {opt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-
-                  {/* Raqam Input */}
-                  <div className="w-[170px] shrink-0 relative">
-                    <Input
-                      id="passport_number_digits"
-                      placeholder="1234567"
-                      maxLength={7}
-                      {...register("passport_number_digits" as const, {
-                        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 7);
-                        }
-                      })}
-                      disabled={submitting}
-                      className={`${inputBaseClass} font-mono tracking-wider font-bold pr-10`}
-                    />
-                    {checkingPassport && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <Spinner className="h-4 w-4 text-slate-400" />
-                      </div>
-                    )}
-                  </div>
+                <div className="max-w-[340px] relative">
+                  <Input
+                    id="passport_number"
+                    placeholder="Masalan: AA1234567"
+                    maxLength={9}
+                    {...register("passport_number", {
+                      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                        const formatted = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                        const letters = formatted.slice(0, 2).replace(/[^A-Z]/g, "");
+                        const digits = formatted.slice(2, 9).replace(/[^0-9]/g, "");
+                        const finalVal = letters + digits;
+                        e.target.value = finalVal;
+                        setValue("passport_number", finalVal, { shouldValidate: true });
+                      }
+                    })}
+                    disabled={submitting || !!existingApp}
+                    className={`${inputBaseClass} font-mono tracking-wider font-bold pr-10`}
+                  />
+                  {checkingPassport && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <Spinner className="h-4 w-4 text-slate-400" />
+                    </div>
+                  )}
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-semibold tracking-wide mt-1 pl-1">
-                  Pasport seriyasini tanlang va faqat 7 ta raqamini kiriting. (Masalan: AA 1234567)
+                  Pasport seriyasi va 7 ta raqamini kiriting. (Masalan: AA1234567)
                 </p>
 
-                {errors.passport_number_digits ? (
-                  <p className="text-xs text-destructive font-semibold mt-1">{(errors.passport_number_digits as { message?: string }).message}</p>
-                ) : errors.passport_number ? (
+                {errors.passport_number ? (
                   <p className="text-xs text-destructive font-semibold mt-1">{errors.passport_number.message}</p>
                 ) : null}
 
@@ -741,37 +712,19 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 </div>
               </div>
 
-              {/* Sharifi va Tug'ilgan sanasi */}
-              <div className="grid gap-5 md:grid-cols-2">
-                {/* Sharifi */}
-                <div className="space-y-1.5">
-                  <Label htmlFor="middle_name" className={labelBaseClass}>Sharifi (Otasining ismi)</Label>
-                  <Input
-                    id="middle_name"
-                    placeholder="Masalan: Alisherovich"
-                    {...register("middle_name" as const)}
-                    disabled={submitting || !!existingApp}
-                    className={inputBaseClass}
-                  />
-                  {errors.middle_name ? (
-                    <p className="text-xs text-destructive font-semibold">{(errors.middle_name as { message?: string }).message}</p>
-                  ) : null}
-                </div>
-
-                {/* Tug'ilgan sanasi */}
-                <div className="space-y-1.5">
-                  <Label htmlFor="birth_date" className={labelBaseClass}>Tug'ilgan sanasi <span className="text-indigo-900">*</span></Label>
-                  <Input
-                    id="birth_date"
-                    type="date"
-                    {...register("birth_date")}
-                    disabled={submitting || !!existingApp}
-                    className={inputBaseClass}
-                  />
-                  {errors.birth_date ? (
-                    <p className="text-xs text-destructive font-semibold">{errors.birth_date.message}</p>
-                  ) : null}
-                </div>
+              {/* Sharifi */}
+              <div className="space-y-1.5 max-w-md">
+                <Label htmlFor="middle_name" className={labelBaseClass}>Sharifi (Otasining ismi)</Label>
+                <Input
+                  id="middle_name"
+                  placeholder="Masalan: Alisherovich"
+                  {...register("middle_name" as const)}
+                  disabled={submitting || !!existingApp}
+                  className={inputBaseClass}
+                />
+                {errors.middle_name ? (
+                  <p className="text-xs text-destructive font-semibold">{(errors.middle_name as { message?: string }).message}</p>
+                ) : null}
               </div>
             </div>
           </fieldset>
@@ -805,9 +758,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 />
                 {errors.phone ? (
                   <p className="text-xs text-destructive font-semibold">{errors.phone.message}</p>
-                ) : (
-                  <p className="text-[11px] text-slate-400 font-semibold tracking-wide mt-1 pl-1">Format: +998XXXXXXXXX</p>
-                )}
+                ) : null}
               </div>
 
               {/* Telefon (Qo'shimcha) */}
@@ -831,9 +782,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 />
                 {errors.phone_secondary ? (
                   <p className="text-xs text-destructive font-semibold">{(errors.phone_secondary as { message?: string }).message}</p>
-                ) : (
-                  <p className="text-[11px] text-slate-400 font-semibold tracking-wide mt-1 pl-1">Format: +998XXXXXXXXX (ixtiyoriy)</p>
-                )}
+                ) : null}
               </div>
             </div>
           </fieldset>

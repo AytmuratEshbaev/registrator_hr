@@ -9,7 +9,6 @@ export type ApplicationRow = {
   middle_name: string | null;
   phone: string;
   phone_secondary: string | null;
-  birth_date: string; // Vakansiya uchun tug'ilgan sana majburiy
   position_id: string | null;
   position_title: string;
   cv_url: string; // Rezyume majburiy
@@ -30,7 +29,6 @@ export type ApplicationInsert = {
   middle_name?: string | null;
   phone: string;
   phone_secondary?: string | null;
-  birth_date: string;
   position_id?: string | null;
   position_title: string;
   cv_url: string;
@@ -51,7 +49,6 @@ export type ApplicationUpdate = {
   middle_name?: string | null;
   phone?: string;
   phone_secondary?: string | null;
-  birth_date?: string;
   position_id?: string | null;
   position_title?: string;
   cv_url?: string;

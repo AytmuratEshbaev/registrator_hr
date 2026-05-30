@@ -37,7 +37,6 @@ CREATE TABLE public.applications (
   middle_name        text, -- Nomzod sharifi
   phone              text NOT NULL, -- Asosiy telefon
   phone_secondary    text, -- Qo'shimcha telefon
-  birth_date         date NOT NULL, -- Ishchi yoshini tekshirish uchun majburiy
   position_id        uuid REFERENCES public.positions(id) ON DELETE SET NULL,
   position_title     text NOT NULL,
   cv_url             text NOT NULL, -- Rezyume topshirish majburiy

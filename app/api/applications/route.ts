@@ -73,7 +73,6 @@ export async function POST(req: Request) {
         middle_name: data.middle_name ?? null,
         phone: data.phone,
         phone_secondary: data.phone_secondary ?? null,
-        birth_date: data.birth_date,
         position_id: data.position_id ?? null,
         position_title: data.position_title,
         cv_url: data.cv_url,
