@@ -81,6 +81,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Avtomatik pasport/hujjat tekshiruvi uchun holatlar
   const [checkingPassport, setCheckingPassport] = useState(false);
@@ -343,7 +344,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
         // ignore
       }
 
-      router.push("/apply/success");
+      setShowSuccessModal(true);
     } catch (err) {
       console.error(err);
       toast({
@@ -357,7 +358,8 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       
       {/* O'quvchi uchun maxsus maydonlar */}
       {isStudent && (
@@ -943,5 +945,45 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
         </Button>
       </div>
     </form>
+
+    {/* Muvaffaqiyatli topshirilganlik modal oynasi */}
+    {showSuccessModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 flex flex-col items-center text-center space-y-6 transform scale-in duration-300 animate-in zoom-in-95">
+          {/* Yashil doira va tasdiq ikonasi */}
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isStudent ? 'bg-orange-50 text-orange-500' : 'bg-indigo-50 text-indigo-900'}`}>
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+              Arizangiz qabul qilindi!
+            </h3>
+            <p className="text-sm font-medium text-slate-500 leading-relaxed">
+              Murojaatingiz uchun tashakkur. Maktab ma'muriyati arizangizni tez orada ko'rib chiqadi va siz bilan bog'lanadi.
+            </p>
+          </div>
+
+          <div className="w-full pt-2">
+            <Button
+              onClick={() => {
+                setShowSuccessModal(false);
+                router.push("/");
+              }}
+              className={`w-full h-12 rounded-xl text-sm font-bold text-white shadow-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] ${
+                isStudent
+                  ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20'
+                  : 'bg-indigo-900 hover:bg-indigo-950 shadow-indigo-950/20'
+              }`}
+            >
+              Bosh sahifaga qaytish
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
