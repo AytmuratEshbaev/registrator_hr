@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { FileUploadField } from "@/components/forms/file-upload-field";
-import { StatusBadge } from "@/components/ui/status-badge";
 import {
   studentApplicationSchema,
   vacancyApplicationSchema,
@@ -25,7 +24,6 @@ import {
 } from "@/lib/validations/application";
 import type { PositionRow, ApplicationStatus } from "@/lib/supabase/types";
 import { PASSPORT_REGEX } from "@/lib/constants";
-import { statusFriendlyMessage } from "@/lib/utils";
 
 interface ApplicationFormProps {
   type: "student" | "vacancy";
@@ -453,16 +451,6 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                         </p>
                       </div>
                     </div>
-                    
-                    <div className="border-t border-emerald-100 pt-3 flex items-center gap-3.5 text-sm">
-                      <span className="text-emerald-700 font-bold">Ariza holati:</span>
-                      <StatusBadge status={existingApp.status} />
-                    </div>
-                    
-                    <p className="text-sm text-emerald-900 font-bold leading-relaxed bg-white/80 border border-emerald-100/50 rounded-xl px-4 py-3 shadow-inner">
-                      {statusFriendlyMessage(existingApp.status)}
-                    </p>
-                    
                     {existingApp.hr_note ? (
                       <div className="rounded-xl bg-white border border-emerald-100 px-4 py-3 text-sm shadow-sm">
                         <p className="text-xs text-slate-400 mb-1 font-bold">Ma'muriyat izohi:</p>
@@ -710,16 +698,6 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                         </p>
                       </div>
                     </div>
-                    
-                    <div className="border-t border-emerald-100 pt-3 flex items-center gap-3.5 text-sm">
-                      <span className="text-emerald-700 font-bold">Ariza holati:</span>
-                      <StatusBadge status={existingApp.status} />
-                    </div>
-                    
-                    <p className="text-sm text-emerald-900 font-bold leading-relaxed bg-white/80 border border-emerald-100/50 rounded-xl px-4 py-3 shadow-inner">
-                      {statusFriendlyMessage(existingApp.status)}
-                    </p>
-                    
                     {existingApp.hr_note ? (
                       <div className="rounded-xl bg-white border border-emerald-100 px-4 py-3 text-sm shadow-sm">
                         <p className="text-xs text-slate-400 mb-1 font-bold">Ma'muriyat izohi:</p>
