@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/public/logo";
 
 export function Header() {
@@ -36,7 +37,15 @@ export function Header() {
                 : "bg-orange-500 hover:bg-orange-600 shadow-orange-500/15"
             }`}
           >
-            {isStudent ? "Vakansiyalar" : "O'quvchi qabuli"}
+            {isStudent ? (
+              <span className="flex items-center gap-1.5">
+                Vakansiyalar <ArrowRight className="w-4 h-4" />
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                O'quvchi qabuli <ArrowRight className="w-4 h-4" />
+              </span>
+            )}
           </Link>
         </div>
         
