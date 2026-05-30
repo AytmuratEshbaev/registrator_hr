@@ -35,9 +35,11 @@ CREATE TABLE public.applications (
   passport_number    text NOT NULL UNIQUE,
   first_name         text NOT NULL,
   last_name          text NOT NULL,
-  phone              text NOT NULL,
+  middle_name        text, -- O'quvchi sharifi / Nomzod sharifi
+  phone              text NOT NULL, -- Asosiy telefon
+  phone_secondary    text, -- Qo'shimcha telefon
   birth_date         date NOT NULL,
-  parent_name        text, -- Faqat o'quvchilar uchun
+  parent_name        text, -- Eski maydon (Faqat o'quvchilar uchun ota-ona ismi)
   grade              text, -- Faqat o'quvchilar uchun (masalan: 1-sinf)
   position_id        uuid REFERENCES public.positions(id) ON DELETE SET NULL, -- Faqat vakansiyalar uchun
   position_title     text, -- Faqat vakansiyalar uchun

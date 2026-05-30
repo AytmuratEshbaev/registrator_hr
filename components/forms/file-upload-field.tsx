@@ -15,6 +15,7 @@ interface FileUploadFieldProps {
   label: string;
   onUploaded: (key: string | null) => void;
   required?: boolean;
+  disabled?: boolean;
 }
 
 type UploadStatus = "idle" | "compressing" | "requesting" | "uploading" | "done" | "error";
@@ -25,6 +26,7 @@ export function FileUploadField({
   label,
   onUploaded,
   required = true,
+  disabled = false,
 }: FileUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<UploadStatus>("idle");
@@ -162,10 +164,10 @@ export function FileUploadField({
 
       {status === "idle" || status === "error" ? (
         <label
-          htmlFor={`file-${kind}`}
+          htmlFor={disabled ? undefined : `file-${kind}`}
           className={cn(
-            "flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-md px-4 py-6 cursor-pointer transition-colors",
-            "hover:border-primary/50 hover:bg-primary/5",
+            "flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-md px-4 py-6 transition-colors",
+            disabled ? "opacity-50 cursor-not-allowed border-slate-200 bg-slate-50" : "cursor-pointer hover:border-primary/50 hover:bg-primary/5",
             status === "error" ? "border-destructive/40 bg-destructive/5" : "border-input"
           )}
         >
@@ -186,7 +188,7 @@ export function FileUploadField({
             accept={accept}
             className="sr-only"
             onChange={onChange}
-            disabled={isBusy}
+            disabled={isBusy || disabled}
           />
         </label>
       ) : (

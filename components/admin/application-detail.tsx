@@ -113,14 +113,21 @@ export function ApplicationDetail({ application }: Props) {
               <div className="grid gap-4 md:grid-cols-2">
                 <FieldRow
                   icon={User}
-                  label="Ismi"
-                  value={application.first_name}
-                />
-                <FieldRow
-                  icon={User}
                   label="Familiyasi"
                   value={application.last_name}
                 />
+                <FieldRow
+                  icon={User}
+                  label="Ismi"
+                  value={application.first_name}
+                />
+                {application.middle_name && (
+                  <FieldRow
+                    icon={User}
+                    label="Sharifi"
+                    value={application.middle_name}
+                  />
+                )}
                 <FieldRow
                   icon={FileText}
                   label={isStudent ? "Hujjat raqami (Guvohnoma/Pasport)" : "Pasport seriyasi va raqami"}
@@ -130,7 +137,7 @@ export function ApplicationDetail({ application }: Props) {
                 />
                 <FieldRow
                   icon={Phone}
-                  label={isStudent ? "Ota-onaning telefon raqami" : "Telefon raqami"}
+                  label="Asosiy telefon raqami"
                   value={
                     <a
                       href={`tel:${application.phone}`}
@@ -140,13 +147,27 @@ export function ApplicationDetail({ application }: Props) {
                     </a>
                   }
                 />
+                {application.phone_secondary && (
+                  <FieldRow
+                    icon={Phone}
+                    label="Qo'shimcha telefon raqami"
+                    value={
+                      <a
+                        href={`tel:${application.phone_secondary}`}
+                        className="text-primary hover:underline font-bold"
+                      >
+                        {formatPhone(application.phone_secondary)}
+                      </a>
+                    }
+                  />
+                )}
                 <FieldRow
                   icon={Calendar}
                   label="Tug'ilgan sanasi"
                   value={formatDate(application.birth_date)}
                 />
                 
-                {/* O'quvchi uchun maxsus: Sinf va Ota-onaning ismi */}
+                {/* O'quvchi uchun maxsus: Sinf */}
                 {isStudent ? (
                   <>
                     <FieldRow
@@ -154,13 +175,15 @@ export function ApplicationDetail({ application }: Props) {
                       label="Sinfi"
                       value={<span className="text-orange-600 font-bold">{application.grade}</span>}
                     />
-                    <div className="md:col-span-2">
-                      <FieldRow
-                        icon={Users}
-                        label="Ota-onasining to'liq ismi (F.I.SH.)"
-                        value={application.parent_name}
-                      />
-                    </div>
+                    {application.parent_name && (
+                      <div className="md:col-span-2">
+                        <FieldRow
+                          icon={Users}
+                          label="Ota-onasining to'liq ismi (F.I.SH.)"
+                          value={application.parent_name}
+                        />
+                      </div>
+                    )}
                   </>
                 ) : (
                   // Ishchi uchun maxsus: Lavozim

@@ -40,9 +40,11 @@ export async function GET(req: NextRequest) {
   const rows = ((data as ApplicationRow[] | null) ?? []).map((a) => ({
     "Ismi": a.first_name,
     "Familiyasi": a.last_name,
+    "Sharifi": a.middle_name ?? "",
     "Ariza turi": a.type === "student" ? "O'quvchi" : "Vakansiya",
     "Hujjat raqami": a.passport_number,
-    "Telefon raqami": a.phone,
+    "Asosiy telefon": a.phone,
+    "Qo'shimcha telefon": a.phone_secondary ?? "",
     "Tug'ilgan sanasi": formatDate(a.birth_date),
     "Sinf / Lavozim": a.type === "student" ? a.grade : a.position_title,
     "Ota-onasining ismi": a.parent_name ?? "",

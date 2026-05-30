@@ -82,7 +82,7 @@ export function PassportCheckForm({ type }: PassportCheckFormProps) {
       } catch {
         // ignore
       }
-      router.push(`/apply/form?passport=${encodeURIComponent(normalized)}&type=${type}`);
+      router.push(`/?passport=${encodeURIComponent(normalized)}&type=${type}`);
     } catch (err) {
       console.error(err);
       toast({

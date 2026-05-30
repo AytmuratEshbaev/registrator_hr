@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("applications")
-      .select("id, status, hr_note")
+      .select("id, status, hr_note, first_name, last_name, middle_name")
       .eq("passport_number", passport_number)
       .maybeSingle();
 
@@ -61,6 +61,9 @@ export async function POST(req: Request) {
         exists: true,
         status: data.status,
         hr_note: data.hr_note,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        middle_name: data.middle_name,
       });
     }
     return NextResponse.json({ exists: false });

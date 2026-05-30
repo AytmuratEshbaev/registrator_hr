@@ -6,8 +6,10 @@ export type ApplicationRow = {
   passport_number: string;
   first_name: string;
   last_name: string;
+  middle_name: string | null;
   phone: string;
-  birth_date: string;
+  phone_secondary: string | null;
+  birth_date: string | null;
   parent_name: string | null;
   grade: string | null;
   position_id: string | null;
@@ -28,8 +30,10 @@ export type ApplicationInsert = {
   passport_number: string;
   first_name: string;
   last_name: string;
+  middle_name?: string | null;
   phone: string;
-  birth_date: string;
+  phone_secondary?: string | null;
+  birth_date?: string | null;
   parent_name?: string | null;
   grade?: string | null;
   position_id?: string | null;
@@ -50,8 +54,10 @@ export type ApplicationUpdate = {
   passport_number?: string;
   first_name?: string;
   last_name?: string;
+  middle_name?: string | null;
   phone?: string;
-  birth_date?: string;
+  phone_secondary?: string | null;
+  birth_date?: string | null;
   parent_name?: string | null;
   grade?: string | null;
   position_id?: string | null;

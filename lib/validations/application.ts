@@ -8,6 +8,8 @@ const baseSchema = z.object({
     .trim()
     .toUpperCase()
     .regex(PASSPORT_REGEX, "Hujjat raqami formati noto'g'ri. (Masalan: AA1234567 yoki I-TAS 1234567)"),
+  passport_series: z.string().min(1, "Seriyani tanlang"),
+  passport_number_digits: z.string().regex(/^\d{7}$/, "Hujjat raqami 7 ta raqamdan iborat bo'lishi kerak"),
   first_name: z
     .string()
     .trim()
@@ -22,6 +24,8 @@ const baseSchema = z.object({
     .string()
     .trim()
     .regex(PHONE_REGEX, "Telefon raqami noto'g'ri. Format: +998XXXXXXXXX"),
+  middle_name: z.string().optional().nullable(),
+  phone_secondary: z.string().optional().nullable(),
   passport_scan_url: z.string().optional().nullable(),
   diploma_url: z.string().optional().nullable(),
   photo_url: z.string().optional().nullable(),
@@ -30,20 +34,17 @@ const baseSchema = z.object({
 // O'quvchilar qabuli validatsiyasi
 export const studentApplicationSchema = baseSchema.extend({
   type: z.literal("student"),
-  parent_name: z.string().trim().min(3, "Ota-onaning ismi va familiyasini kiriting").max(100),
-  grade: z.string().trim().min(1, "Sinfni tanlang"),
-  birth_date: z
+  middle_name: z.string().trim().min(3, "Sharifingizni kiriting").max(60),
+  phone_secondary: z
     .string()
-    .refine((v) => !isNaN(Date.parse(v)), { message: "Noto'g'ri sana" })
-    .refine(
-      (v) => {
-        const d = new Date(v);
-        const now = new Date();
-        const age = (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-        return age >= 5 && age <= 20;
-      },
-      { message: "O'quvchi yoshi 5 dan 20 yoshgacha bo'lishi kerak" }
-    ),
+    .trim()
+    .regex(PHONE_REGEX, "Telefon raqami noto'g'ri. Format: +998XXXXXXXXX")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  parent_name: z.string().optional().nullable(),
+  grade: z.string().trim().min(1, "Sinfni tanlang"),
+  birth_date: z.string().optional().nullable(),
   position_id: z.null().optional(),
   position_title: z.string().optional().nullable(),
   cv_url: z.string().optional().nullable(),
@@ -52,6 +53,14 @@ export const studentApplicationSchema = baseSchema.extend({
 // Vakansiya / Ishchi qabuli validatsiyasi
 export const vacancyApplicationSchema = baseSchema.extend({
   type: z.literal("vacancy"),
+  middle_name: z.string().optional().nullable(),
+  phone_secondary: z
+    .string()
+    .trim()
+    .regex(PHONE_REGEX, "Telefon raqami noto'g'ri. Format: +998XXXXXXXXX")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   parent_name: z.string().optional().nullable(),
   grade: z.string().optional().nullable(),
   birth_date: z
