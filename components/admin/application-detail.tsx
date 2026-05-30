@@ -161,11 +161,13 @@ export function ApplicationDetail({ application }: Props) {
                     }
                   />
                 )}
-                <FieldRow
-                  icon={Calendar}
-                  label="Tug'ilgan sanasi"
-                  value={formatDate(application.birth_date)}
-                />
+                {!isStudent && (
+                  <FieldRow
+                    icon={Calendar}
+                    label="Tug'ilgan sanasi"
+                    value={formatDate(application.birth_date)}
+                  />
+                )}
                 
                 {/* O'quvchi uchun maxsus: Sinf */}
                 {isStudent ? (
