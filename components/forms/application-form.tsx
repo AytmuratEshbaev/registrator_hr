@@ -104,6 +104,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
     control,
     setError,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm<ApplicationInput>({
     resolver: zodResolver(activeSchema),
@@ -970,6 +971,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
             <Button
               onClick={() => {
                 setShowSuccessModal(false);
+                reset();
                 router.push("/");
               }}
               className={`w-full h-12 rounded-xl text-sm font-bold text-white shadow-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] ${
