@@ -923,6 +923,37 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           )}
         </Button>
       </div>
+
+      {/* Maktab bilan bog'lanish yordam bo'limi (UX/UI accent) */}
+      <div className={`mt-6 p-5 rounded-2xl border border-dashed transition-all duration-300 flex flex-col sm:flex-row items-center gap-4 ${
+        isStudent 
+          ? 'bg-orange-50/20 border-orange-200/40 hover:bg-orange-50/40' 
+          : 'bg-indigo-50/20 border-indigo-200/40 hover:bg-indigo-50/40'
+      }`}>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm ${
+          isStudent ? 'bg-orange-100 text-orange-600' : 'bg-indigo-100 text-indigo-900'
+        }`}>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <div className="text-center sm:text-left space-y-0.5">
+          <p className="text-[13px] font-bold text-slate-800 tracking-wide">
+            Savollaringiz bormi yoki muammoga duch keldingizmi?
+          </p>
+          <p className="text-xs text-slate-500 font-semibold leading-relaxed">
+            Ro'yxatdan o'tishda qiyinchilik yuzaga kelsa, maktab ma'muriyati bilan bog'laning:{" "}
+            <a 
+              href="tel:+998931234567" 
+              className={`font-black hover:underline transition-all duration-150 inline-flex items-center gap-1 ${
+                isStudent ? 'text-orange-600' : 'text-indigo-900'
+              }`}
+            >
+              +998 93 123 45 67
+            </a>
+          </p>
+        </div>
+      </div>
     </form>
 
     {/* Muvaffaqiyatli topshirilganlik modal oynasi */}
