@@ -189,7 +189,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
         const res = await fetch("/api/check-passport", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ passport_number: normalized }),
+          body: JSON.stringify({ passport_number: normalized, type }),
           signal: controller.signal,
         });
 
@@ -234,7 +234,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [passportVal, digitsVal, setError, clearErrors, isStudent]);
+  }, [passportVal, digitsVal, setError, clearErrors, isStudent, type]);
 
   // Draft'dan tiklash
   useEffect(() => {

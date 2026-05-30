@@ -1,20 +1,18 @@
 export type ApplicationStatus = "pending" | "reviewing" | "accepted" | "rejected";
 
+// Vakansiyalar uchun arizalar turi
 export type ApplicationRow = {
   id: string;
-  type: "student" | "vacancy";
   passport_number: string;
   first_name: string;
   last_name: string;
   middle_name: string | null;
   phone: string;
   phone_secondary: string | null;
-  birth_date: string | null;
-  parent_name: string | null;
-  grade: string | null;
+  birth_date: string; // Vakansiya uchun tug'ilgan sana majburiy
   position_id: string | null;
-  position_title: string | null;
-  cv_url: string | null;
+  position_title: string;
+  cv_url: string; // Rezyume majburiy
   passport_scan_url: string | null;
   diploma_url: string | null;
   photo_url: string | null;
@@ -26,19 +24,16 @@ export type ApplicationRow = {
 
 export type ApplicationInsert = {
   id?: string;
-  type: "student" | "vacancy";
   passport_number: string;
   first_name: string;
   last_name: string;
   middle_name?: string | null;
   phone: string;
   phone_secondary?: string | null;
-  birth_date?: string | null;
-  parent_name?: string | null;
-  grade?: string | null;
+  birth_date: string;
   position_id?: string | null;
-  position_title?: string | null;
-  cv_url?: string | null;
+  position_title: string;
+  cv_url: string;
   passport_scan_url?: string | null;
   diploma_url?: string | null;
   photo_url?: string | null;
@@ -50,22 +45,65 @@ export type ApplicationInsert = {
 
 export type ApplicationUpdate = {
   id?: string;
-  type?: "student" | "vacancy";
   passport_number?: string;
   first_name?: string;
   last_name?: string;
   middle_name?: string | null;
   phone?: string;
   phone_secondary?: string | null;
-  birth_date?: string | null;
-  parent_name?: string | null;
-  grade?: string | null;
+  birth_date?: string;
   position_id?: string | null;
-  position_title?: string | null;
-  cv_url?: string | null;
+  position_title?: string;
+  cv_url?: string;
   passport_scan_url?: string | null;
   diploma_url?: string | null;
   photo_url?: string | null;
+  status?: ApplicationStatus;
+  hr_note?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+// O'quvchilar uchun arizalar turi
+export type StudentApplicationRow = {
+  id: string;
+  passport_number: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  phone: string;
+  phone_secondary: string | null;
+  grade: string;
+  status: ApplicationStatus;
+  hr_note: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type StudentApplicationInsert = {
+  id?: string;
+  passport_number: string;
+  first_name: string;
+  last_name: string;
+  middle_name: string;
+  phone: string;
+  phone_secondary?: string | null;
+  grade: string;
+  status?: ApplicationStatus;
+  hr_note?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type StudentApplicationUpdate = {
+  id?: string;
+  passport_number?: string;
+  first_name?: string;
+  last_name?: string;
+  middle_name?: string;
+  phone?: string;
+  phone_secondary?: string | null;
+  grade?: string;
   status?: ApplicationStatus;
   hr_note?: string | null;
   created_at?: string;
@@ -103,6 +141,12 @@ export type Database = {
         Row: ApplicationRow;
         Insert: ApplicationInsert;
         Update: ApplicationUpdate;
+        Relationships: [];
+      };
+      student_applications: {
+        Row: StudentApplicationRow;
+        Insert: StudentApplicationInsert;
+        Update: StudentApplicationUpdate;
         Relationships: [];
       };
       positions: {

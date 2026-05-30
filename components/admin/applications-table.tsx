@@ -27,14 +27,19 @@ import { formatDateTime, formatName, formatPhone, statusLabel } from "@/lib/util
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import type {
   ApplicationRow,
+  StudentApplicationRow,
   ApplicationStatus,
   PositionRow,
 } from "@/lib/supabase/types";
 
+export type AdminApplication = 
+  | (ApplicationRow & { type: "vacancy" })
+  | (StudentApplicationRow & { type: "student" });
+
 const ALL_VALUE = "__all__";
 
 interface Props {
-  applications: ApplicationRow[];
+  applications: AdminApplication[];
   positions: PositionRow[];
   total: number;
   page: number;
@@ -103,6 +108,16 @@ export function ApplicationsTable({
     updateParams({ page: String(newPage) });
   }
 
+  const exportUrl = (() => {
+    const params = new URLSearchParams();
+    params.set("format", "xlsx");
+    if (filters.status) params.set("status", filters.status);
+    if (filters.position) params.set("position", filters.position);
+    if (filters.type) params.set("type", filters.type);
+    if (filters.q) params.set("q", filters.q);
+    return `/api/admin/export?${params.toString()}`;
+  })();
+
   return (
     <div className="space-y-4">
       {/* Qidiruv va Eksport */}
@@ -124,7 +139,7 @@ export function ApplicationsTable({
 
         <div className="flex items-center gap-2">
           <a
-            href="/api/admin/export?format=xlsx"
+            href={exportUrl}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-indigo-950/15"
           >
             <Download className="h-4 w-4" />

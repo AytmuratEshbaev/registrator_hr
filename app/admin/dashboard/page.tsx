@@ -18,7 +18,7 @@ import {
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatDateTime, formatName } from "@/lib/utils";
-import type { ApplicationRow } from "@/lib/supabase/types";
+import type { AdminApplication } from "@/components/admin/applications-table";
 import { GraduationCap, Briefcase, FileText, CheckCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -26,20 +26,50 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   const supabase = createClient();
 
-  // Barcha arizalarni, oxirgi 5 ta arizani parallel ravishda olamiz
-  const [latestRes, allRes] = await Promise.all([
+  // Oxirgi arizalarni parallel ravishda olamiz
+  const [studentLatestRes, vacancyLatestRes] = await Promise.all([
     supabase
-      .from("applications")
+      .from("student_applications")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(5),
     supabase
       .from("applications")
-      .select("type, status, position_title, grade"),
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5),
   ]);
 
-  const latest: ApplicationRow[] = (latestRes.data as ApplicationRow[] | null) ?? [];
-  const allData = allRes.data ?? [];
+  const studentLatest = (studentLatestRes.data ?? []).map((x) => ({ ...x, type: "student" as const }));
+  const vacancyLatest = (vacancyLatestRes.data ?? []).map((x) => ({ ...x, type: "vacancy" as const }));
+
+  const latest: AdminApplication[] = [...studentLatest, ...vacancyLatest]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5);
+
+  // Statistika uchun barcha arizalarni olamiz
+  const [studentStatsRes, vacancyStatsRes] = await Promise.all([
+    supabase
+      .from("student_applications")
+      .select("status, grade"),
+    supabase
+      .from("applications")
+      .select("status, position_title"),
+  ]);
+
+  const studentStats = (studentStatsRes.data ?? []).map((x) => ({
+    status: x.status,
+    grade: x.grade,
+    type: "student" as const,
+  }));
+
+  const vacancyStats = (vacancyStatsRes.data ?? []).map((x) => ({
+    status: x.status,
+    position_title: x.position_title,
+    type: "vacancy" as const,
+  }));
+
+  const allData = [...studentStats, ...vacancyStats];
 
   // Hisob-kitoblar
   const total = allData.length;

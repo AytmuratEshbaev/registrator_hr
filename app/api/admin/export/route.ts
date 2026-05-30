@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatDateTime, statusLabel } from "@/lib/utils";
-import type { ApplicationRow } from "@/lib/supabase/types";
+import type { AdminApplication } from "@/components/admin/applications-table";
+import type { ApplicationStatus } from "@/lib/supabase/types";
 
 function todayStamp(): string {
   const d = new Date();
@@ -28,16 +29,66 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { data, error } = await supabase
-    .from("applications")
-    .select("*")
-    .order("created_at", { ascending: false });
+  // Get active filters from search params
+  const status = (req.nextUrl.searchParams.get("status") ?? "") as ApplicationStatus | "";
+  const position = req.nextUrl.searchParams.get("position") ?? "";
+  const type = req.nextUrl.searchParams.get("type") ?? "";
+  const q = req.nextUrl.searchParams.get("q") ?? "";
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  let combined: AdminApplication[] = [];
+
+  if (type === "student") {
+    let query = supabase.from("student_applications").select("*");
+    if (status) query = query.eq("status", status);
+    if (q) {
+      const safe = q.replace(/[%,]/g, "");
+      query = query.or(`first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,passport_number.ilike.%${safe}%`);
+    }
+    const { data, error } = await query.order("created_at", { ascending: false });
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    combined = (data ?? []).map((x) => ({ ...x, type: "student" as const }));
+  } else if (type === "vacancy") {
+    let query = supabase.from("applications").select("*");
+    if (status) query = query.eq("status", status);
+    if (position) query = query.eq("position_id", position);
+    if (q) {
+      const safe = q.replace(/[%,]/g, "");
+      query = query.or(`first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,passport_number.ilike.%${safe}%`);
+    }
+    const { data, error } = await query.order("created_at", { ascending: false });
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    combined = (data ?? []).map((x) => ({ ...x, type: "vacancy" as const }));
+  } else {
+    // Fetch both and merge
+    let studentQuery = supabase.from("student_applications").select("*");
+    if (status) studentQuery = studentQuery.eq("status", status);
+    if (q) {
+      const safe = q.replace(/[%,]/g, "");
+      studentQuery = studentQuery.or(`first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,passport_number.ilike.%${safe}%`);
+    }
+
+    let vacancyQuery = supabase.from("applications").select("*");
+    if (status) vacancyQuery = vacancyQuery.eq("status", status);
+    if (position) vacancyQuery = vacancyQuery.eq("position_id", position);
+    if (q) {
+      const safe = q.replace(/[%,]/g, "");
+      vacancyQuery = vacancyQuery.or(`first_name.ilike.%${safe}%,last_name.ilike.%${safe}%,passport_number.ilike.%${safe}%`);
+    }
+
+    const [studentsRes, vacanciesRes] = await Promise.all([studentQuery, vacancyQuery]);
+    
+    if (studentsRes.error) return NextResponse.json({ error: studentsRes.error.message }, { status: 500 });
+    if (vacanciesRes.error) return NextResponse.json({ error: vacanciesRes.error.message }, { status: 500 });
+
+    const students = (studentsRes.data ?? []).map((x) => ({ ...x, type: "student" as const }));
+    const vacancies = (vacanciesRes.data ?? []).map((x) => ({ ...x, type: "vacancy" as const }));
+
+    combined = [...students, ...vacancies].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   }
 
-  const rows = ((data as ApplicationRow[] | null) ?? []).map((a) => ({
+  const rows = combined.map((a) => ({
     "Ismi": a.first_name,
     "Familiyasi": a.last_name,
     "Sharifi": a.middle_name ?? "",
@@ -45,9 +96,9 @@ export async function GET(req: NextRequest) {
     "Hujjat raqami": a.passport_number,
     "Asosiy telefon": a.phone,
     "Qo'shimcha telefon": a.phone_secondary ?? "",
-    "Tug'ilgan sanasi": formatDate(a.birth_date),
+    "Tug'ilgan sanasi": a.type === "vacancy" ? formatDate(a.birth_date) : "",
     "Sinf / Lavozim": a.type === "student" ? a.grade : a.position_title,
-    "Ota-onasining ismi": a.parent_name ?? "",
+    "Ota-onasining ismi": a.type === "student" ? a.middle_name : "",
     "Status": statusLabel(a.status),
     "Ma'muriyat izohi (HR)": a.hr_note ?? "",
     "Topshirilgan sana": formatDateTime(a.created_at),

@@ -38,12 +38,14 @@ export async function POST(req: Request) {
   }
 
   const { passport_number } = parsed.data;
+  const type = (body as { type?: string }).type === "student" ? "student" : "vacancy";
+  const tableName = type === "student" ? "student_applications" : "applications";
 
   // DB tekshiruv
   try {
     const supabase = createAdminClient();
     const { data, error } = await supabase
-      .from("applications")
+      .from(tableName)
       .select("id, status, hr_note, first_name, last_name, middle_name")
       .eq("passport_number", passport_number)
       .maybeSingle();

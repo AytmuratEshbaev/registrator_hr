@@ -23,7 +23,15 @@ import { StatusChanger } from "./status-changer";
 import { HrNoteEditor } from "./hr-note-editor";
 import { DownloadButton } from "./download-button";
 import { formatDate, formatDateTime, formatName, formatPhone } from "@/lib/utils";
-import type { ApplicationRow } from "@/lib/supabase/types";
+import type { ApplicationRow, StudentApplicationRow } from "@/lib/supabase/types";
+
+export type AdminApplicationDetailRow = 
+  | (ApplicationRow & { type: "vacancy" })
+  | (StudentApplicationRow & { type: "student"; parent_name?: string | null });
+
+interface Props {
+  application: AdminApplicationDetailRow;
+}
 
 function extractKeyFromUrl(urlOrKey: string): string {
   if (!urlOrKey.startsWith("http")) return urlOrKey;
@@ -33,10 +41,6 @@ function extractKeyFromUrl(urlOrKey: string): string {
   } catch {
     return urlOrKey;
   }
-}
-
-interface Props {
-  application: ApplicationRow;
 }
 
 function FieldRow({
@@ -62,7 +66,7 @@ function FieldRow({
 export function ApplicationDetail({ application }: Props) {
   const isStudent = application.type === "student";
 
-  const cvKey = application.cv_url ? extractKeyFromUrl(application.cv_url) : null;
+  const cvKey = !isStudent && application.cv_url ? extractKeyFromUrl(application.cv_url) : null;
 
   const fullName = formatName(application);
   const safeName = fullName.replace(/[^A-Za-z0-9_\- ]/g, "").trim();

@@ -30,20 +30,36 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabase
+  // 1. O'quvchi arizasini tekshirish
+  const { data: studentData, error: studentError } = await supabase
+    .from("student_applications")
+    .select("*")
+    .eq("id", params.id)
+    .maybeSingle();
+
+  if (studentData) {
+    return NextResponse.json({ application: { ...studentData, type: "student" } });
+  }
+
+  // 2. Vakansiya arizasini tekshirish
+  const { data: vacancyData, error: vacancyError } = await supabase
     .from("applications")
     .select("*")
     .eq("id", params.id)
     .maybeSingle();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-  if (!data) {
-    return NextResponse.json({ error: "Не найдено" }, { status: 404 });
+  if (vacancyData) {
+    return NextResponse.json({ application: { ...vacancyData, type: "vacancy" } });
   }
 
-  return NextResponse.json({ application: data });
+  if (studentError) {
+    return NextResponse.json({ error: studentError.message }, { status: 500 });
+  }
+  if (vacancyError) {
+    return NextResponse.json({ error: vacancyError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ error: "Не найдено" }, { status: 404 });
 }
 
 export async function PATCH(
@@ -77,12 +93,35 @@ export async function PATCH(
     );
   }
 
-  const { data, error } = await supabase
-    .from("applications")
-    .update(parsed.data)
+  // 1. O'quvchi arizalarida borligini tekshirish
+  const { data: studentCheck } = await supabase
+    .from("student_applications")
+    .select("id")
     .eq("id", params.id)
-    .select()
     .maybeSingle();
+
+  let data;
+  let error;
+
+  if (studentCheck) {
+    const res = await supabase
+      .from("student_applications")
+      .update(parsed.data)
+      .eq("id", params.id)
+      .select()
+      .maybeSingle();
+    data = res.data ? { ...res.data, type: "student" } : null;
+    error = res.error;
+  } else {
+    const res = await supabase
+      .from("applications")
+      .update(parsed.data)
+      .eq("id", params.id)
+      .select()
+      .maybeSingle();
+    data = res.data ? { ...res.data, type: "vacancy" } : null;
+    error = res.error;
+  }
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -103,47 +142,70 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fetch first so we know which R2 objects to clean up
-  const { data: app, error: fetchErr } = await supabase
+  // 1. O'quvchi arizasini tekshirish va o'chirish
+  const { data: studentApp, error: studentFetchErr } = await supabase
+    .from("student_applications")
+    .select("*")
+    .eq("id", params.id)
+    .maybeSingle();
+
+  if (studentApp) {
+    const { error: delErr } = await supabase
+      .from("student_applications")
+      .delete()
+      .eq("id", params.id);
+
+    if (delErr) {
+      return NextResponse.json({ error: delErr.message }, { status: 500 });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // 2. Vakansiya arizasini tekshirish va o'chirish
+  const { data: vacancyApp, error: vacancyFetchErr } = await supabase
     .from("applications")
     .select("*")
     .eq("id", params.id)
     .maybeSingle();
 
-  if (fetchErr) {
-    return NextResponse.json({ error: fetchErr.message }, { status: 500 });
-  }
-  if (!app) {
-    return NextResponse.json({ error: "Не найдено" }, { status: 404 });
-  }
+  if (vacancyApp) {
+    const { error: delErr } = await supabase
+      .from("applications")
+      .delete()
+      .eq("id", params.id);
 
-  const { error: delErr } = await supabase
-    .from("applications")
-    .delete()
-    .eq("id", params.id);
+    if (delErr) {
+      return NextResponse.json({ error: delErr.message }, { status: 500 });
+    }
 
-  if (delErr) {
-    return NextResponse.json({ error: delErr.message }, { status: 500 });
-  }
-
-  // Best-effort R2 cleanup (don't fail the request if it errors)
-  try {
-    const a = app as ApplicationRow;
-    const urls = [a.cv_url, a.passport_scan_url, a.diploma_url, a.photo_url];
-    const client = getR2Client();
-    await Promise.allSettled(
-      urls
-        .filter((u): u is string => Boolean(u))
-        .map((u) => extractKeyFromUrl(u))
-        .map((key) =>
-          client.send(
-            new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: key })
+    // R2 dagi yuklangan fayllarni tozalash (Best-effort)
+    try {
+      const a = vacancyApp as ApplicationRow;
+      const urls = [a.cv_url, a.passport_scan_url, a.diploma_url, a.photo_url];
+      const client = getR2Client();
+      await Promise.allSettled(
+        urls
+          .filter((u): u is string => Boolean(u))
+          .map((u) => extractKeyFromUrl(u))
+          .map((key) =>
+            client.send(
+              new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: key })
+            )
           )
-        )
-    );
-  } catch {
-    // ignore — DB deletion already succeeded
+      );
+    } catch {
+      // ignore — DB deletion already succeeded
+    }
+
+    return NextResponse.json({ ok: true });
   }
 
-  return NextResponse.json({ ok: true });
+  if (studentFetchErr) {
+    return NextResponse.json({ error: studentFetchErr.message }, { status: 500 });
+  }
+  if (vacancyFetchErr) {
+    return NextResponse.json({ error: vacancyFetchErr.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ error: "Не найдено" }, { status: 404 });
 }

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { applicationSchema } from "@/lib/validations/application";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import type { ApplicationInsert } from "@/lib/supabase/types";
+import type { PostgrestError } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,67 +41,81 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
 
-  // Dinamik ravishda turga qarab yoziladigan maydonlarni shakllantiramiz
-  const insertData: ApplicationInsert = {
-    type: data.type,
-    passport_number: data.passport_number,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    middle_name: data.middle_name ?? null,
-    phone: data.phone,
-    phone_secondary: data.phone_secondary ?? null,
-    birth_date: data.birth_date ?? null,
-    passport_scan_url: data.passport_scan_url ?? null,
-    diploma_url: data.diploma_url ?? null,
-    photo_url: data.photo_url ?? null,
-  };
-
-  if (data.type === "student") {
-    insertData.parent_name = data.parent_name;
-    insertData.grade = data.grade;
-    insertData.position_id = null;
-    insertData.position_title = null;
-    insertData.cv_url = null;
-  } else {
-    insertData.parent_name = null;
-    insertData.grade = null;
-    insertData.position_id = data.position_id ?? null;
-    insertData.position_title = data.position_title;
-    insertData.cv_url = data.cv_url;
-  }
-
   try {
     const supabase = createAdminClient();
-    const { data: inserted, error } = await supabase
-      .from("applications")
-      .insert(insertData)
-      .select("id")
-      .single();
+    let insertedId: string | null = null;
+    let dbError: PostgrestError | null = null;
 
-    if (error) {
+    if (data.type === "student") {
+      const studentInsert = {
+        passport_number: data.passport_number,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        middle_name: data.middle_name, // Sharifi
+        phone: data.phone,
+        phone_secondary: data.phone_secondary ?? null,
+        grade: data.grade,
+      };
+
+      const { data: inserted, error } = await supabase
+        .from("student_applications")
+        .insert(studentInsert)
+        .select("id")
+        .single();
+
+      if (inserted) insertedId = inserted.id;
+      dbError = error;
+    } else {
+      const vacancyInsert = {
+        passport_number: data.passport_number,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        middle_name: data.middle_name ?? null,
+        phone: data.phone,
+        phone_secondary: data.phone_secondary ?? null,
+        birth_date: data.birth_date,
+        position_id: data.position_id ?? null,
+        position_title: data.position_title,
+        cv_url: data.cv_url,
+        passport_scan_url: data.passport_scan_url ?? null,
+        diploma_url: data.diploma_url ?? null,
+        photo_url: data.photo_url ?? null,
+      };
+
+      const { data: inserted, error } = await supabase
+        .from("applications")
+        .insert(vacancyInsert)
+        .select("id")
+        .single();
+
+      if (inserted) insertedId = inserted.id;
+      dbError = error;
+    }
+
+    if (dbError) {
       // UNIQUE constraint (passport_number)
-      const code = (error as { code?: string }).code;
+      const code = (dbError as { code?: string }).code;
       if (code === "23505") {
         return NextResponse.json(
           { error: "Ushbu pasport yoki guvohnoma raqami bo'yicha ariza allaqachon topshirilgan" },
           { status: 409 }
         );
       }
-      console.error("[applications] insert error:", error);
+      console.error("[applications] insert error:", dbError);
       return NextResponse.json(
-        { error: `Arizani saqlashda xatolik: ${error.message} (${error.details || error.hint || ''})` },
+        { error: `Arizani saqlashda xatolik: ${dbError.message} (${dbError.details || dbError.hint || ''})` },
         { status: 500 }
       );
     }
 
-    if (!inserted) {
+    if (!insertedId) {
       return NextResponse.json(
         { error: "Arizani saqlashda xatolik yuz berdi (ma'lumot qaytmadi)." },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ id: inserted.id });
+    return NextResponse.json({ id: insertedId });
   } catch (err) {
     console.error("[applications] exception:", err);
     return NextResponse.json(
