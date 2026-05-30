@@ -89,14 +89,14 @@ export async function POST(req: Request) {
       }
       console.error("[applications] insert error:", error);
       return NextResponse.json(
-        { error: "Arizani saqlashda xatolik yuz berdi." },
+        { error: `Arizani saqlashda xatolik: ${error.message} (${error.details || error.hint || ''})` },
         { status: 500 }
       );
     }
 
     if (!inserted) {
       return NextResponse.json(
-        { error: "Arizani saqlashda xatolik yuz berdi." },
+        { error: "Arizani saqlashda xatolik yuz berdi (ma'lumot qaytmadi)." },
         { status: 500 }
       );
     }
@@ -104,6 +104,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: inserted.id });
   } catch (err) {
     console.error("[applications] exception:", err);
-    return NextResponse.json({ error: "Server xatoligi" }, { status: 500 });
+    return NextResponse.json(
+      { error: `Server xatoligi: ${err instanceof Error ? err.message : "Noma'lum xatolik"}` },
+      { status: 500 }
+    );
   }
 }
