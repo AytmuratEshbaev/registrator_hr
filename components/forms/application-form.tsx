@@ -125,7 +125,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
       ? {
           type: "student",
           passport_number: "",
-          passport_series: "I-AN",
+          passport_series: "",
           passport_number_digits: "",
           first_name: "",
           last_name: "",
@@ -138,7 +138,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
       : {
           type: "vacancy",
           passport_number: "",
-          passport_series: "AA",
+          passport_series: "",
           passport_number_digits: "",
           first_name: "",
           last_name: "",
@@ -172,10 +172,51 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
   // Seriya va raqamlarni passport_number'ga birlashtirish
   useEffect(() => {
     if (isStudent) {
-      const combined = ((seriesVal ?? "") + (digitsVal ?? "")).trim().toUpperCase();
-      setValue("passport_number", combined, { shouldValidate: true });
+      if (digitsVal) {
+        const combined = ((seriesVal ?? "") + (digitsVal ?? "")).trim().toUpperCase();
+        setValue("passport_number", combined, { shouldValidate: true });
+      } else {
+        setValue("passport_number", "", { shouldValidate: false });
+        clearErrors("passport_number");
+      }
     }
-  }, [seriesVal, digitsVal, setValue, isStudent]);
+  }, [seriesVal, digitsVal, setValue, isStudent, clearErrors]);
+
+  // Formani har safar ariza turi o'zgarganda tozalash
+  useEffect(() => {
+    reset(
+      (isStudent
+        ? {
+            type: "student",
+            passport_number: "",
+            passport_series: "",
+            passport_number_digits: "",
+            first_name: "",
+            last_name: "",
+            middle_name: "",
+            phone: "+998",
+            phone_secondary: "+998",
+            parent_name: "",
+            grade: "",
+          }
+        : {
+            type: "vacancy",
+            passport_number: "",
+            passport_series: "",
+            passport_number_digits: "",
+            first_name: "",
+            last_name: "",
+            middle_name: "",
+            phone: "+998",
+            phone_secondary: "+998",
+            position_id: null,
+            position_title: "",
+            cv_url: "",
+          }) as unknown as ApplicationInput
+    );
+    clearErrors();
+    setExistingApp(null);
+  }, [type, isStudent, reset, clearErrors]);
 
   // Hujjat raqamini avtomatik ravishda tekshirish (kechikish va AbortController bilan)
   useEffect(() => {
