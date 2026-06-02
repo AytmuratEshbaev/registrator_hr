@@ -56,20 +56,20 @@ export function PositionsManager({ initialPositions }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Подтвердить удаление должности?")) return;
+    if (!confirm("Lavozimni o'chirishni tasdiqlaysizmi?")) return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/admin/positions/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Ошибка при удалении");
+        throw new Error(body.error ?? "O'chirishda xatolik yuz berdi");
       }
-      toast({ title: "Удалено", description: "Должность удалена" });
+      toast({ title: "O'chirildi", description: "Lavozim muvaffaqiyatli o'chirildi" });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+        title: "Xatolik",
+        description: err instanceof Error ? err.message : "Noma'lum xatolik",
         variant: "destructive",
       });
     } finally {
@@ -80,20 +80,20 @@ export function PositionsManager({ initialPositions }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-end">
-        <Button onClick={openCreate}>
+        <Button onClick={openCreate} className="rounded-xl font-bold bg-indigo-900 hover:bg-indigo-950">
           <Plus className="mr-2 h-4 w-4" />
-          Добавить должность
+          Yangi lavozim qo'shish
         </Button>
       </div>
 
-      <div className="rounded-lg border bg-card">
+      <div className="rounded-2xl border border-slate-200/85 bg-card overflow-hidden shadow-sm">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-slate-50/70 border-b">
             <TableRow>
-              <TableHead>Название</TableHead>
-              <TableHead>Описание</TableHead>
-              <TableHead className="w-32">Состояние</TableHead>
-              <TableHead className="text-right w-44">Действия</TableHead>
+              <TableHead className="font-bold text-slate-800">Lavozim nomi</TableHead>
+              <TableHead className="font-bold text-slate-800">Tavsif (Izoh)</TableHead>
+              <TableHead className="w-32 font-bold text-slate-800">Holati</TableHead>
+              <TableHead className="text-right w-44 font-bold text-slate-800">Amallar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -101,23 +101,23 @@ export function PositionsManager({ initialPositions }: Props) {
               <TableRow>
                 <TableCell
                   colSpan={4}
-                  className="text-center py-12 text-muted-foreground"
+                  className="text-center py-12 text-slate-400 font-medium"
                 >
-                  Должностей нет. Добавьте через кнопку «Добавить должность».
+                  Hozircha hech qanday lavozim yo'q. Yangi lavozim qo'shish tugmasi orqali qo'shing.
                 </TableCell>
               </TableRow>
             ) : (
               initialPositions.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell className="font-medium">{p.title}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground max-w-md truncate">
+                <TableRow key={p.id} className="hover:bg-slate-50/30">
+                  <TableCell className="font-bold text-slate-900">{p.title}</TableCell>
+                  <TableCell className="text-sm text-slate-600 max-w-md truncate font-medium">
                     {p.description || "—"}
                   </TableCell>
                   <TableCell>
                     {p.active ? (
-                      <Badge>Активна</Badge>
+                      <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold rounded-lg px-2.5 py-0.5 shadow-none hover:bg-emerald-50">Faol</Badge>
                     ) : (
-                      <Badge variant="secondary">Неактивна</Badge>
+                      <Badge variant="secondary" className="bg-slate-50 text-slate-500 border border-slate-200 font-bold rounded-lg px-2.5 py-0.5 shadow-none">Nofaol</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -126,15 +126,17 @@ export function PositionsManager({ initialPositions }: Props) {
                         variant="outline"
                         size="sm"
                         onClick={() => openEdit(p)}
+                        className="rounded-lg font-semibold border-slate-200"
                       >
                         <Pencil className="h-3.5 w-3.5 mr-1" />
-                        Редактировать
+                        Tahrirlash
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(p.id)}
                         disabled={deletingId === p.id}
+                        className="rounded-lg font-semibold border-slate-200 hover:bg-destructive/5 hover:border-destructive"
                       >
                         {deletingId === p.id ? (
                           <Spinner className="h-3.5 w-3.5" />
@@ -226,18 +228,18 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Ошибка при сохранении");
+        throw new Error(body.error ?? "Saqlashda xatolik yuz berdi");
       }
       toast({
-        title: "Сохранено",
-        description: editing ? "Должность обновлена" : "Новая должность добавлена",
+        title: "Saqlandi",
+        description: editing ? "Lavozim muvaffaqiyatli yangilandi" : "Yangi lavozim muvaffaqiyatli qo'shildi",
       });
       reset();
       onSaved();
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+        title: "Xatolik",
+        description: err instanceof Error ? err.message : "Noma'lum xatolik",
         variant: "destructive",
       });
     } finally {
@@ -247,13 +249,13 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="rounded-2xl sm:rounded-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {editing ? "Редактировать должность" : "Добавить должность"}
+          <DialogTitle className="text-xl font-bold text-slate-900">
+            {editing ? "Lavozimni tahrirlash" : "Yangi lavozim qo'shish"}
           </DialogTitle>
-          <DialogDescription>
-            Введите данные о должности
+          <DialogDescription className="text-xs">
+            Lavozim ma'lumotlarini kiriting
           </DialogDescription>
         </DialogHeader>
 
@@ -263,58 +265,61 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
           id="position-form"
         >
           <div className="space-y-2">
-            <Label htmlFor="title">Название *</Label>
+            <Label htmlFor="title" className="text-xs font-bold text-slate-700">Lavozim nomi *</Label>
             <Input
               id="title"
-              placeholder="Например: Frontend Developer"
+              placeholder="Masalan: Matematika o'qituvchisi"
               {...register("title")}
+              className="rounded-xl border-slate-200"
             />
             {errors.title && (
-              <p className="text-sm text-destructive">{errors.title.message}</p>
+              <p className="text-xs text-destructive font-semibold">{errors.title.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Описание</Label>
+            <Label htmlFor="description" className="text-xs font-bold text-slate-700">Tavsif (Izoh)</Label>
             <Textarea
               id="description"
               rows={4}
-              placeholder="Краткое описание должности"
+              placeholder="Lavozim haqida qisqacha ma'lumot"
               {...register("description")}
+              className="rounded-xl border-slate-200 resize-none"
             />
             {errors.description && (
-              <p className="text-sm text-destructive">
+              <p className="text-xs text-destructive font-semibold">
                 {errors.description.message}
               </p>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pt-2">
             <input
               id="active"
               type="checkbox"
               checked={active}
               onChange={(e) => setValue("active", e.target.checked)}
-              className="h-4 w-4 rounded border-input"
+              className="h-4 w-4 rounded border-slate-300 text-indigo-900 focus:ring-indigo-900/10 cursor-pointer"
             />
-            <Label htmlFor="active" className="cursor-pointer">
-              Активна (отображается при подаче заявки)
+            <Label htmlFor="active" className="cursor-pointer text-xs font-bold text-slate-700 select-none">
+              Faol (ariza topshirish oynasida ko'rinadi)
             </Label>
           </div>
         </form>
 
-        <DialogFooter>
+        <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-slate-100">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={submitting}
+            className="rounded-xl font-bold border-slate-200"
           >
-            Отмена
+            Bekor qilish
           </Button>
-          <Button type="submit" form="position-form" disabled={submitting}>
+          <Button type="submit" form="position-form" disabled={submitting} className="rounded-xl font-bold bg-indigo-900 hover:bg-indigo-950">
             {submitting && <Spinner className="mr-2" />}
-            {editing ? "Обновить" : "Добавить"}
+            {editing ? "Yangilash" : "Qo'shish"}
           </Button>
         </DialogFooter>
       </DialogContent>

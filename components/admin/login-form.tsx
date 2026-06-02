@@ -44,8 +44,8 @@ export function LoginForm() {
       });
       if (error) {
         toast({
-          title: "Не удалось войти",
-          description: "Неверный email или пароль",
+          title: "Tizimga kirib bo'lmadi",
+          description: "E-pochta yoki parol noto'g'ri",
           variant: "destructive",
         });
         return;
@@ -60,8 +60,8 @@ export function LoginForm() {
       router.refresh();
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+        title: "Xatolik",
+        description: err instanceof Error ? err.message : "Noma'lum xatolik",
         variant: "destructive",
       });
     } finally {
@@ -74,7 +74,7 @@ export function LoginForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">HR Admin</CardTitle>
-          <CardDescription>Вход в панель управления</CardDescription>
+          <CardDescription>Boshqaruv paneliga kirish</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -92,7 +92,7 @@ export function LoginForm() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Пароль</Label>
+              <Label htmlFor="password">Maxfiy kalit (Parol)</Label>
               <Input
                 id="password"
                 type="password"
@@ -108,7 +108,7 @@ export function LoginForm() {
             </div>
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting && <Spinner className="mr-2" />}
-              Войти
+              Tizimga kirish
             </Button>
           </form>
         </CardContent>
