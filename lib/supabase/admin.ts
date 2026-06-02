@@ -15,6 +15,14 @@ export function createAdminClient(): SupabaseClient<Database> {
         persistSession: false,
         autoRefreshToken: false,
       },
+      global: {
+        fetch: (url, options) => {
+          return fetch(url, {
+            ...options,
+            cache: "no-store",
+          });
+        },
+      },
     }
   );
 }

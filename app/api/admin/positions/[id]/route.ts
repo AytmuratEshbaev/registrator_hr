@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { positionUpdateSchema } from "@/lib/validations/position";
 import type { PositionUpdate } from "@/lib/supabase/types";
@@ -57,6 +58,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Не найдено" }, { status: 404 });
   }
 
+  revalidatePath("/");
   return NextResponse.json({ position: data });
 }
 
@@ -81,5 +83,6 @@ export async function DELETE(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  revalidatePath("/");
   return NextResponse.json({ ok: true });
 }

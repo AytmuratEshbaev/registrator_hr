@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { positionSchema } from "@/lib/validations/position";
 
@@ -61,5 +62,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  revalidatePath("/");
   return NextResponse.json({ position: data }, { status: 201 });
 }
