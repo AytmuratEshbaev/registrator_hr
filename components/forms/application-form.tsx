@@ -895,7 +895,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               Rezyume (CV)
             </legend>
             <p className="text-sm text-slate-500 -mt-3">
-              Iltimos, rezyumeyingizni (CV) PDF shaklida yuklang. Fayl hajmi 2 MB dan oshmasligi kerak.
+              Iltimos, rezyumeyingizni (CV) PDF shaklida yuklang. Fayl hajmi 5 MB dan oshmasligi kerak.
             </p>
 
             <div className="max-w-md">

@@ -7,7 +7,7 @@ export const APPLICATION_STATUSES = [
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
 export const FILE_LIMITS = {
-  cv: { maxBytes: 2 * 1024 * 1024, mimes: ["application/pdf"], label: "Резюме (PDF)" },
+  cv: { maxBytes: 5 * 1024 * 1024, mimes: ["application/pdf"], label: "Резюме (PDF)" },
   passport_scan: {
     maxBytes: 2 * 1024 * 1024,
     mimes: ["application/pdf", "image/jpeg", "image/jpg", "image/png"],
