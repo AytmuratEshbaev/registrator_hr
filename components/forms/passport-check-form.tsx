@@ -40,7 +40,7 @@ export function PassportCheckForm({ type }: PassportCheckFormProps) {
     if (!PASSPORT_REGEX.test(normalized)) {
       setError(
         isStudent
-          ? "Hujjat raqami formati noto'g'ri. (Masalan: AA1234567 yoki I-TAS 1234567)"
+          ? "Hujjat raqami formati noto'g'ri. (Masalan: AA1234567 yoki I-AN 1234567)"
           : "Pasport raqami formati noto'g'ri. (Masalan: AA1234567)"
       );
       return;

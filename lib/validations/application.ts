@@ -7,7 +7,7 @@ const baseSchema = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .regex(PASSPORT_REGEX, "Hujjat raqami formati noto'g'ri. (Masalan: AA1234567 yoki I-TAS 1234567)"),
+    .regex(PASSPORT_REGEX, "Hujjat raqami formati noto'g'ri. (Masalan: AA1234567 yoki I-AN 1234567)"),
   passport_series: z.string().min(1, "Seriyani tanlang"),
   passport_number_digits: z.string().regex(/^\d{7}$/, "Hujjat raqami 7 ta raqamdan iborat bo'lishi kerak"),
   first_name: z
