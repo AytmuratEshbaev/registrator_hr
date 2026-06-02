@@ -193,9 +193,14 @@ export default async function AdminDashboardPage() {
               <CardTitle className="text-lg font-bold text-slate-800">Oxirgi topshirilgan arizalar</CardTitle>
               <CardDescription className="text-xs">Oxirgi topshirilgan 5 ta ariza ro'yxati</CardDescription>
             </div>
-            <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
-              <Link href="/admin/applications">Barchasi</Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
+                <Link href="/admin/students">O'quvchilar</Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
+                <Link href="/admin/candidates">Nomzodlar</Link>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="pt-4">
             {latest.length === 0 ? (
@@ -220,7 +225,7 @@ export default async function AdminDashboardPage() {
                       <TableRow key={app.id} className="hover:bg-slate-50/30">
                         <TableCell className="font-bold text-slate-900">
                           <Link
-                            href={`/admin/applications/${app.id}`}
+                            href={isAppStudent ? `/admin/students/${app.id}` : `/admin/candidates/${app.id}`}
                             className="hover:underline"
                           >
                             {formatName(app)}

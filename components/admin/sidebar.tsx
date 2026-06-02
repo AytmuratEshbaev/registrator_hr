@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, FileText, Briefcase, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Briefcase, LogOut, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -12,7 +12,8 @@ import { Logo } from "@/components/public/logo";
 
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Boshqaruv paneli", icon: LayoutDashboard },
-  { href: "/admin/applications", label: "Arizalar", icon: FileText },
+  { href: "/admin/students", label: "O'quvchilar arizalari", icon: GraduationCap },
+  { href: "/admin/candidates", label: "Nomzodlar arizalari", icon: FileText },
   { href: "/admin/positions", label: "Vakansiyalar", icon: Briefcase },
 ];
 

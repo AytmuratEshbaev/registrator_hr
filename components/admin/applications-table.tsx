@@ -50,6 +50,7 @@ interface Props {
     type: string;
     q: string;
   };
+  mode: "student" | "vacancy";
 }
 
 export function ApplicationsTable({
@@ -59,6 +60,7 @@ export function ApplicationsTable({
   page,
   pageSize,
   filters,
+  mode,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -95,10 +97,6 @@ export function ApplicationsTable({
     updateParams({ position: value === ALL_VALUE ? null : value });
   }
 
-  function handleTypeChange(value: string) {
-    updateParams({ type: value === ALL_VALUE ? null : value });
-  }
-
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
     updateParams({ q: searchInput.trim() || null });
@@ -113,7 +111,7 @@ export function ApplicationsTable({
     params.set("format", "xlsx");
     if (filters.status) params.set("status", filters.status);
     if (filters.position) params.set("position", filters.position);
-    if (filters.type) params.set("type", filters.type);
+    params.set("type", mode);
     if (filters.q) params.set("q", filters.q);
     return `/api/admin/export?${params.toString()}`;
   })();
@@ -155,21 +153,6 @@ export function ApplicationsTable({
           <span className="text-sm font-bold text-slate-800">Filtrlar:</span>
         </div>
 
-        {/* Ariza Turi filtri */}
-        <Select
-          value={filters.type || ALL_VALUE}
-          onValueChange={handleTypeChange}
-        >
-          <SelectTrigger className="w-full md:w-[180px] rounded-xl border-slate-200">
-            <SelectValue placeholder="Ariza turi" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL_VALUE}>Barcha turlar</SelectItem>
-            <SelectItem value="student">O'quvchilar qabuli</SelectItem>
-            <SelectItem value="vacancy">Vakansiya qabuli</SelectItem>
-          </SelectContent>
-        </Select>
-
         {/* Status filtri */}
         <Select
           value={filters.status || ALL_VALUE}
@@ -189,7 +172,7 @@ export function ApplicationsTable({
         </Select>
 
         {/* Vakansiya filtri - Faqat vakansiyalar uchun */}
-        {filters.type !== "student" && (
+        {mode === "vacancy" && (
           <Select
             value={filters.position || ALL_VALUE}
             onValueChange={handlePositionChange}
@@ -217,8 +200,7 @@ export function ApplicationsTable({
           <TableHeader className="bg-slate-50/70 border-b">
             <TableRow>
               <TableHead className="font-bold text-slate-800">F.I.SH.</TableHead>
-              <TableHead className="font-bold text-slate-800">Ariza turi</TableHead>
-              <TableHead className="font-bold text-slate-800">Sinf / Lavozim</TableHead>
+              <TableHead className="font-bold text-slate-800">{mode === "student" ? "Sinf" : "Lavozim"}</TableHead>
               <TableHead className="font-bold text-slate-800">Hujjat raqami</TableHead>
               <TableHead className="font-bold text-slate-800">Telefon raqami</TableHead>
               <TableHead className="font-bold text-slate-800">Sana</TableHead>
@@ -229,7 +211,7 @@ export function ApplicationsTable({
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-12 text-slate-400 font-medium">
+                <TableCell colSpan={7} className="text-center py-12 text-slate-400 font-medium">
                   Arizalar topilmadi
                 </TableCell>
               </TableRow>
@@ -240,17 +222,6 @@ export function ApplicationsTable({
                   <TableRow key={app.id} className="hover:bg-slate-50/50">
                     {/* F.I.SH */}
                     <TableCell className="font-bold text-slate-900">{formatName(app)}</TableCell>
-                    
-                    {/* Ariza turi */}
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold ${
-                        isAppStudent 
-                          ? "bg-orange-50 text-orange-700 border border-orange-100" 
-                          : "bg-indigo-50 text-indigo-700 border border-indigo-100"
-                      }`}>
-                        {isAppStudent ? "O'quvchi" : "Vakansiya"}
-                      </span>
-                    </TableCell>
 
                     {/* Sinf / Lavozim */}
                     <TableCell className="font-medium text-slate-700">
@@ -284,7 +255,7 @@ export function ApplicationsTable({
                     {/* Ko'rish */}
                     <TableCell className="text-right">
                       <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
-                        <Link href={`/admin/applications/${app.id}`}>Ko'rish</Link>
+                        <Link href={mode === "student" ? `/admin/students/${app.id}` : `/admin/candidates/${app.id}`}>Ko'rish</Link>
                       </Button>
                     </TableCell>
                   </TableRow>

@@ -77,8 +77,8 @@ export function ApplicationDetail({ application }: Props) {
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1 font-medium">
-            <Link href="/admin/applications" className="hover:underline">
-              Arizalar
+            <Link href={isStudent ? "/admin/students" : "/admin/candidates"} className="hover:underline">
+              {isStudent ? "O'quvchilar arizalari" : "Nomzodlar arizalari"}
             </Link>
             <span>/</span>
             <span>Tafsilotlar</span>
@@ -99,7 +99,7 @@ export function ApplicationDetail({ application }: Props) {
           </div>
         </div>
         <Button asChild variant="outline" className="rounded-xl border-slate-200 font-semibold">
-          <Link href="/admin/applications">← Ro'yxatga qaytish</Link>
+          <Link href={isStudent ? "/admin/students" : "/admin/candidates"}>← Ro'yxatga qaytish</Link>
         </Button>
       </div>
 
