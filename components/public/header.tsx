@@ -4,31 +4,33 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/public/logo";
+import { useLanguage } from "@/components/language/language-provider";
 
 export function Header() {
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const type = searchParams.get("type") === "vacancy" ? "vacancy" : "student";
   const isStudent = type === "student";
 
   return (
     <header className="border-b bg-white/95 backdrop-blur sticky top-0 z-30 shadow-sm">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
         
         {/* Chap tarafda: Sarlavha (Katta ekranlar uchun) */}
         <div className="w-1/3 hidden md:block text-left">
           <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight flex items-center gap-2.5">
             <span className={`w-2 h-6 rounded ${isStudent ? 'bg-orange-500' : 'bg-indigo-900'}`} />
-            {isStudent ? "O'quvchilar qabuli" : "Vakansiyalar"}
+            {isStudent ? t("O'quvchilar qabuli") : t("Vakansiyalar")}
           </h2>
         </div>
         
         {/* Markazda: Maktab nomi (Logotip) */}
-        <div className="flex-shrink-0 w-full md:w-1/3 flex justify-center md:justify-center justify-start">
+        <div className="flex-shrink-0 w-auto md:w-1/3 flex justify-start md:justify-center">
           <Logo size="lg" />
         </div>
         
         {/* O'ng tarafda: Vakansiyalar / O'quvchi qabuli o'tish tugmasi */}
-        <div className="w-full md:w-1/3 flex justify-end items-center">
+        <div className="w-auto md:w-1/3 flex justify-end items-center">
           <Link
             href={isStudent ? "/?type=vacancy" : "/?type=student"}
             className={`text-xs md:text-sm font-bold px-4 py-2.5 md:px-5 md:py-3 rounded-xl transition-all shadow-md text-white ${
@@ -39,11 +41,11 @@ export function Header() {
           >
             {isStudent ? (
               <span className="flex items-center gap-1.5">
-                Vakansiyalar <ArrowRight className="w-4 h-4" />
+                {t("Vakansiyalar")} <ArrowRight className="w-4 h-4" />
               </span>
             ) : (
               <span className="flex items-center gap-1.5">
-                O'quvchi qabuli <ArrowRight className="w-4 h-4" />
+                {t("O'quvchi qabuli")} <ArrowRight className="w-4 h-4" />
               </span>
             )}
           </Link>

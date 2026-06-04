@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
 import { Logo } from "@/components/public/logo";
+import { useLanguage } from "@/components/language/language-provider";
 
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Boshqaruv paneli", icon: LayoutDashboard },
@@ -21,6 +22,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [loggingOut, setLoggingOut] = useState(false);
 
   async function handleLogout() {
@@ -44,7 +46,7 @@ export function AdminSidebar() {
     <aside className="flex h-screen w-64 flex-col border-r bg-card sticky top-0">
       <div className="border-b px-6 py-5">
         <Logo size="sm" href={null} />
-        <p className="text-xs text-muted-foreground mt-2">Boshqaruv paneli</p>
+        <p className="text-xs text-muted-foreground mt-2">{t("Boshqaruv paneli")}</p>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -64,7 +66,7 @@ export function AdminSidebar() {
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
-              <span>{item.label}</span>
+              <span>{t(item.label)}</span>
             </Link>
           );
         })}
@@ -82,7 +84,7 @@ export function AdminSidebar() {
           ) : (
             <LogOut className="mr-3 h-4 w-4" />
           )}
-          Chiqish
+          {t("Chiqish")}
         </Button>
       </div>
     </aside>

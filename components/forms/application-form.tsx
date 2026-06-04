@@ -24,6 +24,7 @@ import {
 } from "@/lib/validations/application";
 import type { PositionRow, ApplicationStatus } from "@/lib/supabase/types";
 import { PASSPORT_REGEX } from "@/lib/constants";
+import { useLanguage } from "@/components/language/language-provider";
 
 interface ApplicationFormProps {
   type: "student" | "vacancy";
@@ -93,6 +94,7 @@ const GRADES = [
 export function ApplicationForm({ type, positions }: ApplicationFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -432,13 +434,13 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           <fieldset className="space-y-5">
             <legend className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5 mb-2 select-none">
               <span className="w-2 h-5 rounded-full bg-orange-500 block" />
-              O'quvchi Ma'lumotlari
+              {t("O'quvchi Ma'lumotlari")}
             </legend>
 
             <div className="space-y-5">
               {/* Row 1: Metrika seriyasi va raqami */}
               <div className="space-y-1.5">
-                <Label className={labelBaseClass}>Tug'ilganlik guvohnomasi (metrika) seriyasi va raqami <span className="text-orange-500">*</span></Label>
+                <Label className={labelBaseClass}>{t("Tug'ilganlik guvohnomasi (metrika) seriyasi va raqami")} <span className="text-orange-500">*</span></Label>
                 <div className="flex gap-3 max-w-[340px]">
                   {/* Seriya Select */}
                   <div className="w-[130px] shrink-0">
@@ -452,7 +454,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                           disabled={submitting}
                         >
                           <SelectTrigger id="passport_series" className={selectTriggerClass}>
-                            <SelectValue placeholder="Seriya" />
+                            <SelectValue placeholder={t("Seriya")} />
                           </SelectTrigger>
                           <SelectContent>
                             {STUDENT_SERIES.map((opt) => (
@@ -489,7 +491,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-semibold tracking-wide mt-1 pl-1">
-                  Tug'ilganlik guvohnomasi seriyasini tanlang va faqat 7 ta raqamini kiriting. (Masalan: I-TAS 1234567)
+                  {t("Tug'ilganlik guvohnomasi seriyasini tanlang va faqat 7 ta raqamini kiriting. (Masalan: I-TAS 1234567)")}
                 </p>
 
                 {errors.passport_number_digits ? (
@@ -530,10 +532,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               <div className="grid gap-5 md:grid-cols-2">
                 {/* Familiyasi */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="last_name" className={labelBaseClass}>Familiyasi <span className="text-orange-500">*</span></Label>
+                  <Label htmlFor="last_name" className={labelBaseClass}>{t("Familiyasi")} <span className="text-orange-500">*</span></Label>
                   <Input
                     id="last_name"
-                    placeholder="Masalan: Karimov"
+                    placeholder={t("Masalan: Karimov")}
                     {...register("last_name")}
                     disabled={submitting || !!existingApp}
                     className={inputBaseClass}
@@ -545,10 +547,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
                 {/* Ismi */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="first_name" className={labelBaseClass}>Ismi <span className="text-orange-500">*</span></Label>
+                  <Label htmlFor="first_name" className={labelBaseClass}>{t("Ismi")} <span className="text-orange-500">*</span></Label>
                   <Input
                     id="first_name"
-                    placeholder="Masalan: Sardor"
+                    placeholder={t("Masalan: Sardor")}
                     {...register("first_name")}
                     disabled={submitting || !!existingApp}
                     className={inputBaseClass}
@@ -563,10 +565,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               <div className="grid gap-5 md:grid-cols-2">
                 {/* Sharifi */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="middle_name" className={labelBaseClass}>Sharifi (Otasining ismi) <span className="text-orange-500">*</span></Label>
+                  <Label htmlFor="middle_name" className={labelBaseClass}>{t("Sharifi (Otasining ismi)")} <span className="text-orange-500">*</span></Label>
                   <Input
                     id="middle_name"
-                    placeholder="Masalan: Alisherovich"
+                    placeholder={t("Masalan: Alisherovich")}
                     {...register("middle_name" as const)}
                     disabled={submitting || !!existingApp}
                     className={inputBaseClass}
@@ -578,7 +580,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
                 {/* Sinfni tanlash */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="grade" className={labelBaseClass}>Qabul qilinadigan sinf <span className="text-orange-500">*</span></Label>
+                  <Label htmlFor="grade" className={labelBaseClass}>{t("Qabul qilinadigan sinf")} <span className="text-orange-500">*</span></Label>
                   <Controller
                     control={control}
                     name="grade"
@@ -589,7 +591,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                         disabled={submitting || !!existingApp}
                       >
                         <SelectTrigger id="grade" className={selectTriggerClass}>
-                          <SelectValue placeholder="Sinfni tanlang" />
+                          <SelectValue placeholder={t("Sinfni tanlang")} />
                         </SelectTrigger>
                         <SelectContent>
                           {GRADES.map((g) => (
@@ -613,13 +615,13 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           <fieldset className="space-y-5">
             <legend className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5 mb-2 select-none">
               <span className="w-2 h-5 rounded-full bg-orange-500 block" />
-              Ota-ona Ma'lumotlari
+              {t("Ota-ona Ma'lumotlari")}
             </legend>
 
             <div className="grid gap-5 md:grid-cols-2">
               {/* Telefon (Asosiy) */}
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className={labelBaseClass}>Telefon raqam (Asosiy) <span className="text-orange-500">*</span></Label>
+                <Label htmlFor="phone" className={labelBaseClass}>{t("Telefon raqam (Asosiy)")} <span className="text-orange-500">*</span></Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -643,7 +645,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
               {/* Telefon (Qo'shimcha) */}
               <div className="space-y-1.5">
-                <Label htmlFor="phone_secondary" className={labelBaseClass}>Telefon raqam (Qo'shimcha)</Label>
+                <Label htmlFor="phone_secondary" className={labelBaseClass}>{t("Telefon raqam (Qo'shimcha)")}</Label>
                 <Input
                   id="phone_secondary"
                   type="tel"
@@ -676,17 +678,17 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           <fieldset className="space-y-5">
             <legend className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5 mb-2 select-none">
               <span className="w-2 h-5 rounded-full bg-indigo-900 block" />
-              Nomzod Ma'lumotlari
+              {t("Nomzod Ma'lumotlari")}
             </legend>
 
             <div className="space-y-5">
               {/* Pasport seriyasi va raqami */}
               <div className="space-y-1.5">
-                <Label className={labelBaseClass}>Pasport seriyasi va raqami <span className="text-indigo-900">*</span></Label>
+                <Label className={labelBaseClass}>{t("Pasport seriyasi va raqami")} <span className="text-indigo-900">*</span></Label>
                 <div className="max-w-[340px] relative">
                   <Input
                     id="passport_number"
-                    placeholder="Masalan: AA1234567"
+                    placeholder={t("Masalan: AA1234567")}
                     maxLength={9}
                     {...register("passport_number", {
                       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -709,7 +711,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 </div>
 
                 <p className="text-[11px] text-slate-400 font-semibold tracking-wide mt-1 pl-1">
-                  Pasport seriyasi va 7 ta raqamini kiriting. (Masalan: AA1234567)
+                  {t("Pasport seriyasi va 7 ta raqamini kiriting. (Masalan: AA1234567)")}
                 </p>
 
                 {errors.passport_number ? (
@@ -747,10 +749,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               <div className="grid gap-5 md:grid-cols-2">
                 {/* Familiyasi */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="last_name" className={labelBaseClass}>Familiyasi <span className="text-indigo-900">*</span></Label>
+                  <Label htmlFor="last_name" className={labelBaseClass}>{t("Familiyasi")} <span className="text-indigo-900">*</span></Label>
                   <Input
                     id="last_name"
-                    placeholder="Masalan: Karimov"
+                    placeholder={t("Masalan: Karimov")}
                     {...register("last_name")}
                     disabled={submitting || !!existingApp}
                     className={inputBaseClass}
@@ -762,10 +764,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
                 {/* Ismi */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="first_name" className={labelBaseClass}>Ismi <span className="text-indigo-900">*</span></Label>
+                  <Label htmlFor="first_name" className={labelBaseClass}>{t("Ismi")} <span className="text-indigo-900">*</span></Label>
                   <Input
                     id="first_name"
-                    placeholder="Masalan: Sardor"
+                    placeholder={t("Masalan: Sardor")}
                     {...register("first_name")}
                     disabled={submitting || !!existingApp}
                     className={inputBaseClass}
@@ -778,10 +780,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
               {/* Sharifi */}
               <div className="space-y-1.5 max-w-md">
-                <Label htmlFor="middle_name" className={labelBaseClass}>Sharifi (Otasining ismi)</Label>
+                <Label htmlFor="middle_name" className={labelBaseClass}>{t("Sharifi (Otasining ismi)")}</Label>
                 <Input
                   id="middle_name"
-                  placeholder="Masalan: Alisherovich"
+                  placeholder={t("Masalan: Alisherovich")}
                   {...register("middle_name" as const)}
                   disabled={submitting || !!existingApp}
                   className={inputBaseClass}
@@ -797,13 +799,13 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           <fieldset className="space-y-5">
             <legend className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5 mb-2 select-none">
               <span className="w-2 h-5 rounded-full bg-indigo-900 block" />
-              Aloqa Ma'lumotlari
+              {t("Aloqa Ma'lumotlari")}
             </legend>
 
             <div className="grid gap-5 md:grid-cols-2">
               {/* Telefon (Asosiy) */}
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className={labelBaseClass}>Telefon raqam (Asosiy) <span className="text-indigo-900">*</span></Label>
+                <Label htmlFor="phone" className={labelBaseClass}>{t("Telefon raqam (Asosiy)")} <span className="text-indigo-900">*</span></Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -827,7 +829,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
               {/* Telefon (Qo'shimcha) */}
               <div className="space-y-1.5">
-                <Label htmlFor="phone_secondary" className={labelBaseClass}>Telefon raqam (Qo'shimcha)</Label>
+                <Label htmlFor="phone_secondary" className={labelBaseClass}>{t("Telefon raqam (Qo'shimcha)")}</Label>
                 <Input
                   id="phone_secondary"
                   type="tel"
@@ -855,11 +857,11 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           <fieldset className="space-y-5">
             <legend className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5 mb-2 select-none">
               <span className="w-2 h-5 rounded-full bg-indigo-900 block" />
-              Tanlanayotgan Lavozim
+              {t("Tanlanayotgan Lavozim")}
             </legend>
 
             <div className="space-y-1.5">
-              <Label htmlFor="position" className={labelBaseClass}>Ochiq vakansiya <span className="text-indigo-900">*</span></Label>
+              <Label htmlFor="position" className={labelBaseClass}>{t("Ochiq vakansiya")} <span className="text-indigo-900">*</span></Label>
               <Controller
                 control={control}
                 name="position_id"
@@ -870,7 +872,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                     disabled={submitting || !!existingApp}
                   >
                     <SelectTrigger id="position" className={selectTriggerClass}>
-                      <SelectValue placeholder="Lavozimni tanlang" />
+                      <SelectValue placeholder={t("Lavozimni tanlang")} />
                     </SelectTrigger>
                     <SelectContent>
                       {positions.map((p) => (
@@ -892,17 +894,17 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           <fieldset className="space-y-5">
             <legend className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5 mb-2 select-none">
               <span className="w-2 h-5 rounded-full bg-indigo-900 block" />
-              Rezyume (CV)
+              {t("Rezyume (CV)")}
             </legend>
             <p className="text-sm text-slate-500 -mt-3">
-              Iltimos, rezyumeyingizni (CV) PDF shaklida yuklang. Fayl hajmi 5 MB dan oshmasligi kerak.
+              {t("Iltimos, rezyumeyingizni (CV) PDF shaklida yuklang. Fayl hajmi 5 MB dan oshmasligi kerak.")}
             </p>
 
             <div className="max-w-md">
               <FileUploadField
                 kind="cv"
                 passport_number={passportVal}
-                label="Rezyumeni yuklash (PDF)"
+                label={t("Rezyumeni yuklash (PDF)")}
                 onUploaded={(key) => setValue("cv_url", key ?? "", { shouldValidate: true })}
                 disabled={submitting || !!existingApp}
               />
@@ -929,10 +931,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
         >
           {submitting ? (
             <>
-              <Spinner className="mr-2 h-4 w-4" /> Yuborilmoqda...
+              <Spinner className="mr-2 h-4 w-4" /> {t("Yuborilmoqda...")}
             </>
           ) : (
-            "Arizani Yuborish"
+            t("Arizani Yuborish")
           )}
         </Button>
       </div>
@@ -952,10 +954,10 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
           <div className="space-y-2">
             <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-              Arizangiz qabul qilindi!
+              {t("Arizangiz qabul qilindi!")}
             </h3>
             <p className="text-sm font-medium text-slate-500 leading-relaxed">
-              Murojaatingiz uchun tashakkur. Maktab ma'muriyati arizangizni tez orada ko'rib chiqadi va siz bilan bog'lanadi.
+              {t("Murojaatingiz uchun tashakkur. Maktab ma'muriyati arizangizni tez orada ko'rib chiqadi va siz bilan bog'lanadi.")}
             </p>
           </div>
 
@@ -972,7 +974,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                   : 'bg-indigo-900 hover:bg-indigo-950 shadow-indigo-950/20'
               }`}
             >
-              Bosh sahifaga qaytish
+              {t("Bosh sahifaga qaytish")}
             </Button>
           </div>
         </div>

@@ -1,13 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
-
-export const metadata = {
-  title: "Ariza muvaffaqiyatli yuborildi — Zeyin School",
-};
+import { useLanguage } from "@/components/language/language-provider";
 
 export default function ApplySuccessPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-slate-50 min-h-[calc(100vh-8rem)] flex items-center py-12 px-4">
       <div className="max-w-md w-full mx-auto">
@@ -16,14 +17,14 @@ export default function ApplySuccessPage() {
             <CheckCircle2 className="w-10 h-10" />
           </div>
           <CardHeader className="space-y-2 p-0">
-            <CardTitle className="text-2xl font-bold text-slate-900">Arizangiz qabul qilindi!</CardTitle>
+            <CardTitle className="text-2xl font-bold text-slate-900">{t("Arizangiz qabul qilindi!")}</CardTitle>
             <CardDescription className="text-slate-500 text-sm leading-relaxed">
-              Murojaatingiz uchun tashakkur. Maktab ma'muriyati arizangizni tez orada ko'rib chiqadi va siz bilan bog'lanadi.
+              {t("Murojaatingiz uchun tashakkur. Maktab ma'muriyati arizangizni tez orada ko'rib chiqadi va siz bilan bog'lanadi.")}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6 pb-0">
             <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl">
-              <Link href="/">Bosh sahifaga qaytish</Link>
+              <Link href="/">{t("Bosh sahifaga qaytish")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -31,3 +32,4 @@ export default function ApplySuccessPage() {
     </div>
   );
 }
+

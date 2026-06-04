@@ -18,11 +18,13 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/components/language/language-provider";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
 
   const {
@@ -74,7 +76,7 @@ export function LoginForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">HR Admin</CardTitle>
-          <CardDescription>Boshqaruv paneliga kirish</CardDescription>
+          <CardDescription>{t("Boshqaruv paneliga kirish")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -92,7 +94,7 @@ export function LoginForm() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Maxfiy kalit (Parol)</Label>
+              <Label htmlFor="password">{t("Maxfiy kalit (Parol)")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -108,7 +110,7 @@ export function LoginForm() {
             </div>
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting && <Spinner className="mr-2" />}
-              Tizimga kirish
+              {t("Tizimga kirish")}
             </Button>
           </form>
         </CardContent>
