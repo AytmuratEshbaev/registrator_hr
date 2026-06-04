@@ -14,43 +14,43 @@ interface GalleryImage {
 
 const GALLERY_IMAGES: GalleryImage[] = [
   {
-    src: "/assets/images/school_classroom.png",
-    captionKey: "Shinam sinfxonalar",
+    src: "/assets/images/school.JPG",
+    captionKey: "Maktab binosi",
     gridClass: "md:col-span-2 md:row-span-2",
   },
   {
-    src: "/assets/images/school_library.png",
-    captionKey: "Zamonaviy kutubxona",
+    src: "/assets/images/school_classroom.JPG",
+    captionKey: "Shinam sinfxonalar",
     gridClass: "md:col-span-1 md:row-span-1",
   },
   {
-    src: "/assets/images/school_it_lab.png",
-    captionKey: "IT va robototexnika xonasi",
+    src: "/assets/images/school_computerroom1.JPG",
+    captionKey: "Zamonaviy IT xonasi",
     gridClass: "md:col-span-1 md:row-span-1",
   },
   {
-    src: "/assets/images/school_science_lab.png",
-    captionKey: "Ilmiy laboratoriya",
+    src: "/assets/images/school_computerroom2.JPG",
+    captionKey: "Kompyuter sinfi",
     gridClass: "md:col-span-1 md:row-span-1",
   },
   {
-    src: "/assets/images/school_sports_gym.png",
-    captionKey: "Keng sport zali",
+    src: "/assets/images/school_roboticsroom.JPG",
+    captionKey: "Robototexnika xonasi",
     gridClass: "md:col-span-1 md:row-span-2",
   },
   {
-    src: "/assets/images/school_art_room.png",
-    captionKey: "Tasviriy san'at va ijod xonasi",
+    src: "/assets/images/school_sporthall.JPG",
+    captionKey: "Yopiq sport zali",
     gridClass: "md:col-span-1 md:row-span-1",
   },
   {
-    src: "/assets/images/school_courtyard.png",
-    captionKey: "Shinam maktab hovlisi",
+    src: "/assets/images/school_sportgazon.jpg",
+    captionKey: "Yashil futbol maydoni",
     gridClass: "md:col-span-1 md:row-span-1",
   },
   {
-    src: "/assets/images/school_cafeteria.png",
-    captionKey: "Shinam oshxona",
+    src: "/assets/images/school_kitchen.JPG",
+    captionKey: "Maktab oshxonasi",
     gridClass: "md:col-span-1 md:row-span-1",
   },
 ];
