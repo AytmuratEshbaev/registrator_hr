@@ -1,8 +1,12 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { statusColor, statusLabel } from "@/lib/utils";
 import type { ApplicationStatus } from "@/lib/supabase/types";
+import { useLanguage } from "@/components/language/language-provider";
 
 export function StatusBadge({ status, className }: { status: ApplicationStatus; className?: string }) {
+  const { t } = useLanguage();
   return (
     <span
       className={cn(
@@ -11,7 +15,7 @@ export function StatusBadge({ status, className }: { status: ApplicationStatus; 
         className
       )}
     >
-      {statusLabel(status)}
+      {t(statusLabel(status))}
     </span>
   );
 }

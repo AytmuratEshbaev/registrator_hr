@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import { statusLabel } from "@/lib/utils";
+import { useLanguage } from "@/components/language/language-provider";
 import type { ApplicationStatus } from "@/lib/supabase/types";
 
 interface Props {
@@ -27,6 +28,7 @@ const VARIANT_MAP: Record<
 export function StatusChanger({ applicationId, currentStatus }: Props) {
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [pendingStatus, setPendingStatus] = useState<ApplicationStatus | null>(
     null
   );
@@ -45,14 +47,14 @@ export function StatusChanger({ applicationId, currentStatus }: Props) {
         throw new Error(body.error ?? "Ошибка при обновлении статуса");
       }
       toast({
-        title: "Статус обновлён",
-        description: `Статус: ${statusLabel(status)}`,
+        title: t("Статус обновлён"),
+        description: `${t("Status")}: ${t(statusLabel(status))}`,
       });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+        title: t("Ошибка"),
+        description: err instanceof Error ? t(err.message) : t("Неизвестная ошибка"),
         variant: "destructive",
       });
     } finally {
@@ -74,7 +76,7 @@ export function StatusChanger({ applicationId, currentStatus }: Props) {
             onClick={() => changeStatus(s)}
           >
             {isLoading && <Spinner className="mr-2" />}
-            {statusLabel(s)}
+            {t(statusLabel(s))}
           </Button>
         );
       })}

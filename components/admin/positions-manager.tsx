@@ -33,6 +33,7 @@ import {
   type PositionInput,
 } from "@/lib/validations/position";
 import type { PositionRow } from "@/lib/supabase/types";
+import { useLanguage } from "@/components/language/language-provider";
 
 interface Props {
   initialPositions: PositionRow[];
@@ -41,6 +42,7 @@ interface Props {
 export function PositionsManager({ initialPositions }: Props) {
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<PositionRow | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -56,20 +58,20 @@ export function PositionsManager({ initialPositions }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Lavozimni o'chirishni tasdiqlaysizmi?")) return;
+    if (!confirm(t("Lavozimni o'chirishni tasdiqlaysizmi?"))) return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/admin/positions/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "O'chirishda xatolik yuz berdi");
+        throw new Error(body.error ?? t("O'chirishda xatolik yuz berdi"));
       }
-      toast({ title: "O'chirildi", description: "Lavozim muvaffaqiyatli o'chirildi" });
+      toast({ title: t("O'chirildi"), description: t("Lavozim muvaffaqiyatli o'chirildi") });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Xatolik",
-        description: err instanceof Error ? err.message : "Noma'lum xatolik",
+        title: t("Xatolik"),
+        description: err instanceof Error ? err.message : t("Noma'lum xatolik"),
         variant: "destructive",
       });
     } finally {
@@ -82,7 +84,7 @@ export function PositionsManager({ initialPositions }: Props) {
       <div className="flex items-center justify-end">
         <Button onClick={openCreate} className="rounded-xl font-bold bg-indigo-900 hover:bg-indigo-950">
           <Plus className="mr-2 h-4 w-4" />
-          Yangi lavozim qo'shish
+          {t("Yangi lavozim qo'shish")}
         </Button>
       </div>
 
@@ -90,10 +92,10 @@ export function PositionsManager({ initialPositions }: Props) {
         <Table>
           <TableHeader className="bg-slate-50/70 border-b">
             <TableRow>
-              <TableHead className="font-bold text-slate-800">Lavozim nomi</TableHead>
-              <TableHead className="font-bold text-slate-800">Tavsif (Izoh)</TableHead>
-              <TableHead className="w-32 font-bold text-slate-800">Holati</TableHead>
-              <TableHead className="text-right w-44 font-bold text-slate-800">Amallar</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("Lavozim nomi")}</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("Tavsif (Izoh)")}</TableHead>
+              <TableHead className="w-32 font-bold text-slate-800">{t("Holati")}</TableHead>
+              <TableHead className="text-right w-44 font-bold text-slate-800">{t("Amallar")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -103,7 +105,7 @@ export function PositionsManager({ initialPositions }: Props) {
                   colSpan={4}
                   className="text-center py-12 text-slate-400 font-medium"
                 >
-                  Hozircha hech qanday lavozim yo'q. Yangi lavozim qo'shish tugmasi orqali qo'shing.
+                  {t("Hozircha hech qanday lavozim yo'q. Yangi lavozim qo'shish tugmasi orqali qo'shing.")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -115,9 +117,9 @@ export function PositionsManager({ initialPositions }: Props) {
                   </TableCell>
                   <TableCell>
                     {p.active ? (
-                      <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold rounded-lg px-2.5 py-0.5 shadow-none hover:bg-emerald-50">Faol</Badge>
+                      <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold rounded-lg px-2.5 py-0.5 shadow-none hover:bg-emerald-50">{t("Faol")}</Badge>
                     ) : (
-                      <Badge variant="secondary" className="bg-slate-50 text-slate-500 border border-slate-200 font-bold rounded-lg px-2.5 py-0.5 shadow-none">Nofaol</Badge>
+                      <Badge variant="secondary" className="bg-slate-50 text-slate-500 border border-slate-200 font-bold rounded-lg px-2.5 py-0.5 shadow-none">{t("Nofaol")}</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -129,7 +131,7 @@ export function PositionsManager({ initialPositions }: Props) {
                         className="rounded-lg font-semibold border-slate-200"
                       >
                         <Pencil className="h-3.5 w-3.5 mr-1" />
-                        Tahrirlash
+                        {t("Tahrirlash")}
                       </Button>
                       <Button
                         variant="outline"
@@ -176,6 +178,7 @@ interface DialogProps {
 
 function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
 
   const {
@@ -228,18 +231,18 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Saqlashda xatolik yuz berdi");
+        throw new Error(body.error ?? t("Saqlashda xatolik yuz berdi"));
       }
       toast({
-        title: "Saqlandi",
-        description: editing ? "Lavozim muvaffaqiyatli yangilandi" : "Yangi lavozim muvaffaqiyatli qo'shildi",
+        title: t("Saqlandi"),
+        description: editing ? t("Lavozim muvaffaqiyatli yangilandi") : t("Yangi lavozim muvaffaqiyatli qo'shildi"),
       });
       reset();
       onSaved();
     } catch (err) {
       toast({
-        title: "Xatolik",
-        description: err instanceof Error ? err.message : "Noma'lum xatolik",
+        title: t("Xatolik"),
+        description: err instanceof Error ? err.message : t("Noma'lum xatolik"),
         variant: "destructive",
       });
     } finally {
@@ -252,10 +255,10 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
       <DialogContent className="rounded-2xl sm:rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-slate-900">
-            {editing ? "Lavozimni tahrirlash" : "Yangi lavozim qo'shish"}
+            {editing ? t("Lavozimni tahrirlash") : t("Yangi lavozim qo'shish")}
           </DialogTitle>
           <DialogDescription className="text-xs">
-            Lavozim ma'lumotlarini kiriting
+            {t("Lavozim ma'lumotlarini kiriting")}
           </DialogDescription>
         </DialogHeader>
 
@@ -265,10 +268,10 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
           id="position-form"
         >
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-xs font-bold text-slate-700">Lavozim nomi *</Label>
+            <Label htmlFor="title" className="text-xs font-bold text-slate-700">{t("Lavozim nomi *")}</Label>
             <Input
               id="title"
-              placeholder="Masalan: Matematika o'qituvchisi"
+              placeholder={t("Masalan: Matematika o'qituvchisi")}
               {...register("title")}
               className="rounded-xl border-slate-200"
             />
@@ -278,11 +281,11 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-xs font-bold text-slate-700">Tavsif (Izoh)</Label>
+            <Label htmlFor="description" className="text-xs font-bold text-slate-700">{t("Tavsif (Izoh)")}</Label>
             <Textarea
               id="description"
               rows={4}
-              placeholder="Lavozim haqida qisqacha ma'lumot"
+              placeholder={t("Lavozim haqida qisqacha ma'lumot")}
               {...register("description")}
               className="rounded-xl border-slate-200 resize-none"
             />
@@ -302,7 +305,7 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
               className="h-4 w-4 rounded border-slate-300 text-indigo-900 focus:ring-indigo-900/10 cursor-pointer"
             />
             <Label htmlFor="active" className="cursor-pointer text-xs font-bold text-slate-700 select-none">
-              Faol (ariza topshirish oynasida ko'rinadi)
+              {t("Faol (ariza topshirish oynasida ko'rinadi)")}
             </Label>
           </div>
         </form>
@@ -315,11 +318,11 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
             disabled={submitting}
             className="rounded-xl font-bold border-slate-200"
           >
-            Bekor qilish
+            {t("Bekor qilish")}
           </Button>
           <Button type="submit" form="position-form" disabled={submitting} className="rounded-xl font-bold bg-indigo-900 hover:bg-indigo-950">
             {submitting && <Spinner className="mr-2" />}
-            {editing ? "Yangilash" : "Qo'shish"}
+            {editing ? t("Yangilash") : t("Qo'shish")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -5,6 +5,7 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/components/language/language-provider";
 
 interface Props {
   label: string;
@@ -14,6 +15,7 @@ interface Props {
 
 export function DownloadButton({ label, objectKey, filename }: Props) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
 
   const disabled = !objectKey;
@@ -34,8 +36,8 @@ export function DownloadButton({ label, objectKey, filename }: Props) {
       window.open(data.url, "_blank", "noopener,noreferrer");
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+        title: t("Ошибка"),
+        description: err instanceof Error ? t(err.message) : t("Неизвестная ошибка"),
         variant: "destructive",
       });
     } finally {
@@ -57,7 +59,7 @@ export function DownloadButton({ label, objectKey, filename }: Props) {
       )}
       {label}
       {disabled && (
-        <span className="ml-auto text-xs text-muted-foreground">нет</span>
+        <span className="ml-auto text-xs text-muted-foreground">{t("нет")}</span>
       )}
     </Button>
   );

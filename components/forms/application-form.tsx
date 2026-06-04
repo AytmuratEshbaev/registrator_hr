@@ -72,6 +72,7 @@ const STUDENT_SERIES = [
   "III-KK",
   "III-NA",
   "III-NV",
+
   "III-QD",
   "III-QQ",
   "III-SM",
@@ -85,10 +86,17 @@ const STUDENT_SERIES = [
 ];
 
 const GRADES = [
-  "1-sinf",
-  "2-sinf",
-  "3-sinf",
-  "4-sinf",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
 ];
 
 export function ApplicationForm({ type, positions }: ApplicationFormProps) {

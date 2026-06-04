@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { ApplicationsTable } from "@/components/admin/applications-table";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import type {
   ApplicationStatus,
@@ -56,12 +57,10 @@ export default async function AdminCandidatesPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Nomzodlar arizalari</h1>
-        <p className="text-muted-foreground">
-          Barcha topshirilgan ishga kirish/o'qituvchilik arizalarini ko'rib chiqish va boshqarish paneli
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Nomzodlar arizalari"
+        description="Barcha topshirilgan ishga kirish/o'qituvchilik arizalarini ko'rib chiqish va boshqarish paneli"
+      />
 
       <ApplicationsTable
         applications={applications}

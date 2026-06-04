@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/components/language/language-provider";
 
 interface Props {
   applicationId: string;
@@ -15,6 +16,7 @@ interface Props {
 export function HrNoteEditor({ applicationId, initialNote }: Props) {
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [note, setNote] = useState(initialNote ?? "");
   const [saving, setSaving] = useState(false);
 
@@ -33,12 +35,12 @@ export function HrNoteEditor({ applicationId, initialNote }: Props) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error ?? "Ошибка при сохранении");
       }
-      toast({ title: "Сохранено", description: "Комментарий HR обновлён" });
+      toast({ title: t("Сохранено"), description: t("Комментарий HR обновлён") });
       router.refresh();
     } catch (err) {
       toast({
-        title: "Ошибка",
-        description: err instanceof Error ? err.message : "Неизвестная ошибка",
+        title: t("Ошибка"),
+        description: err instanceof Error ? t(err.message) : t("Неизвестная ошибка"),
         variant: "destructive",
       });
     } finally {
@@ -51,13 +53,13 @@ export function HrNoteEditor({ applicationId, initialNote }: Props) {
       <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="Напишите комментарий HR здесь..."
+        placeholder={t("Напишите комментарий HR здесь...")}
         rows={5}
       />
       <div className="flex justify-end">
         <Button onClick={save} disabled={saving || !dirty}>
           {saving && <Spinner className="mr-2" />}
-          Сохранить
+          {t("Saqlash")}
         </Button>
       </div>
     </div>

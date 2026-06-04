@@ -46,8 +46,8 @@ export function LoginForm() {
       });
       if (error) {
         toast({
-          title: "Tizimga kirib bo'lmadi",
-          description: "E-pochta yoki parol noto'g'ri",
+          title: t("Tizimga kirib bo'lmadi"),
+          description: t("E-pochta yoki parol noto'g'ri"),
           variant: "destructive",
         });
         return;
@@ -62,8 +62,8 @@ export function LoginForm() {
       router.refresh();
     } catch (err) {
       toast({
-        title: "Xatolik",
-        description: err instanceof Error ? err.message : "Noma'lum xatolik",
+        title: t("Xatolik"),
+        description: err instanceof Error ? t(err.message) : t("Noma'lum xatolik"),
         variant: "destructive",
       });
     } finally {

@@ -78,3 +78,14 @@ export function statusColor(status: string): string {
   };
   return colors[status] ?? "bg-gray-100 text-gray-800 border-gray-200";
 }
+
+export function formatGrade(grade: string | null | undefined, lang: string): string {
+  if (!grade) return "—";
+  const numOnly = grade.replace(/\D/g, "");
+  if (numOnly) {
+    if (lang === "qq") return `${numOnly}-klass`;
+    if (lang === "ru") return `${numOnly}-класс`;
+    return `${numOnly}-sinf`;
+  }
+  return grade;
+}

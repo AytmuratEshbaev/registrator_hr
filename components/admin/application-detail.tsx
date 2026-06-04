@@ -21,7 +21,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StatusChanger } from "./status-changer";
 import { HrNoteEditor } from "./hr-note-editor";
 import { DownloadButton } from "./download-button";
-import { formatDateTime, formatName, formatPhone } from "@/lib/utils";
+import { formatDateTime, formatName, formatPhone, formatGrade } from "@/lib/utils";
+import { useLanguage } from "@/components/language/language-provider";
 import type { ApplicationRow, StudentApplicationRow } from "@/lib/supabase/types";
 
 export type AdminApplicationDetailRow = 
@@ -64,6 +65,7 @@ function FieldRow({
 
 export function ApplicationDetail({ application }: Props) {
   const isStudent = application.type === "student";
+  const { t, language } = useLanguage();
 
   const cvKey = !isStudent && application.cv_url ? extractKeyFromUrl(application.cv_url) : null;
 
@@ -78,10 +80,10 @@ export function ApplicationDetail({ application }: Props) {
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1 font-medium">
             <Link href={isStudent ? "/admin/students" : "/admin/candidates"} className="hover:underline">
-              {isStudent ? "O'quvchilar arizalari" : "Nomzodlar arizalari"}
+              {isStudent ? t("O'quvchilar arizalari") : t("Nomzodlar arizalari")}
             </Link>
             <span>/</span>
-            <span>Tafsilotlar</span>
+            <span>{t("Tafsilotlar")}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">
             {fullName}
@@ -89,17 +91,17 @@ export function ApplicationDetail({ application }: Props) {
           <div className="mt-2 flex items-center gap-3">
             <StatusBadge status={application.status} />
             <span className="text-xs text-muted-foreground font-medium">
-              Yuborilgan sana: {formatDateTime(application.created_at)}
+              {t("Yuborilgan sana")}: {formatDateTime(application.created_at)}
             </span>
             <span className={`inline-flex items-center rounded-lg px-2 py-0.5 text-xs font-bold ${
               isStudent ? 'bg-orange-50 text-orange-700 border border-orange-100' : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
             }`}>
-              {isStudent ? "O'quvchi" : "Ishchi / Nomzod"}
+              {isStudent ? t("O'quvchi") : t("Ishchi / Nomzod")}
             </span>
           </div>
         </div>
         <Button asChild variant="outline" className="rounded-xl border-slate-200 font-semibold">
-          <Link href={isStudent ? "/admin/students" : "/admin/candidates"}>← Ro'yxatga qaytish</Link>
+          <Link href={isStudent ? "/admin/students" : "/admin/candidates"}>{t("← Ro'yxatga qaytish")}</Link>
         </Button>
       </div>
 
@@ -109,38 +111,38 @@ export function ApplicationDetail({ application }: Props) {
           <Card className="rounded-2xl border-slate-200/80 shadow-sm overflow-hidden">
             <CardHeader className="bg-slate-50/50 border-b py-4">
               <CardTitle className="text-lg font-bold text-slate-800">
-                {isStudent ? "O'quvchi va Ota-ona Ma'lumotlari" : "Nomzodning Shaxsiy Ma'lumotlari"}
+                {isStudent ? t("O'quvchi va Ota-ona Ma'lumotlari") : t("Nomzodning Shaxsiy Ma'lumotlari")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <FieldRow
                   icon={User}
-                  label="Familiyasi"
+                  label={t("Familiyasi")}
                   value={application.last_name}
                 />
                 <FieldRow
                   icon={User}
-                  label="Ismi"
+                  label={t("Ismi")}
                   value={application.first_name}
                 />
                 {application.middle_name && (
                   <FieldRow
                     icon={User}
-                    label="Sharifi"
+                    label={t("Sharifi")}
                     value={application.middle_name}
                   />
                 )}
                 <FieldRow
                   icon={FileText}
-                  label={isStudent ? "Hujjat raqami (Guvohnoma/Pasport)" : "Pasport seriyasi va raqami"}
+                  label={isStudent ? t("Hujjat raqami (Guvohnoma/Pasport)") : t("Pasport seriyasi va raqami")}
                   value={
                     <span className="font-mono font-bold text-slate-900">{application.passport_number}</span>
                   }
                 />
                 <FieldRow
                   icon={Phone}
-                  label="Asosiy telefon raqami"
+                  label={t("Asosiy telefon raqami")}
                   value={
                     <a
                       href={`tel:${application.phone}`}
@@ -153,7 +155,7 @@ export function ApplicationDetail({ application }: Props) {
                 {application.phone_secondary && (
                   <FieldRow
                     icon={Phone}
-                    label="Qo'shimcha telefon raqami"
+                    label={t("Qo'shimcha telefon raqami")}
                     value={
                       <a
                         href={`tel:${application.phone_secondary}`}
@@ -169,14 +171,14 @@ export function ApplicationDetail({ application }: Props) {
                   <>
                     <FieldRow
                       icon={Bookmark}
-                      label="Sinfi"
-                      value={<span className="text-orange-600 font-bold">{application.grade}</span>}
+                      label={t("Sinfi")}
+                      value={<span className="text-orange-600 font-bold">{formatGrade(application.grade, language)}</span>}
                     />
                     {application.parent_name && (
                       <div className="md:col-span-2">
                         <FieldRow
                           icon={Users}
-                          label="Ota-onasining to'liq ismi (F.I.SH.)"
+                          label={t("Ota-onasining to'liq ismi (F.I.SH.)")}
                           value={application.parent_name}
                         />
                       </div>
@@ -186,8 +188,8 @@ export function ApplicationDetail({ application }: Props) {
                   // Ishchi uchun maxsus: Lavozim
                   <FieldRow
                     icon={Briefcase}
-                    label="Kutilayotgan lavozim"
-                    value={<span className="text-indigo-900 font-bold">{application.position_title}</span>}
+                    label={t("Kutilayotgan lavozim")}
+                    value={<span className="text-indigo-900 font-bold">{t(application.position_title || "")}</span>}
                   />
                 )}
               </div>
@@ -198,15 +200,15 @@ export function ApplicationDetail({ application }: Props) {
           {!isStudent && (
             <Card className="rounded-2xl border-slate-200/80 shadow-sm overflow-hidden">
               <CardHeader className="bg-slate-50/50 border-b py-4">
-                <CardTitle className="text-lg font-bold text-slate-800">Yuklangan Hujjatlar</CardTitle>
+                <CardTitle className="text-lg font-bold text-slate-800">{t("Yuklangan Hujjatlar")}</CardTitle>
                 <CardDescription className="text-xs">
-                  Rezyumeni (CV) yuklab olish uchun quyidagi tugmani bosing
+                  {t("Rezyumeni (CV) yuklab olish uchun quyidagi tugmani bosing")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="max-w-xs">
                   <DownloadButton
-                    label="Rezyumeni yuklab olish (PDF)"
+                    label={t("Rezyumeni yuklab olish (PDF)")}
                     objectKey={cvKey}
                     filename={`${baseName}-CV.pdf`}
                   />
@@ -220,8 +222,8 @@ export function ApplicationDetail({ application }: Props) {
         <div className="space-y-6">
           <Card className="rounded-2xl border-slate-200/80 shadow-sm">
             <CardHeader className="py-4 border-b bg-slate-50/50 rounded-t-2xl">
-              <CardTitle className="text-base font-bold text-slate-850">Ariza holati</CardTitle>
-              <CardDescription className="text-xs">Ariza statusini o'zgartirish</CardDescription>
+              <CardTitle className="text-base font-bold text-slate-850">{t("Ariza statusini o'zgartirish")}</CardTitle>
+              <CardDescription className="text-xs">{t("Ariza statusini o'zgartirish")}</CardDescription>
             </CardHeader>
             <CardContent className="pt-5">
               <StatusChanger
@@ -233,8 +235,8 @@ export function ApplicationDetail({ application }: Props) {
 
           <Card className="rounded-2xl border-slate-200/80 shadow-sm">
             <CardHeader className="py-4 border-b bg-slate-50/50 rounded-t-2xl">
-              <CardTitle className="text-base font-bold text-slate-850">Ma'muriyat izohi (HR Note)</CardTitle>
-              <CardDescription className="text-xs">Faqat administratorlar uchun ko'rinadi</CardDescription>
+              <CardTitle className="text-base font-bold text-slate-850">{t("Ma'muriyat izohi (HR Note)")}</CardTitle>
+              <CardDescription className="text-xs">{t("Faqat administratorlar uchun ko'rinadi")}</CardDescription>
             </CardHeader>
             <CardContent className="pt-5">
               <HrNoteEditor
@@ -246,23 +248,23 @@ export function ApplicationDetail({ application }: Props) {
 
           <Card className="rounded-2xl border-slate-200/80 shadow-sm">
             <CardHeader className="py-4 border-b bg-slate-50/50 rounded-t-2xl">
-              <CardTitle className="text-base font-bold text-slate-850">Tizim ma'lumotlari</CardTitle>
+              <CardTitle className="text-base font-bold text-slate-850">{t("Tizim ma'lumotlari")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-xs pt-5">
               <div className="flex justify-between items-center py-1 border-b border-dashed border-slate-100">
-                <span className="text-slate-400 font-semibold">Yaratilgan sana:</span>
+                <span className="text-slate-400 font-semibold">{t("Yuborilgan sana")}:</span>
                 <span className="font-mono font-bold text-slate-700">
                   {formatDateTime(application.created_at)}
                 </span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-dashed border-slate-100">
-                <span className="text-slate-400 font-semibold">Yangilangan sana:</span>
+                <span className="text-slate-400 font-semibold">{t("Yangilangan sana")}:</span>
                 <span className="font-mono font-bold text-slate-700">
                   {formatDateTime(application.updated_at)}
                 </span>
               </div>
               <div className="flex flex-col gap-1 py-1">
-                <span className="text-slate-400 font-semibold">Ariza ID:</span>
+                <span className="text-slate-400 font-semibold">{t("Ariza ID")}:</span>
                 <span className="font-mono text-[10px] text-slate-500 break-all select-all font-semibold bg-slate-50 px-2 py-1.5 rounded-lg border">
                   {application.id}
                 </span>

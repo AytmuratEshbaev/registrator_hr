@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Spinner } from "@/components/ui/spinner";
-import { formatDateTime, formatName, formatPhone, statusLabel } from "@/lib/utils";
+import { formatDateTime, formatName, formatPhone, statusLabel, formatGrade } from "@/lib/utils";
+import { useLanguage } from "@/components/language/language-provider";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import type {
   ApplicationRow,
@@ -63,6 +64,7 @@ export function ApplicationsTable({
   mode,
 }: Props) {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -124,14 +126,14 @@ export function ApplicationsTable({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Ism, familiya yoki hujjat raqami..."
+              placeholder={t("Ism, familiya yoki hujjat raqami...")}
               className="pl-9 rounded-xl border-slate-200"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
           <Button type="submit" variant="secondary" disabled={isPending} className="rounded-xl">
-            Qidirish
+            {t("Qidirish")}
           </Button>
         </form>
 
@@ -141,7 +143,7 @@ export function ApplicationsTable({
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-indigo-950/15"
           >
             <Download className="h-4 w-4" />
-            Eksport (XLSX)
+            {t("Eksport (XLSX)")}
           </a>
         </div>
       </div>
@@ -150,7 +152,7 @@ export function ApplicationsTable({
       <div className="flex flex-col gap-3 md:flex-row md:items-center flex-wrap">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-bold text-slate-800">Filtrlar:</span>
+          <span className="text-sm font-bold text-slate-800">{t("Filtrlar:")}</span>
         </div>
 
         {/* Status filtri */}
@@ -159,13 +161,13 @@ export function ApplicationsTable({
           onValueChange={handleStatusChange}
         >
           <SelectTrigger className="w-full md:w-[180px] rounded-xl border-slate-200">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t("Status")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL_VALUE}>Barcha statuslar</SelectItem>
+            <SelectItem value={ALL_VALUE}>{t("Barcha statuslar")}</SelectItem>
             {APPLICATION_STATUSES.map((s) => (
               <SelectItem key={s} value={s}>
-                {statusLabel(s)}
+                {t(statusLabel(s))}
               </SelectItem>
             ))}
           </SelectContent>
@@ -178,10 +180,10 @@ export function ApplicationsTable({
             onValueChange={handlePositionChange}
           >
             <SelectTrigger className="w-full md:w-[220px] rounded-xl border-slate-200">
-              <SelectValue placeholder="Vakansiya lavozimi" />
+              <SelectValue placeholder={t("Vakansiya lavozimi")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL_VALUE}>Barcha vakansiyalar</SelectItem>
+              <SelectItem value={ALL_VALUE}>{t("Barcha vakansiyalar")}</SelectItem>
               {positions.map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.title}
@@ -199,20 +201,20 @@ export function ApplicationsTable({
         <Table>
           <TableHeader className="bg-slate-50/70 border-b">
             <TableRow>
-              <TableHead className="font-bold text-slate-800">F.I.SH.</TableHead>
-              <TableHead className="font-bold text-slate-800">{mode === "student" ? "Sinf" : "Lavozim"}</TableHead>
-              <TableHead className="font-bold text-slate-800">Hujjat raqami</TableHead>
-              <TableHead className="font-bold text-slate-800">Telefon raqami</TableHead>
-              <TableHead className="font-bold text-slate-800">Sana</TableHead>
-              <TableHead className="font-bold text-slate-800">Status</TableHead>
-              <TableHead className="text-right font-bold text-slate-800">Amallar</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("F.I.SH.")}</TableHead>
+              <TableHead className="font-bold text-slate-800">{mode === "student" ? t("Sinf") : t("Lavozim")}</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("Hujjat raqami")}</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("Telefon raqami")}</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("Sana")}</TableHead>
+              <TableHead className="font-bold text-slate-800">{t("Status")}</TableHead>
+              <TableHead className="text-right font-bold text-slate-800">{t("Amallar")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-12 text-slate-400 font-medium">
-                  Arizalar topilmadi
+                  {t("Arizalar topilmadi")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -226,7 +228,7 @@ export function ApplicationsTable({
                     {/* Sinf / Lavozim */}
                     <TableCell className="font-medium text-slate-700">
                       {isAppStudent ? (
-                        <span className="text-orange-600 font-semibold">{app.grade}</span>
+                        <span className="text-orange-600 font-semibold">{formatGrade(app.grade, language)}</span>
                       ) : (
                         <span className="text-indigo-900 font-semibold">{app.position_title}</span>
                       )}
@@ -255,7 +257,7 @@ export function ApplicationsTable({
                     {/* Ko'rish */}
                     <TableCell className="text-right">
                       <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
-                        <Link href={mode === "student" ? `/admin/students/${app.id}` : `/admin/candidates/${app.id}`}>Ko'rish</Link>
+                        <Link href={mode === "student" ? `/admin/students/${app.id}` : `/admin/candidates/${app.id}`}>{t("Ko'rish")}</Link>
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -270,8 +272,8 @@ export function ApplicationsTable({
       {total > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-500 font-medium">
-            Jami: <span className="font-bold text-slate-800">{total}</span> ta ariza
-            {" "}— sahifa {page} / {totalPages}
+            {t("Jami")}: <span className="font-bold text-slate-800">{total}</span> {t("ta ariza")}
+            {" "}— {t("sahifa")} {page} / {totalPages}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -281,7 +283,7 @@ export function ApplicationsTable({
               disabled={page <= 1 || isPending}
               className="rounded-lg font-medium border-slate-200"
             >
-              Orqaga
+              {t("Orqaga")}
             </Button>
             <Button
               variant="outline"
@@ -290,7 +292,7 @@ export function ApplicationsTable({
               disabled={page >= totalPages || isPending}
               className="rounded-lg font-medium border-slate-200"
             >
-              Oldinga
+              {t("Oldinga")}
             </Button>
           </div>
         </div>
