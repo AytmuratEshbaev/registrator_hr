@@ -12,6 +12,11 @@ export function getR2Client(): S3Client {
       accessKeyId: process.env.R2_ACCESS_KEY_ID!,
       secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
     },
+    // AWS SDK v3 (3.729+) PutObject'ga sukut bo'yicha CRC32 checksum qo'shadi.
+    // Bu brauzerdan presigned PUT'ni buzadi (imzolangan x-amz-checksum-crc32
+    // sarlavhasi yuborilmaydi) va R2 bilan mos kelmaydi. WHEN_REQUIRED bilan o'chiramiz.
+    requestChecksumCalculation: "WHEN_REQUIRED",
+    responseChecksumValidation: "WHEN_REQUIRED",
   });
 
   return cached;
