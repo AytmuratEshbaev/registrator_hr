@@ -9,35 +9,37 @@ import { useLanguage } from "@/components/language/language-provider";
 
 interface Props {
   label: string;
-  objectKey: string | null;
+  applicationId: string;
+  field: "cv_url" | "passport_scan_url" | "diploma_url" | "photo_url";
+  hasFile: boolean;
   filename?: string;
 }
 
-export function DownloadButton({ label, objectKey, filename }: Props) {
+export function DownloadButton({ label, applicationId, field, hasFile, filename }: Props) {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
 
-  const disabled = !objectKey;
+  const disabled = !hasFile;
 
   async function handleClick() {
-    if (!objectKey) return;
+    if (!hasFile) return;
     setLoading(true);
     try {
-      const params = new URLSearchParams({ key: objectKey });
+      const params = new URLSearchParams({ id: applicationId, field });
       if (filename) params.set("filename", filename);
       const res = await fetch(`/api/admin/download?${params.toString()}`);
       if (!res.ok) {
         const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error ?? "Ошибка при скачивании");
+        throw new Error(errBody.error ?? "Yuklab olishda xatolik");
       }
       const data = (await res.json()) as { url?: string };
-      if (!data.url) throw new Error("Не удалось получить ссылку для скачивания");
+      if (!data.url) throw new Error("Yuklab olishda xatolik");
       window.open(data.url, "_blank", "noopener,noreferrer");
     } catch (err) {
       toast({
-        title: t("Ошибка"),
-        description: err instanceof Error ? t(err.message) : t("Неизвестная ошибка"),
+        title: t("Xatolik"),
+        description: err instanceof Error ? t(err.message) : t("Noma'lum xatolik"),
         variant: "destructive",
       });
     } finally {
@@ -59,7 +61,7 @@ export function DownloadButton({ label, objectKey, filename }: Props) {
       )}
       {label}
       {disabled && (
-        <span className="ml-auto text-xs text-muted-foreground">{t("нет")}</span>
+        <span className="ml-auto text-xs text-muted-foreground">{t("Yo'q")}</span>
       )}
     </Button>
   );

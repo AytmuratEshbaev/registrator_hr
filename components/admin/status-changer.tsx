@@ -44,17 +44,17 @@ export function StatusChanger({ applicationId, currentStatus }: Props) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Ошибка при обновлении статуса");
+        throw new Error(body.error ?? "Statusni yangilashda xatolik");
       }
       toast({
-        title: t("Статус обновлён"),
+        title: t("Status yangilandi"),
         description: `${t("Status")}: ${t(statusLabel(status))}`,
       });
       router.refresh();
     } catch (err) {
       toast({
-        title: t("Ошибка"),
-        description: err instanceof Error ? t(err.message) : t("Неизвестная ошибка"),
+        title: t("Xatolik"),
+        description: err instanceof Error ? t(err.message) : t("Noma'lum xatolik"),
         variant: "destructive",
       });
     } finally {

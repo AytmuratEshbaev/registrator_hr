@@ -42,8 +42,9 @@ export const studentApplicationSchema = baseSchema.extend({
     .optional()
     .nullable()
     .or(z.literal("")),
-  parent_name: z.string().optional().nullable(),
   grade: z.string().trim().min(1, "Sinfni tanlang"),
+  // Maktabdan oldingi tayyorgarlik darslari (faqat 1-sinf uchun ma'noli). 1-sinfdan boshqa sinflarda "no".
+  preschool_prep: z.enum(["yes", "no"]),
   position_id: z.null().optional(),
   position_title: z.string().optional().nullable(),
   cv_url: z.string().optional().nullable(),
@@ -84,7 +85,6 @@ export const vacancyApplicationSchema = z.object({
   passport_scan_url: z.string().optional().nullable(),
   diploma_url: z.string().optional().nullable(),
   photo_url: z.string().optional().nullable(),
-  parent_name: z.string().optional().nullable(),
   grade: z.string().optional().nullable(),
   position_id: z.string().uuid("Lavozimni tanlang").nullable().optional(),
   position_title: z.string().trim().min(2, "Lavozimni tanlang").max(150),

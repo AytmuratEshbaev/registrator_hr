@@ -5,11 +5,13 @@ import { DOWNLOAD_URL_EXPIRY_SECONDS } from "@/lib/constants";
 
 export async function createDownloadUrl(key: string, downloadFilename?: string): Promise<string> {
   const client = getR2Client();
+  // Qo'shtirnoq/boshqaruv belgilarini olib tashlab, Content-Disposition headerini buzishning oldini olamiz.
+  const safeFilename = downloadFilename?.replace(/["\r\n\\]/g, "").trim() || undefined;
   const command = new GetObjectCommand({
     Bucket: R2_BUCKET,
     Key: key,
-    ResponseContentDisposition: downloadFilename
-      ? `attachment; filename="${downloadFilename}"`
+    ResponseContentDisposition: safeFilename
+      ? `attachment; filename="${safeFilename}"`
       : undefined,
   });
   return getSignedUrl(client, command, { expiresIn: DOWNLOAD_URL_EXPIRY_SECONDS });

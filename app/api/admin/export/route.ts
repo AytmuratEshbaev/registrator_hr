@@ -97,6 +97,12 @@ export async function GET(req: NextRequest) {
     "Asosiy telefon": a.phone,
     "Qo'shimcha telefon": a.phone_secondary ?? "",
     "Sinf / Lavozim": a.type === "student" ? a.grade : a.position_title,
+    "Maktabdan oldingi tayyorgarlik":
+      a.type === "student" && a.grade === "1"
+        ? a.preschool_prep === "yes"
+          ? "Ha"
+          : "Yo'q"
+        : "",
     "Ota-onasining ismi": a.type === "student" ? a.middle_name : "",
     "Status": statusLabel(a.status),
     "Ma'muriyat izohi (HR)": a.hr_note ?? "",

@@ -6,6 +6,7 @@
 
 -- ----- Tozalash (qaytadan o'rnatish uchun) -----
 DROP TABLE IF EXISTS public.applications CASCADE;
+DROP TABLE IF EXISTS public.student_applications CASCADE;
 DROP TABLE IF EXISTS public.positions CASCADE;
 DROP TYPE IF EXISTS public.application_status CASCADE;
 
@@ -60,6 +61,7 @@ CREATE TABLE public.student_applications (
   phone              text NOT NULL, -- Asosiy telefon
   phone_secondary    text,          -- Qo'shimcha telefon
   grade              text NOT NULL, -- Qabul qilinadigan sinf
+  preschool_prep     text NOT NULL DEFAULT 'no', -- Maktabdan oldingi tayyorgarlik (faqat 1-sinf): 'yes' | 'no'
   status             public.application_status NOT NULL DEFAULT 'pending',
   hr_note            text,
   created_at         timestamptz NOT NULL DEFAULT now(),

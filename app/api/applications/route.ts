@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { applicationSchema } from "@/lib/validations/application";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { isValidUploadKey } from "@/lib/r2/upload";
 import type { PostgrestError } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   const ip = getClientIp(req.headers);
 
   // Rate limit
-  const rl = rateLimit(`applications:${ip}`, { max: 5, windowMs: 60_000 });
+  const rl = await rateLimit(`applications:${ip}`, { max: 5, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Urinishlar soni ko'payib ketdi. Iltimos, bir daqiqadan so'ng qayta urinib ko'ring." },
@@ -41,6 +42,26 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
 
+  // Fayl kalitlari faqat server yaratgan naqshga mos bo'lishi shart (boshqa nomzod faylini
+  // ko'rsatish yoki ixtiyoriy R2 kalitini saqlashning oldini oladi).
+  if (data.type === "vacancy") {
+    if (!isValidUploadKey(data.cv_url)) {
+      return NextResponse.json(
+        { error: "Rezyume (CV) fayli noto'g'ri. Iltimos, qaytadan yuklang.", field: "cv_url" },
+        { status: 400 }
+      );
+    }
+    for (const k of ["passport_scan_url", "diploma_url", "photo_url"] as const) {
+      const val = data[k];
+      if (val && !isValidUploadKey(val)) {
+        return NextResponse.json(
+          { error: "Yuklangan fayl noto'g'ri. Iltimos, qaytadan yuklang.", field: k },
+          { status: 400 }
+        );
+      }
+    }
+  }
+
   try {
     const supabase = createAdminClient();
     let insertedId: string | null = null;
@@ -55,6 +76,7 @@ export async function POST(req: Request) {
         phone: data.phone,
         phone_secondary: data.phone_secondary ?? null,
         grade: data.grade,
+        preschool_prep: data.grade === "1" ? (data.preschool_prep ?? "no") : "no",
       };
 
       const { data: inserted, error } = await supabase
@@ -102,7 +124,7 @@ export async function POST(req: Request) {
       }
       console.error("[applications] insert error:", dbError);
       return NextResponse.json(
-        { error: `Arizani saqlashda xatolik: ${dbError.message} (${dbError.details || dbError.hint || ''})` },
+        { error: "Arizani saqlashda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring." },
         { status: 500 }
       );
     }
@@ -118,7 +140,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("[applications] exception:", err);
     return NextResponse.json(
-      { error: `Server xatoligi: ${err instanceof Error ? err.message : "Noma'lum xatolik"}` },
+      { error: "Server xatoligi yuz berdi. Iltimos, keyinroq qayta urinib ko'ring." },
       { status: 500 }
     );
   }

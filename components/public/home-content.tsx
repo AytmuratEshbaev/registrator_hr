@@ -18,7 +18,7 @@ export function HomeContent({ isStudent, type, positions }: HomeContentProps) {
 
   return (
     <>
-      <div className="bg-slate-50 min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center py-12 px-4">
+      <div className="bg-slate-50 min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center pt-12 pb-24 px-4">
         <div className="max-w-5xl w-full mx-auto">
           <div className="grid gap-6 lg:grid-cols-3 items-start">
             <div className="lg:col-span-2">
@@ -60,28 +60,37 @@ export function HomeContent({ isStudent, type, positions }: HomeContentProps) {
                     {t("Agarda ro'yxatdan o'tishda qiyinchilikka duch kelsangiz, tizimda muammo yuzaga kelsa yoki qo'shimcha savollaringiz bo'lsa, istalgan vaqtda maktab ma'muriyati bilan bog'lanishingiz mumkin.")}
                   </p>
 
-                  <a
-                    href="tel:+998931234567"
-                    className={`group p-4 rounded-xl border flex items-center gap-3.5 shadow-sm transition-all duration-300 ${
-                      isStudent
-                        ? "bg-orange-50/20 border-orange-200/40 hover:bg-orange-50/50 hover:border-orange-200"
-                        : "bg-indigo-50/20 border-indigo-200/40 hover:bg-indigo-50/50 hover:border-indigo-200"
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
-                      isStudent ? "bg-orange-100 text-orange-600" : "bg-indigo-100 text-indigo-900"
-                    }`}>
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">
-                        {t("Telefon raqamimiz")}
-                      </p>
-                      <p className={`text-base font-black tracking-tight ${isStudent ? "text-orange-600" : "text-indigo-900"}`}>
-                        +998 93 123 45 67
-                      </p>
-                    </div>
-                  </a>
+                  <div className="space-y-2.5">
+                    {[
+                      { display: "+998 95 365 00 66", tel: "+998953650066" },
+                      { display: "+998 99 123 00 66", tel: "+998991230066" },
+                      { display: "+998 99 386 00 33", tel: "+998993860033" },
+                    ].map((phone) => (
+                      <a
+                        key={phone.tel}
+                        href={`tel:${phone.tel}`}
+                        className={`group p-4 rounded-xl border flex items-center gap-3.5 shadow-sm transition-all duration-300 ${
+                          isStudent
+                            ? "bg-orange-50/20 border-orange-200/40 hover:bg-orange-50/50 hover:border-orange-200"
+                            : "bg-indigo-50/20 border-indigo-200/40 hover:bg-indigo-50/50 hover:border-indigo-200"
+                        }`}
+                      >
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm ${
+                          isStudent ? "bg-orange-100 text-orange-600" : "bg-indigo-100 text-indigo-900"
+                        }`}>
+                          <Phone className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">
+                            {t("Telefon raqamimiz")}
+                          </p>
+                          <p className={`text-base font-black tracking-tight ${isStudent ? "text-orange-600" : "text-indigo-900"}`}>
+                            {phone.display}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
 
                   <div className="pt-4 border-t border-slate-100 space-y-3 text-[11px] text-slate-500 font-bold">
                     <div className="flex items-start gap-2.5">

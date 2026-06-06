@@ -22,7 +22,7 @@ import {
   vacancyApplicationSchema,
   type ApplicationInput,
 } from "@/lib/validations/application";
-import type { PositionRow, ApplicationStatus } from "@/lib/supabase/types";
+import type { PositionRow } from "@/lib/supabase/types";
 import { PASSPORT_REGEX } from "@/lib/constants";
 import { useLanguage } from "@/components/language/language-provider";
 
@@ -108,13 +108,8 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
   // Avtomatik pasport/hujjat tekshiruvi uchun holatlar
   const [checkingPassport, setCheckingPassport] = useState(false);
-  const [existingApp, setExistingApp] = useState<{
-    status: ApplicationStatus;
-    hr_note: string | null;
-    first_name: string;
-    last_name: string;
-    middle_name: string | null;
-  } | null>(null);
+  // Maxfiylik: server faqat "mavjud/yo'q" qaytaradi, ism/status/HR izoh emas.
+  const [existingApp, setExistingApp] = useState(false);
 
   const isStudent = type === "student";
   const activeSchema = isStudent ? studentApplicationSchema : vacancyApplicationSchema;
@@ -142,8 +137,8 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           middle_name: "",
           phone: "+998",
           phone_secondary: "+998",
-          parent_name: "",
           grade: "",
+          preschool_prep: "no",
         }
       : {
           type: "vacancy",
@@ -173,9 +168,9 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
     ? "focus-visible:ring-4 focus-visible:ring-orange-500/10 focus-visible:border-orange-500 hover:border-orange-300 bg-white"
     : "focus-visible:ring-4 focus-visible:ring-indigo-900/10 focus-visible:border-indigo-900 hover:border-indigo-300 bg-white";
     
-  const inputBaseClass = `h-12 px-4 rounded-xl border border-slate-200/80 text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal transition-all duration-200 shadow-sm/5 ${themeFocusRing}`;
-  
-  const selectTriggerClass = `flex h-12 w-full items-center justify-between rounded-xl border border-slate-200/80 bg-white px-4 py-2 text-sm font-bold text-slate-800 transition-all duration-200 shadow-sm/5 ${themeFocusRing}`;
+  const inputBaseClass = `h-12 px-4 rounded-xl border border-slate-200/80 text-base md:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal transition-all duration-200 shadow-sm/5 ${themeFocusRing}`;
+
+  const selectTriggerClass = `flex h-12 w-full items-center justify-between rounded-xl border border-slate-200/80 bg-white px-4 py-2 text-base md:text-sm font-bold text-slate-800 transition-all duration-200 shadow-sm/5 ${themeFocusRing}`;
   
   const labelBaseClass = "text-[13px] font-bold text-slate-700 tracking-wide flex items-center gap-1.5 mb-1.5 pl-0.5 select-none";
 
@@ -191,6 +186,15 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
       }
     }
   }, [seriesVal, digitsVal, setValue, isStudent, clearErrors]);
+
+  // Maktabdan oldingi tayyorgarlik faqat 1-sinf uchun. Boshqa sinf tanlansa — avtomatik "no".
+  const gradeVal = (watched as Record<string, unknown>).grade as string | undefined;
+  useEffect(() => {
+    if (!isStudent) return;
+    if (gradeVal !== "1") {
+      setValue("preschool_prep" as never, "no" as never, { shouldValidate: false });
+    }
+  }, [gradeVal, isStudent, setValue]);
 
   // Formani har safar ariza turi o'zgarganda tozalash
   useEffect(() => {
@@ -225,7 +229,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
           }) as unknown as ApplicationInput
     );
     clearErrors();
-    setExistingApp(null);
+    setExistingApp(false);
   }, [type, isStudent, reset, clearErrors]);
 
   // Hujjat raqamini avtomatik ravishda tekshirish (kechikish va AbortController bilan)
@@ -235,7 +239,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
       : (passportVal && passportVal.length === 9);
 
     if (!isComplete) {
-      setExistingApp(null);
+      setExistingApp(false);
       // Frictionless clearing
       if (isStudent && (!digitsVal || digitsVal.length < 7)) {
         clearErrors("passport_number");
@@ -253,7 +257,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
       : /^[A-Z]{2}\d{7}$/.test(normalized);
 
     if (!formatValid) {
-      setExistingApp(null);
+      setExistingApp(false);
       return;
     }
 
@@ -279,20 +283,14 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
 
         if (res.ok) {
           const data = await res.json();
-          if (data.exists && data.status) {
-            setExistingApp({
-              status: data.status,
-              hr_note: data.hr_note ?? null,
-              first_name: data.first_name ?? "",
-              last_name: data.last_name ?? "",
-              middle_name: data.middle_name ?? null,
-            });
+          if (data.exists) {
+            setExistingApp(true);
             setError("passport_number", {
               type: "manual",
-              message: `Siz, ${data.last_name} ${data.first_name}, avval ro'yxatdan o'tgansiz.`,
+              message: "Bu hujjat raqami bo'yicha ariza allaqachon topshirilgan.",
             });
           } else {
-            setExistingApp(null);
+            setExistingApp(false);
             clearErrors("passport_number");
           }
         }
@@ -341,7 +339,6 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
         };
 
         if (isStudent) {
-          draftToSave.parent_name = (watched as Record<string, unknown>).parent_name as string | null | undefined;
           draftToSave.grade = (watched as Record<string, unknown>).grade as string | null | undefined;
         } else {
           draftToSave.position_id = (watched as Record<string, unknown>).position_id as string | null | undefined;
@@ -449,9 +446,9 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               {/* Row 1: Metrika seriyasi va raqami */}
               <div className="space-y-1.5">
                 <Label className={labelBaseClass}>{t("Tug'ilganlik guvohnomasi (metrika) seriyasi va raqami")} <span className="text-orange-500">*</span></Label>
-                <div className="flex gap-3 max-w-[340px]">
+                <div className="flex gap-3 w-full max-w-[340px]">
                   {/* Seriya Select */}
-                  <div className="w-[130px] shrink-0">
+                  <div className="w-[120px] shrink-0">
                     <Controller
                       control={control}
                       name="passport_series"
@@ -477,7 +474,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                   </div>
 
                   {/* Raqam Input */}
-                  <div className="w-[170px] shrink-0 relative">
+                  <div className="flex-1 min-w-0 relative">
                     <Input
                       id="passport_number_digits"
                       placeholder="1234567"
@@ -508,30 +505,24 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                   <p className="text-xs text-destructive font-semibold mt-1">{errors.passport_number.message}</p>
                 ) : null}
 
-                {/* Uniqueness card warning if duplicate */}
+                {/* Takroriy ariza ogohlantirishi (maxfiylik uchun shaxsiy ma'lumotsiz) */}
                 {existingApp && (
-                  <div className="rounded-2xl border border-emerald-250 bg-emerald-50/70 p-5 space-y-4 mt-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 mt-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
                     <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800 shrink-0">
+                      <div className="p-2 rounded-xl bg-amber-100 text-amber-700 shrink-0">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                         </svg>
                       </div>
                       <div className="space-y-1">
-                        <p className="font-bold text-emerald-950 text-base leading-snug">
-                          Siz, {existingApp.last_name} {existingApp.first_name} {existingApp.middle_name ?? ""}, avval ro'yxatdan o'tgansiz!
+                        <p className="font-bold text-amber-900 text-base leading-snug">
+                          {t("Bu hujjat raqami bo'yicha ariza allaqachon topshirilgan.")}
                         </p>
-                        <p className="text-sm text-emerald-800 font-semibold">
-                          Ushbu tug'ilganlik guvohnomasi (metrika) raqami bo'yicha ariza oldin qabul qilingan.
+                        <p className="text-sm text-amber-800 font-semibold">
+                          {t("Savollar bo'lsa, maktab ma'muriyati bilan bog'laning.")}
                         </p>
                       </div>
                     </div>
-                    {existingApp.hr_note ? (
-                      <div className="rounded-xl bg-white border border-emerald-100 px-4 py-3 text-sm shadow-sm">
-                        <p className="text-xs text-slate-400 mb-1 font-bold">Ma'muriyat izohi:</p>
-                        <p className="whitespace-pre-wrap break-words text-slate-800 font-bold">{existingApp.hr_note}</p>
-                      </div>
-                    ) : null}
                   </div>
                 )}
               </div>
@@ -613,6 +604,37 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                   />
                   {errors.grade ? (
                     <p className="text-xs text-destructive font-semibold">{errors.grade.message}</p>
+                  ) : null}
+                </div>
+
+                {/* Maktabdan oldingi tayyorgarlik (faqat 1-sinf uchun yoqiladi) */}
+                <div className="space-y-1.5 md:col-span-2">
+                  <Label htmlFor="preschool_prep" className={labelBaseClass}>
+                    {t("Maktabdan oldingi tayyorgarlik darslari kerakmi?")}
+                  </Label>
+                  <Controller
+                    control={control}
+                    name={"preschool_prep" as never}
+                    render={({ field }) => (
+                      <Select
+                        value={(field.value as string) ?? "no"}
+                        onValueChange={field.onChange}
+                        disabled={submitting || !!existingApp || gradeVal !== "1"}
+                      >
+                        <SelectTrigger id="preschool_prep" className={selectTriggerClass}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">{t("Ha")}</SelectItem>
+                          <SelectItem value="no">{t("Yo'q")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {gradeVal !== "1" ? (
+                    <p className="text-[11px] text-slate-400 font-semibold tracking-wide pl-1">
+                      {t("Faqat 1-sinf uchun mavjud")}
+                    </p>
                   ) : null}
                 </div>
               </div>
@@ -727,28 +749,22 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                 ) : null}
 
                 {existingApp && (
-                  <div className="rounded-2xl border border-emerald-255 bg-emerald-50/70 p-5 space-y-4 mt-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 mt-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
                     <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800 shrink-0">
+                      <div className="p-2 rounded-xl bg-amber-100 text-amber-700 shrink-0">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                         </svg>
                       </div>
                       <div className="space-y-1">
-                        <p className="font-bold text-emerald-950 text-base leading-snug">
-                          Siz, {existingApp.last_name} {existingApp.first_name} {existingApp.middle_name ?? ""}, avval ro'yxatdan o'tgansiz!
+                        <p className="font-bold text-amber-900 text-base leading-snug">
+                          {t("Bu hujjat raqami bo'yicha ariza allaqachon topshirilgan.")}
                         </p>
-                        <p className="text-sm text-emerald-800 font-semibold">
-                          Ushbu pasport raqami bo'yicha ariza oldin qabul qilingan.
+                        <p className="text-sm text-amber-800 font-semibold">
+                          {t("Savollar bo'lsa, maktab ma'muriyati bilan bog'laning.")}
                         </p>
                       </div>
                     </div>
-                    {existingApp.hr_note ? (
-                      <div className="rounded-xl bg-white border border-emerald-100 px-4 py-3 text-sm shadow-sm">
-                        <p className="text-xs text-slate-400 mb-1 font-bold">Ma'muriyat izohi:</p>
-                        <p className="whitespace-pre-wrap break-words text-slate-800 font-bold">{existingApp.hr_note}</p>
-                      </div>
-                    ) : null}
                   </div>
                 )}
               </div>
@@ -952,7 +968,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
     {/* Muvaffaqiyatli topshirilganlik modal oynasi */}
     {showSuccessModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 flex flex-col items-center text-center space-y-6 transform scale-in duration-300 animate-in zoom-in-95">
+        <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-slate-100 flex flex-col items-center text-center space-y-6 transform scale-in duration-300 animate-in zoom-in-95">
           {/* Yashil doira va tasdiq ikonasi */}
           <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isStudent ? 'bg-orange-50 text-orange-500' : 'bg-indigo-50 text-indigo-900'}`}>
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

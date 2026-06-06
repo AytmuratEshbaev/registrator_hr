@@ -71,6 +71,7 @@ export type StudentApplicationRow = {
   phone: string;
   phone_secondary: string | null;
   grade: string;
+  preschool_prep: string; // "yes" | "no" — maktabdan oldingi tayyorgarlik (faqat 1-sinf uchun ma'noli)
   status: ApplicationStatus;
   hr_note: string | null;
   created_at: string;
@@ -86,6 +87,7 @@ export type StudentApplicationInsert = {
   phone: string;
   phone_secondary?: string | null;
   grade: string;
+  preschool_prep?: string;
   status?: ApplicationStatus;
   hr_note?: string | null;
   created_at?: string;
@@ -101,6 +103,7 @@ export type StudentApplicationUpdate = {
   phone?: string;
   phone_secondary?: string | null;
   grade?: string;
+  preschool_prep?: string;
   status?: ApplicationStatus;
   hr_note?: string | null;
   created_at?: string;

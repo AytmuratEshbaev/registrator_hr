@@ -7,7 +7,6 @@ import {
   Briefcase,
   FileText,
   Bookmark,
-  Users,
 } from "lucide-react";
 import {
   Card,
@@ -27,20 +26,10 @@ import type { ApplicationRow, StudentApplicationRow } from "@/lib/supabase/types
 
 export type AdminApplicationDetailRow = 
   | (ApplicationRow & { type: "vacancy" })
-  | (StudentApplicationRow & { type: "student"; parent_name?: string | null });
+  | (StudentApplicationRow & { type: "student" });
 
 interface Props {
   application: AdminApplicationDetailRow;
-}
-
-function extractKeyFromUrl(urlOrKey: string): string {
-  if (!urlOrKey.startsWith("http")) return urlOrKey;
-  try {
-    const url = new URL(urlOrKey);
-    return url.pathname.replace(/^\//, "");
-  } catch {
-    return urlOrKey;
-  }
 }
 
 function FieldRow({
@@ -67,7 +56,7 @@ export function ApplicationDetail({ application }: Props) {
   const isStudent = application.type === "student";
   const { t, language } = useLanguage();
 
-  const cvKey = !isStudent && application.cv_url ? extractKeyFromUrl(application.cv_url) : null;
+  const hasCv = !isStudent && Boolean(application.cv_url);
 
   const fullName = formatName(application);
   const safeName = fullName.replace(/[^A-Za-z0-9_\- ]/g, "").trim();
@@ -174,14 +163,16 @@ export function ApplicationDetail({ application }: Props) {
                       label={t("Sinfi")}
                       value={<span className="text-orange-600 font-bold">{formatGrade(application.grade, language)}</span>}
                     />
-                    {application.parent_name && (
-                      <div className="md:col-span-2">
-                        <FieldRow
-                          icon={Users}
-                          label={t("Ota-onasining to'liq ismi (F.I.SH.)")}
-                          value={application.parent_name}
-                        />
-                      </div>
+                    {application.grade === "1" && (
+                      <FieldRow
+                        icon={Bookmark}
+                        label={t("Maktabdan oldingi tayyorgarlik")}
+                        value={
+                          <span className="font-bold text-slate-800">
+                            {application.preschool_prep === "yes" ? t("Ha") : t("Yo'q")}
+                          </span>
+                        }
+                      />
                     )}
                   </>
                 ) : (
@@ -209,7 +200,9 @@ export function ApplicationDetail({ application }: Props) {
                 <div className="max-w-xs">
                   <DownloadButton
                     label={t("Rezyumeni yuklab olish (PDF)")}
-                    objectKey={cvKey}
+                    applicationId={application.id}
+                    field="cv_url"
+                    hasFile={hasCv}
                     filename={`${baseName}-CV.pdf`}
                   />
                 </div>

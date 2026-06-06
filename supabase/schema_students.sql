@@ -1,7 +1,10 @@
 -- ============================================
--- O'quvchi Registratsiyasi — Alohida Database sxemasi
+-- [LEGACY / ESKIRGAN] O'quvchi Registratsiyasi — Alohida Database sxemasi
 -- ============================================
--- Supabase SQL Editor'da bu butun faylni nusxalab yopishtiring va Run bosing.
+-- ⚠️ BU FAYLNI ISHGA TUSHIRMANG. `schema.sql` endi `student_applications` jadvalini
+--    (preschool_prep ustuni bilan birga) to'liq o'z ichiga oladi. Bu faylni `schema.sql`
+--    bilan birga ishga tushirsangiz "trigger/policy already exists" xatosi chiqadi.
+--    Faqat tarixiy ma'lumot uchun saqlangan.
 
 -- ----- student_applications jadvali -----
 CREATE TABLE IF NOT EXISTS public.student_applications (
@@ -13,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.student_applications (
   phone              text NOT NULL, -- Asosiy telefon
   phone_secondary    text,          -- Qo'shimcha telefon
   grade              text NOT NULL, -- Qabul qilinadigan sinf (masalan: 1-sinf)
+  preschool_prep     text NOT NULL DEFAULT 'no', -- Maktabdan oldingi tayyorgarlik darslari (faqat 1-sinf): 'yes' | 'no'
   status             public.application_status NOT NULL DEFAULT 'pending',
   hr_note            text,
   created_at         timestamptz NOT NULL DEFAULT now(),

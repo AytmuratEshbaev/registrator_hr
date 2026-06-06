@@ -14,7 +14,7 @@ export function Header() {
 
   return (
     <header className="border-b bg-white/95 backdrop-blur sticky top-0 z-30 shadow-sm">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between gap-4">
         
         {/* Chap tarafda: Sarlavha (Katta ekranlar uchun) */}
         <div className="w-1/3 hidden md:block text-left">
@@ -26,7 +26,7 @@ export function Header() {
         
         {/* Markazda: Maktab nomi (Logotip) */}
         <div className="flex-shrink-0 w-auto md:w-1/3 flex justify-start md:justify-center">
-          <Logo size="lg" />
+          <Logo size="lg" className="h-12 md:h-20" />
         </div>
         
         {/* O'ng tarafda: Vakansiyalar / O'quvchi qabuli o'tish tugmasi */}

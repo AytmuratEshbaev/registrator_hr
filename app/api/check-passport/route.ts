@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const ip = getClientIp(req.headers);
 
   // Rate limit
-  const rl = rateLimit(`check-passport:${ip}`);
+  const rl = await rateLimit(`check-passport:${ip}`);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Urinishlar soni ko'payib ketdi. Iltimos, bir daqiqadan so'ng qayta urinib ko'ring." },
@@ -44,9 +44,11 @@ export async function POST(req: Request) {
   // DB tekshiruv
   try {
     const supabase = createAdminClient();
+    // Maxfiylik: autentifikatsiyasiz chaqiruvchiga ism/status/HR izohni QAYTARMAYMIZ.
+    // Faqat hujjat allaqachon ro'yxatdan o'tganini bildiramiz (takroriy arizani bloklash uchun).
     const { data, error } = await supabase
       .from(tableName)
-      .select("id, status, hr_note, first_name, last_name, middle_name")
+      .select("id")
       .eq("passport_number", passport_number)
       .maybeSingle();
 
@@ -58,17 +60,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (data) {
-      return NextResponse.json({
-        exists: true,
-        status: data.status,
-        hr_note: data.hr_note,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        middle_name: data.middle_name,
-      });
-    }
-    return NextResponse.json({ exists: false });
+    return NextResponse.json({ exists: Boolean(data) });
   } catch (err) {
     console.error("[check-passport] exception:", err);
     if (err instanceof z.ZodError) {

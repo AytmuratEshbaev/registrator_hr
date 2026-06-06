@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const ip = getClientIp(req.headers);
 
   // Rate limit (har bir hujjat alohida URL talab qilinadi, shuning uchun cheklov keng)
-  const rl = rateLimit(`upload-url:${ip}`, { max: 20, windowMs: 60_000 });
+  const rl = await rateLimit(`upload-url:${ip}`, { max: 20, windowMs: 60_000 });
   if (!rl.allowed) {
     return NextResponse.json(
       { error: "Слишком много попыток. Попробуйте позже." },
@@ -35,10 +35,10 @@ export async function POST(req: Request) {
     );
   }
 
-  const { passport_number, kind, contentType, contentLength } = parsed.data;
+  const { kind, contentType, contentLength } = parsed.data;
 
   try {
-    const key = buildObjectKey(passport_number, kind as FileKind, contentType);
+    const key = buildObjectKey(kind as FileKind, contentType);
     const uploadUrl = await createUploadUrl({ key, contentType, contentLength });
     return NextResponse.json({ uploadUrl, key });
   } catch (err) {

@@ -33,14 +33,14 @@ export function HrNoteEditor({ applicationId, initialNote }: Props) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "Ошибка при сохранении");
+        throw new Error(body.error ?? "Saqlashda xatolik");
       }
-      toast({ title: t("Сохранено"), description: t("Комментарий HR обновлён") });
+      toast({ title: t("Saqlandi"), description: t("HR izohi yangilandi") });
       router.refresh();
     } catch (err) {
       toast({
-        title: t("Ошибка"),
-        description: err instanceof Error ? t(err.message) : t("Неизвестная ошибка"),
+        title: t("Xatolik"),
+        description: err instanceof Error ? t(err.message) : t("Noma'lum xatolik"),
         variant: "destructive",
       });
     } finally {
@@ -53,7 +53,7 @@ export function HrNoteEditor({ applicationId, initialNote }: Props) {
       <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder={t("Напишите комментарий HR здесь...")}
+        placeholder={t("HR izohini bu yerga yozing...")}
         rows={5}
       />
       <div className="flex justify-end">

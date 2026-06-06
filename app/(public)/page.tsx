@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import type { PositionRow } from "@/lib/supabase/types";
 import { HomeContent } from "@/components/public/home-content";
 
@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 
 async function getActivePositions(): Promise<PositionRow[]> {
   try {
-    const supabase = createAdminClient();
+    // Anon (RLS-cheklangan) client yetarli: positions_select_public faqat active=true ni ochadi.
+    const supabase = createClient();
     const { data, error } = await supabase
       .from("positions")
       .select("*")
