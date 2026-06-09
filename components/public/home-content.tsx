@@ -63,7 +63,6 @@ export function HomeContent({ isStudent, type, positions }: HomeContentProps) {
                   <div className="space-y-2.5">
                     {[
                       { display: "+998 95 365 00 66", tel: "+998953650066" },
-                      { display: "+998 99 123 00 66", tel: "+998991230066" },
                       { display: "+998 99 386 00 33", tel: "+998993860033" },
                     ].map((phone) => (
                       <a
