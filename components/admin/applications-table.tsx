@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Spinner } from "@/components/ui/spinner";
+import { CvPreviewModal } from "./cv-preview-modal";
 import { formatDateTime, formatName, formatPhone, statusLabel, formatGrade } from "@/lib/utils";
 import { useLanguage } from "@/components/language/language-provider";
 import { APPLICATION_STATUSES } from "@/lib/constants";
@@ -254,11 +255,20 @@ export function ApplicationsTable({
                       <StatusBadge status={app.status} />
                     </TableCell>
 
-                    {/* Ko'rish */}
+                    {/* Amallar */}
                     <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
-                        <Link href={mode === "student" ? `/admin/students/${app.id}` : `/admin/candidates/${app.id}`}>{t("Ko'rish")}</Link>
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button asChild variant="outline" size="sm" className="rounded-lg font-semibold border-slate-200">
+                          <Link href={mode === "student" ? `/admin/students/${app.id}` : `/admin/candidates/${app.id}`}>{t("Ko'rish")}</Link>
+                        </Button>
+                        {!isAppStudent && (
+                          <CvPreviewModal
+                            applicationId={app.id}
+                            hasFile={Boolean(app.cv_url)}
+                            name={formatName(app)}
+                          />
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
