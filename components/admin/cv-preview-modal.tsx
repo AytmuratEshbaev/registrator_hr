@@ -73,7 +73,7 @@ export function CvPreviewModal({ applicationId, hasFile, name }: Props) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-5xl w-[95vw] h-[90vh] flex flex-col gap-3 p-4 sm:p-6">
+        <DialogContent className="max-w-7xl w-[98vw] h-[100vh] max-h-[100vh] flex flex-col gap-3 p-4 sm:p-6">
           <DialogHeader className="pr-8">
             <DialogTitle className="text-base font-bold">
               {t("Rezyume (CV)")}
