@@ -20,6 +20,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StatusChanger } from "./status-changer";
 import { HrNoteEditor } from "./hr-note-editor";
 import { DownloadButton } from "./download-button";
+import { CvPreview } from "./cv-preview";
 import { formatDateTime, formatName, formatPhone, formatGrade } from "@/lib/utils";
 import { useLanguage } from "@/components/language/language-provider";
 import type { ApplicationRow, StudentApplicationRow } from "@/lib/supabase/types";
@@ -193,10 +194,10 @@ export function ApplicationDetail({ application }: Props) {
               <CardHeader className="bg-slate-50/50 border-b py-4">
                 <CardTitle className="text-lg font-bold text-slate-800">{t("Yuklangan Hujjatlar")}</CardTitle>
                 <CardDescription className="text-xs">
-                  {t("Rezyumeni (CV) yuklab olish uchun quyidagi tugmani bosing")}
+                  {t("Rezyumeni (CV) shu yerda ko'rishingiz yoki yuklab olishingiz mumkin")}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6">
+              <CardContent className="space-y-4 pt-6">
                 <div className="max-w-xs">
                   <DownloadButton
                     label={t("Rezyumeni yuklab olish (PDF)")}
@@ -206,6 +207,11 @@ export function ApplicationDetail({ application }: Props) {
                     filename={`${baseName}-CV.pdf`}
                   />
                 </div>
+                <CvPreview
+                  applicationId={application.id}
+                  field="cv_url"
+                  hasFile={hasCv}
+                />
               </CardContent>
             </Card>
           )}

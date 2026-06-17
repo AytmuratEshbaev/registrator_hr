@@ -23,6 +23,8 @@ export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   const field = req.nextUrl.searchParams.get("field") as DownloadField | null;
   const filename = req.nextUrl.searchParams.get("filename") ?? undefined;
+  const disposition =
+    req.nextUrl.searchParams.get("disposition") === "inline" ? "inline" : "attachment";
 
   if (!id || !field || !ALLOWED_FIELDS.includes(field)) {
     return NextResponse.json({ error: "Noto'g'ri so'rov" }, { status: 400 });
@@ -54,7 +56,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const url = await createDownloadUrl(key, filename);
+    const url = await createDownloadUrl(key, filename, disposition);
     return NextResponse.json({ url });
   } catch (err) {
     console.error("[download] presign error:", err);
