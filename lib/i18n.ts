@@ -194,6 +194,18 @@ export const UI_TRANSLATIONS: TranslationEntry[] = [
   { uz: "Yuklab olishda xatolik", qq: "Júklep alıwda qátelik", ru: "Ошибка при скачивании" },
   { uz: "Yuklab olish uchun havola olib bo'lmadi", qq: "Júklep alıw ushın silteme alıp bolmadı", ru: "Не удалось получить ссылку для скачивания" },
   { uz: "yo'q", qq: "joq", ru: "нет" },
+  { uz: "Lavozimga talablar", qq: "Lawazımǵa talaplar", ru: "Требования к должности" },
+  { uz: "Tavsif / Talablar *", qq: "Tawsıp / Talaplar *", ru: "Описание / Требования *" },
+  {
+    uz: "Har bir tilda to'ldiring. Bu matn ariza topshirish oynasida nomzodga tanlangan tilida ko'rsatiladi.",
+    qq: "Hár bir tilde toltırıń. Bul matn arza tapsırıw aynasında talapkerge saylanǵan tilinde kórsetiledi.",
+    ru: "Заполните на каждом языке. Этот текст показывается кандидату на выбранном им языке при подаче заявки.",
+  },
+  {
+    uz: "Lavozimga qo'yiladigan talablarni yozing. Masalan: IELTS bali C1 darajada bo'lishi shart.",
+    qq: "Lawazımǵa qoyılatuǵın talaplardı jazıń. Mısalı: IELTS bali C1 dárejede bolıwı shárt.",
+    ru: "Укажите требования к должности. Например: балл IELTS должен быть не ниже C1.",
+  },
 ];
 
 export function buildTranslationMap(language: LanguageCode): Map<string, string> {

@@ -52,7 +52,9 @@ export async function POST(req: NextRequest) {
     .from("positions")
     .insert({
       title: parsed.data.title,
-      description: parsed.data.description ?? null,
+      description_uz: parsed.data.description_uz,
+      description_qq: parsed.data.description_qq,
+      description_ru: parsed.data.description_ru,
       active: parsed.data.active,
     })
     .select()

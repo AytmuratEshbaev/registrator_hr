@@ -33,6 +33,8 @@ import {
   type PositionInput,
 } from "@/lib/validations/position";
 import type { PositionRow } from "@/lib/supabase/types";
+import { positionDescription } from "@/lib/utils";
+import { LANGUAGES } from "@/lib/i18n";
 import { useLanguage } from "@/components/language/language-provider";
 
 interface Props {
@@ -42,7 +44,7 @@ interface Props {
 export function PositionsManager({ initialPositions }: Props) {
   const router = useRouter();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<PositionRow | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -113,7 +115,7 @@ export function PositionsManager({ initialPositions }: Props) {
                 <TableRow key={p.id} className="hover:bg-slate-50/30">
                   <TableCell className="font-bold text-slate-900">{p.title}</TableCell>
                   <TableCell className="text-sm text-slate-600 max-w-md truncate font-medium">
-                    {p.description || "—"}
+                    {positionDescription(p, language) || "—"}
                   </TableCell>
                   <TableCell>
                     {p.active ? (
@@ -192,7 +194,9 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
     resolver: zodResolver(positionSchema),
     defaultValues: {
       title: "",
-      description: "",
+      description_uz: "",
+      description_qq: "",
+      description_ru: "",
       active: true,
     },
   });
@@ -203,11 +207,13 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
     if (editing) {
       reset({
         title: editing.title,
-        description: editing.description ?? "",
+        description_uz: editing.description_uz ?? editing.description ?? "",
+        description_qq: editing.description_qq ?? editing.description ?? "",
+        description_ru: editing.description_ru ?? editing.description ?? "",
         active: editing.active,
       });
     } else {
-      reset({ title: "", description: "", active: true });
+      reset({ title: "", description_uz: "", description_qq: "", description_ru: "", active: true });
     }
   }, [open, editing, reset]);
 
@@ -225,7 +231,9 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: values.title,
-          description: values.description,
+          description_uz: values.description_uz,
+          description_qq: values.description_qq,
+          description_ru: values.description_ru,
           active: values.active,
         }),
       });
@@ -280,23 +288,39 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-xs font-bold text-slate-700">{t("Tavsif / Talablar *")}</Label>
-            <Textarea
-              id="description"
-              rows={5}
-              placeholder={t("Lavozimga qo'yiladigan talablarni yozing. Masalan: IELTS bali C1 darajada bo'lishi shart.")}
-              {...register("description")}
-              className="rounded-xl border-slate-200 resize-none"
-            />
-            <p className="text-[11px] text-slate-400 font-semibold">
-              {t("Bu matn ariza topshirish oynasida nomzodga ko'rsatiladi.")}
-            </p>
-            {errors.description && (
-              <p className="text-xs text-destructive font-semibold">
-                {errors.description.message}
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs font-bold text-slate-700">{t("Tavsif / Talablar *")}</Label>
+              <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
+                {t("Har bir tilda to'ldiring. Bu matn ariza topshirish oynasida nomzodga tanlangan tilida ko'rsatiladi.")}
               </p>
-            )}
+            </div>
+
+            {LANGUAGES.map((lng) => {
+              const fieldName = `description_${lng.code}` as
+                | "description_uz"
+                | "description_qq"
+                | "description_ru";
+              return (
+                <div key={lng.code} className="space-y-1.5">
+                  <Label htmlFor={fieldName} className="text-[11px] font-bold text-slate-600">
+                    {lng.nativeName}
+                  </Label>
+                  <Textarea
+                    id={fieldName}
+                    rows={3}
+                    placeholder={t("Lavozimga qo'yiladigan talablarni yozing. Masalan: IELTS bali C1 darajada bo'lishi shart.")}
+                    {...register(fieldName)}
+                    className="rounded-xl border-slate-200 resize-none"
+                  />
+                  {errors[fieldName] && (
+                    <p className="text-xs text-destructive font-semibold">
+                      {errors[fieldName]?.message}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2 pt-2">

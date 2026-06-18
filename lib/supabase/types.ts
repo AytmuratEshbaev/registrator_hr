@@ -114,6 +114,9 @@ export type PositionRow = {
   id: string;
   title: string;
   description: string | null;
+  description_uz: string | null;
+  description_qq: string | null;
+  description_ru: string | null;
   active: boolean;
   created_at: string;
 };
@@ -122,6 +125,9 @@ export type PositionInsert = {
   id?: string;
   title: string;
   description?: string | null;
+  description_uz?: string | null;
+  description_qq?: string | null;
+  description_ru?: string | null;
   active?: boolean;
   created_at?: string;
 };
@@ -130,6 +136,9 @@ export type PositionUpdate = {
   id?: string;
   title?: string;
   description?: string | null;
+  description_uz?: string | null;
+  description_qq?: string | null;
+  description_ru?: string | null;
   active?: boolean;
   created_at?: string;
 };
