@@ -911,6 +911,32 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               {errors.position_title ? (
                 <p className="text-xs text-destructive font-semibold">{errors.position_title.message}</p>
               ) : null}
+
+              {/* Tanlangan lavozimga qo'yiladigan talablar */}
+              {(() => {
+                const selectedId = (watched as Record<string, unknown>).position_id as string | null | undefined;
+                const selectedPosition = positions.find((p) => p.id === selectedId);
+                if (!selectedPosition?.description) return null;
+                return (
+                  <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5 mt-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 rounded-xl bg-indigo-100 text-indigo-900 shrink-0">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <p className="text-[12px] font-black text-indigo-900 uppercase tracking-wide">
+                          {t("Lavozimga talablar")}
+                        </p>
+                        <p className="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line">
+                          {selectedPosition.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </fieldset>
 

@@ -225,7 +225,7 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: values.title,
-          description: values.description || null,
+          description: values.description,
           active: values.active,
         }),
       });
@@ -281,14 +281,17 @@ function PositionDialog({ open, onOpenChange, editing, onSaved }: DialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-xs font-bold text-slate-700">{t("Tavsif (Izoh)")}</Label>
+            <Label htmlFor="description" className="text-xs font-bold text-slate-700">{t("Tavsif / Talablar *")}</Label>
             <Textarea
               id="description"
-              rows={4}
-              placeholder={t("Lavozim haqida qisqacha ma'lumot")}
+              rows={5}
+              placeholder={t("Lavozimga qo'yiladigan talablarni yozing. Masalan: IELTS bali C1 darajada bo'lishi shart.")}
               {...register("description")}
               className="rounded-xl border-slate-200 resize-none"
             />
+            <p className="text-[11px] text-slate-400 font-semibold">
+              {t("Bu matn ariza topshirish oynasida nomzodga ko'rsatiladi.")}
+            </p>
             {errors.description && (
               <p className="text-xs text-destructive font-semibold">
                 {errors.description.message}
