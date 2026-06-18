@@ -24,6 +24,7 @@ import {
 } from "@/lib/validations/application";
 import type { PositionRow } from "@/lib/supabase/types";
 import { PASSPORT_REGEX } from "@/lib/constants";
+import { positionDescription } from "@/lib/utils";
 import { useLanguage } from "@/components/language/language-provider";
 
 interface ApplicationFormProps {
@@ -102,7 +103,7 @@ const GRADES = [
 export function ApplicationForm({ type, positions }: ApplicationFormProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -916,7 +917,9 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
               {(() => {
                 const selectedId = (watched as Record<string, unknown>).position_id as string | null | undefined;
                 const selectedPosition = positions.find((p) => p.id === selectedId);
-                if (!selectedPosition?.description) return null;
+                if (!selectedPosition) return null;
+                const requirements = positionDescription(selectedPosition, language);
+                if (!requirements) return null;
                 return (
                   <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5 mt-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
                     <div className="flex items-start gap-3">
@@ -930,7 +933,7 @@ export function ApplicationForm({ type, positions }: ApplicationFormProps) {
                           {t("Lavozimga talablar")}
                         </p>
                         <p className="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line">
-                          {selectedPosition.description}
+                          {requirements}
                         </p>
                       </div>
                     </div>

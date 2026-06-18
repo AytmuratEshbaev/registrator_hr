@@ -1,8 +1,36 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { PositionRow } from "@/lib/supabase/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Lavozim tavsifini (talablarini) tanlangan tilda qaytaradi.
+ * Agar tanlangan tildagi matn bo'lmasa, boshqa tillarga yoki eski
+ * yagona `description` ustuniga qaytadi (graceful fallback).
+ */
+export function positionDescription(
+  position: Pick<
+    PositionRow,
+    "description" | "description_uz" | "description_qq" | "description_ru"
+  >,
+  lang: string
+): string {
+  const byLang: Record<string, string | null> = {
+    uz: position.description_uz,
+    qq: position.description_qq,
+    ru: position.description_ru,
+  };
+  return (
+    byLang[lang] ||
+    position.description_uz ||
+    position.description_qq ||
+    position.description_ru ||
+    position.description ||
+    ""
+  );
 }
 
 export function formatDate(date: string | Date | null | undefined): string {

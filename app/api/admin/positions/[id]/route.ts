@@ -33,8 +33,12 @@ export async function PATCH(
 
   const updates: PositionUpdate = {};
   if (parsed.data.title !== undefined) updates.title = parsed.data.title;
-  if (parsed.data.description !== undefined)
-    updates.description = parsed.data.description ?? null;
+  if (parsed.data.description_uz !== undefined)
+    updates.description_uz = parsed.data.description_uz;
+  if (parsed.data.description_qq !== undefined)
+    updates.description_qq = parsed.data.description_qq;
+  if (parsed.data.description_ru !== undefined)
+    updates.description_ru = parsed.data.description_ru;
   if (parsed.data.active !== undefined) updates.active = parsed.data.active;
 
   if (Object.keys(updates).length === 0) {

@@ -20,11 +20,14 @@ CREATE TYPE public.application_status AS ENUM (
 
 -- ----- positions jadvali -----
 CREATE TABLE public.positions (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  title       text NOT NULL,
-  description text,
-  active      boolean NOT NULL DEFAULT true,
-  created_at  timestamptz NOT NULL DEFAULT now()
+  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title          text NOT NULL,
+  description     text,
+  description_uz text,
+  description_qq text,
+  description_ru text,
+  active         boolean NOT NULL DEFAULT true,
+  created_at     timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE INDEX positions_active_idx ON public.positions (active);
