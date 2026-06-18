@@ -2,7 +2,11 @@ import { z } from "zod";
 
 export const positionSchema = z.object({
   title: z.string().trim().min(2, "Lavozim nomini kiriting").max(150),
-  description: z.string().trim().max(1000).nullable().optional(),
+  description: z
+    .string()
+    .trim()
+    .min(5, "Lavozim tavsifini (talablarni) kiriting")
+    .max(1000),
   active: z.boolean(),
 });
 

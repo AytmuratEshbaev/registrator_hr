@@ -17,7 +17,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <AdminSidebar />
       <main className="flex-1 min-w-0 flex flex-col overflow-x-hidden">
         <AdminTopbar />
-        <div className="container mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8">{children}</div>
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 pt-6 md:pt-8 pb-28">{children}</div>
       </main>
     </div>
   );
